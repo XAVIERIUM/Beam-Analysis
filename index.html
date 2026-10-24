@@ -3,12 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prof.X Beam Analysis — Web Edition</title>
+<title>Prof.X Beam Analysis — Structural Theory Beam Calculations · CE, USM Main</title>
 <style>
   :root{
-    --bg:#141417; --surface:#1e1e23; --surface2:#26262c; --line:#3a3a42;
-    --text:#e8e8ec; --muted:#9a9aa4; --violet:#7c6cf0; --violet2:#6a58e0;
-    --green:#3ecf8e; --red:#e05c5c; --yellow:#e8c15a; --cyan:#5ac8e8; --magenta:#c86ae8;
+    /* palette mirrored from beamColors() in MATLABAlamisApp.m (60-30-10) */
+    --bg:#202020;          /* 60% dark neutral background */
+    --surface:#111111;     /* fields, tables, plots */
+    --surface2:#191919;    /* zebra stripe / inputs */
+    --btn:#2d2d2d;         /* flat buttons */
+    --line:#2d2d2d;
+    --text:#f2f2f2;        /* 30% light text / structure */
+    --muted:#9e9e9e;       /* secondary text */
+    --accent:#3b82f6;      /* 10% vibrant accent = shear diagram */
+    --violet:#6d5bd0;      /* CALCULATE / primary buttons */
+    --violet2:#5a4ab8;
+    --green:#16a34a;       /* success / supports */
+    --warning:#d97706;     /* hinges */
+    --red:#dc2626;         /* danger / point loads */
+    --moment:#a855f7;      /* bending moment diagram (violet) */
+    --deflec:#fbcc15;      /* deflection diagram (yellow) */
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);
@@ -59,7 +72,7 @@
 <body>
 <header>
   <h1>Prof.X Beam Analysis</h1>
-  <span class="sub">Web Edition &middot; direct-stiffness engine ported from the MATLAB app (solveBeamFE) &middot; units kN, m</span>
+  <span class="sub">Structural Theory &mdash; Beam Calculations &middot; CE, USM Main Campus &middot; units kN, m</span>
 </header>
 <main>
   <!-- ============ INPUTS ============ -->
@@ -72,6 +85,16 @@
         <div><label>E (kN/m&sup2;)</label><input id="fE" type="number" step="any" value="200e6"></div>
         <div><label>I (mm&#8308;)</label><input id="fI" type="number" step="any" value="500e6"></div>
         <div><label>Hinges x (m, list)</label><input id="fHinge" placeholder="e.g. 4 7"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer">
+        <input type="checkbox" id="perSpan" style="width:auto">
+        <span style="color:var(--text);font-size:12.5px">Vary E / I per span (non-prismatic beam)</span>
+      </label>
+      <div id="spanWrap" style="display:none;margin-top:8px">
+        <table id="spanTable">
+          <thead><tr><th>Span</th><th>E (kN/m&sup2;)</th><th>I (mm&#8308;)</th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
 
@@ -107,7 +130,7 @@
         <option value="md">Moment Distribution Method</option>
         <option value="fm">Force Method</option>
       </select>
-      <button class="btn primary" id="viewSol" style="background:#5a4bd0">VIEW SOLUTION</button>
+      <button class="btn primary" id="viewSol" style="background:var(--violet2)">VIEW SOLUTION</button>
       <button class="btn ghost" id="clear">CLEAR ALL</button>
     </div>
   </section>
@@ -129,20 +152,52 @@
           <button class="btn danger sm" id="solClose">Close</button>
         </span>
       </h2>
-      <pre id="solPre" style="background:#101013;border:1px solid var(--line);border-radius:8px;
-           padding:12px;font:11.5px/1.4 Consolas,Menlo,monospace;color:#d8d8e0;overflow:auto;
+      <pre id="solPre" style="background:var(--surface);border:1px solid var(--line);border-radius:8px;
+           padding:12px;font:11.5px/1.4 Consolas,Menlo,monospace;color:var(--text);overflow:auto;
            max-height:70vh;white-space:pre"></pre>
     </div>
   </section>
 </main>
 <footer>
-  Numerical engine: built-in direct-stiffness (matrix) beam solver &mdash; a JavaScript port of
-  <code>solveBeamFE</code> from <code>MATLABAlamisApp.m</code> (R2025b App Designer app).
-  <strong>VIEW SOLUTION</strong> prints the full step-by-step working by any of the
-  FOUR methods &mdash; Three-Moment Equation, Slope-Deflection, Force Method and
-  Moment Distribution &mdash; exactly as the desktop app's Solution window,
-  downloadable as .txt.
-  Sign rules: reactions up positive, moments counterclockwise positive, sagging bending moment positive, deflection positive up.
+  <div class="card" style="max-width:900px">
+    <h2>How to use this website</h2>
+    <p style="color:var(--muted);margin:0 0 8px">
+      Hi! This little website solves continuous beams the way we do it in Structural Theory class &mdash;
+      just tell it what your beam looks like, and it will do the tedious arithmetic for you. Here's how:
+    </p>
+    <ol style="color:var(--muted);margin:0;padding-left:20px;line-height:1.7">
+      <li><b style="color:var(--text)">Describe the beam.</b> Put in the total length L, the modulus E (kN/m&sup2;)
+          and the moment of inertia I (mm&#8308;). If your beam changes section from span to span &mdash; which matters
+          a lot in the real calculations &mdash; tick <i>&ldquo;Vary E / I per span&rdquo;</i> and a small table appears
+          where you can type E and I for every span.</li>
+      <li><b style="color:var(--text)">Place the supports.</b> Press <i>+ Add support</i> for each one: type its
+          position x and pick fixed, pinned, roller or spring (springs need a stiffness k). Settlements go in the
+          next column, in metres. Click the little circle at the left of a row to select it, then
+          <i>- Delete selected</i> removes it.</li>
+      <li><b style="color:var(--text)">Add the loads.</b> UDL, linearly varying (UVL), point load, point moment or
+          horizontal load &mdash; with the direction you want. Distributed loads need a start a and an end b.</li>
+      <li><b style="color:var(--text)">Press CALCULATE.</b> On the right you get the support reactions and the four
+          pictures: the beam itself, the shear diagram, the bending moment diagram and the deflection curve,
+          each with its maximum value marked.</li>
+      <li><b style="color:var(--text)">Want the full working?</b> Choose a method &mdash; Three-Moment Equation,
+          Slope-Deflection, Force Method or Moment Distribution &mdash; and press <i>VIEW SOLUTION</i>. You get the
+          same step-by-step write-up as the desktop app's Solution window, and <i>Download .txt</i> saves it for
+          your notes or submission.</li>
+      <li><b style="color:var(--text)">Start over</b> with <i>CLEAR ALL</i> whenever you like.</li>
+    </ol>
+  </div>
+  <p style="margin:10px 0 0">
+    <strong style="color:var(--text)">Prof.X Beam Analysis (MATLAB-ALAMIS)</strong> &mdash;
+    created by <strong style="color:var(--text)">Kym Xavier P. Alamis</strong>, owner and creator &middot;
+    Civil Engineering, University of Southern Mindanao (USM) Main Campus.
+  </p>
+  <p style="margin:6px 0 0">
+    Numerical engine: built-in direct-stiffness (matrix) beam solver &mdash; a JavaScript port of
+    <code>solveBeamFE</code> from <code>MATLABAlamisApp.m</code> (R2025b App Designer app), with the step-by-step
+    engines of all four classical methods ported alongside it.
+    Sign rules: reactions up positive, moments counterclockwise positive, sagging bending moment positive,
+    deflection positive up.
+  </p>
 </footer>
 
 <script>
@@ -2337,6 +2392,18 @@ function readModel(){
   sup.sort(function(a,b){return a[0]-b[0];});
   var spanX = [0, L]; sup.forEach(function(s){ if(spanX.indexOf(s[0])<0) spanX.push(s[0]); });
   spanX = spanX.filter(function(v,i,a){return a.indexOf(v)===i;}).sort(function(a,b){return a-b;});
+  var Elist = [E], Ilist = [Im4];
+  if(el('perSpan').checked){
+    Elist = []; Ilist = [];
+    el('spanTable').querySelectorAll('tbody tr').forEach(function(tr){
+      var eV = num(tr.querySelector('.se').value), iV = num(tr.querySelector('.si').value);
+      if(!(eV>0)) throw new Error('Span E must be a positive number (kN/m²).');
+      if(!(iV>0)) throw new Error('Span I must be a positive number (mm⁴).');
+      Elist.push(eV); Ilist.push(iV*1e-12);
+    });
+    var want = Math.max(1, spanX.length-1);
+    if(Elist.length !== want){ refreshSpanTable(); throw new Error('Span table refreshed ('+want+' spans) — press CALCULATE again.'); }
+  }
   var hinge = (el('fHinge').value.trim().match(/-?\d*\.?\d+/g)||[]).map(Number)
               .filter(function(h){return h>0 && h<L;});
   var P=[],M=[],W=[],H=[],loadRows=[];
@@ -2368,7 +2435,7 @@ function readModel(){
       W.push([a,b,sg*v1,sg*w2]);
     }
   });
-  return {L:L, E:[E], I:[Im4], spanX:spanX, hinge:hinge, P:P, M:M, W:W, H:H, sup:sup,
+  return {L:L, E:Elist, I:Ilist, spanX:spanX, hinge:hinge, P:P, M:M, W:W, H:H, sup:sup,
           loadRows:loadRows, name:el('fTitle').value||'Beam'};
 }
 
@@ -2406,18 +2473,18 @@ function beamSketch(B){
   var s = svgFrame(W,H);
   s += '<text x="12" y="16" fill="#9a9aa4" font-size="12" font-weight="600">'+
        (el('fTitle').value||'Beam')+' | supports &amp; loads</text>';
-  s += '<line x1="'+X(0)+'" y1="'+yb+'" x2="'+X(B.L)+'" y2="'+yb+'" stroke="#5ac8e8" stroke-width="4"/>';
+  s += '<line x1="'+X(0)+'" y1="'+yb+'" x2="'+X(B.L)+'" y2="'+yb+'" stroke="#f2f2f2" stroke-width="4"/>';
   var names='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   B.sup.forEach(function(sp,i){
     var px=X(sp[0]);
-    if(sp[1]===1){ s+='<rect x="'+(px-7)+'" y="'+(yb+4)+'" width="14" height="12" fill="none" stroke="#3ecf8e" stroke-width="2"/>'+
-        '<line x1="'+(px-11)+'" y1="'+(yb+18)+'" x2="'+(px+11)+'" y2="'+(yb+18)+'" stroke="#3ecf8e" stroke-width="2"/>'; }
-    else if(sp[1]===4){ s+='<path d="M '+px+' '+(yb+4)+' l -5 4 l 10 4 l -10 4 l 10 4 l -5 4" fill="none" stroke="#e8c15a" stroke-width="2"/>'; }
-    else { s+='<path d="M '+px+' '+(yb+4)+' l -8 14 l 16 0 Z" fill="none" stroke="#3ecf8e" stroke-width="2"/>'; }
-    if(sp[1]===2){ s+='<circle cx="'+px+'" cy="'+(yb+4)+'" r="2.5" fill="#3ecf8e"/>'; }
-    s += '<text x="'+(px-4)+'" y="'+(yb+38)+'" fill="#3ecf8e" font-size="11">'+
+    if(sp[1]===1){ s+='<rect x="'+(px-7)+'" y="'+(yb+4)+'" width="14" height="12" fill="none" stroke="#16a34a" stroke-width="2"/>'+
+        '<line x1="'+(px-11)+'" y1="'+(yb+18)+'" x2="'+(px+11)+'" y2="'+(yb+18)+'" stroke="#16a34a" stroke-width="2"/>'; }
+    else if(sp[1]===4){ s+='<path d="M '+px+' '+(yb+4)+' l -5 4 l 10 4 l -10 4 l 10 4 l -5 4" fill="none" stroke="#d97706" stroke-width="2"/>'; }
+    else { s+='<path d="M '+px+' '+(yb+4)+' l -8 14 l 16 0 Z" fill="none" stroke="#16a34a" stroke-width="2"/>'; }
+    if(sp[1]===2){ s+='<circle cx="'+px+'" cy="'+(yb+4)+'" r="2.5" fill="#16a34a"/>'; }
+    s += '<text x="'+(px-4)+'" y="'+(yb+38)+'" fill="#16a34a" font-size="11">'+
          (i<26?names[i]:'S'+(i+1))+' ('+SUP_TYPES[sp[1]]+')</text>';
-    if(sp[2]) s += '<text x="'+(px-14)+'" y="'+(yb+50)+'" fill="#e8c15a" font-size="10">set '+fmt(sp[2])+' m</text>';
+    if(sp[2]) s += '<text x="'+(px-14)+'" y="'+(yb+50)+'" fill="#d97706" font-size="10">set '+fmt(sp[2])+' m</text>';
   });
   B.W.forEach(function(w){
     var a=w[0],b=w[1],wmax=Math.max(Math.abs(w[2]),Math.abs(w[3]))||1;
@@ -2429,29 +2496,61 @@ function beamSketch(B){
       var len = 14+18*Math.abs(wi)/wmax;
       var y1 = sg>0 ? yb-8-len : yb+8+len;
       var y2 = sg>0 ? yb-6 : yb+6;
-      s += '<line x1="'+X(xx)+'" y1="'+y1+'" x2="'+X(xx)+'" y2="'+y2+'" stroke="#5ac8e8" stroke-width="1.4"/>'+
-           '<path d="M '+X(xx)+' '+y2+' l -3 '+(sg>0?-5:5)+' l 6 0 Z" fill="#5ac8e8"/>';
+      s += '<line x1="'+X(xx)+'" y1="'+y1+'" x2="'+X(xx)+'" y2="'+y2+'" stroke="#3b82f6" stroke-width="1.4"/>'+
+           '<path d="M '+X(xx)+' '+y2+' l -3 '+(sg>0?-5:5)+' l 6 0 Z" fill="#3b82f6"/>';
     }
-    s += '<text x="'+((X(a)+X(b))/2-24)+'" y="'+(sg>0? yb-34: yb+44)+'" fill="#5ac8e8" font-size="10">'+
+    s += '<text x="'+((X(a)+X(b))/2-24)+'" y="'+(sg>0? yb-34: yb+44)+'" fill="#3b82f6" font-size="10">'+
          fmt(w[2])+(w[2]!==w[3]?'→'+fmt(w[3]):'')+' kN/m</text>';
   });
   B.P.forEach(function(p){
     var px=X(p[0]), sg=p[1]>0?1:-1, y2=sg>0?yb-6:yb+6, y1=sg>0?yb-34:yb+34;
-    s += '<line x1="'+px+'" y1="'+y1+'" x2="'+px+'" y2="'+y2+'" stroke="#e05c5c" stroke-width="2"/>'+
-         '<path d="M '+px+' '+y2+' l -4 '+(sg>0?-6:6)+' l 8 0 Z" fill="#e05c5c"/>'+
-         '<text x="'+(px+5)+'" y="'+(y1+4)+'" fill="#e05c5c" font-size="10">'+fmt(Math.abs(p[1]))+' kN</text>';
+    s += '<line x1="'+px+'" y1="'+y1+'" x2="'+px+'" y2="'+y2+'" stroke="#dc2626" stroke-width="2"/>'+
+         '<path d="M '+px+' '+y2+' l -4 '+(sg>0?-6:6)+' l 8 0 Z" fill="#dc2626"/>'+
+         '<text x="'+(px+5)+'" y="'+(y1+4)+'" fill="#dc2626" font-size="10">'+fmt(Math.abs(p[1]))+' kN</text>';
   });
   B.M.forEach(function(mm){
     var px=X(mm[0]);
-    s += '<path d="M '+(px-10)+' '+(yb-16)+' a 10 10 0 1 1 10 10" fill="none" stroke="#c86ae8" stroke-width="2"/>'+
-         '<text x="'+(px+4)+'" y="'+(yb-24)+'" fill="#c86ae8" font-size="10">'+fmt(Math.abs(mm[1]))+' kN·m</text>';
+    s += '<path d="M '+(px-10)+' '+(yb-16)+' a 10 10 0 1 1 10 10" fill="none" stroke="#a855f7" stroke-width="2"/>'+
+         '<text x="'+(px+4)+'" y="'+(yb-24)+'" fill="#a855f7" font-size="10">'+fmt(Math.abs(mm[1]))+' kN·m</text>';
   });
   B.hinge.forEach(function(h){
-    s += '<circle cx="'+X(h)+'" cy="'+yb+'" r="4" fill="#141417" stroke="#e8c15a" stroke-width="2"/>';
+    s += '<circle cx="'+X(h)+'" cy="'+yb+'" r="4" fill="#141417" stroke="#d97706" stroke-width="2"/>';
   });
   s += '</svg>';
   return s;
 }
+
+function refreshSpanTable(){
+  var L = num(el('fL').value);
+  if(!(L>0)) return;
+  var xs = [0, L];
+  el('supTable').querySelectorAll('tbody tr').forEach(function(tr){
+    var v = num(tr.querySelector('.sx').value);
+    if(isFinite(v) && v>0 && v<L && xs.indexOf(v)<0) xs.push(v);
+  });
+  xs.sort(function(a,b){return a-b;});
+  var n = Math.max(1, xs.length-1);
+  var tb = el('spanTable').querySelector('tbody');
+  var old = [];
+  tb.querySelectorAll('tr').forEach(function(tr){
+    old.push([tr.querySelector('.se').value, tr.querySelector('.si').value]);
+  });
+  tb.innerHTML = '';
+  for(var k=0;k<n;k++){
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>Span '+(k+1)+'&nbsp; ('+xs[k]+'–'+xs[k+1]+' m)</td>'+
+      '<td><input class="se" type="number" step="any" value="'+(old[k]?old[k][0]:el('fE').value)+'"></td>'+
+      '<td><input class="si" type="number" step="any" value="'+(old[k]?old[k][1]:el('fI').value)+'"></td>';
+    tb.appendChild(tr);
+  }
+}
+el('perSpan').onchange = function(){
+  el('spanWrap').style.display = el('perSpan').checked ? '' : 'none';
+  refreshSpanTable();
+};
+el('supTable').addEventListener('input', refreshSpanTable);
+el('fL').addEventListener('input', refreshSpanTable);
+refreshSpanTable();
 
 function calculate(){
   var st = el('status');
@@ -2490,9 +2589,9 @@ function calculate(){
     // plots
     el('plots').innerHTML =
       beamSketch(B)+
-      linePlot('Shear Force Diagram (V) — kN', R.xp, R.Vp, '#5ac8e8','kN')+
-      linePlot('Bending Moment Diagram (M) — kN·m, sagging +', R.xp, R.Mp, '#c86ae8','kN·m')+
-      linePlot('Beam Deflection Curve — mm', R.xp, R.vp.map(function(v){return v*1000;}), '#e8c15a','mm');
+      linePlot('Shear Force Diagram (V) — kN', R.xp, R.Vp, '#3b82f6','kN')+
+      linePlot('Bending Moment Diagram (M) — kN·m, sagging +', R.xp, R.Mp, '#a855f7','kN·m')+
+      linePlot('Beam Deflection Curve — mm', R.xp, R.vp.map(function(v){return v*1000;}), '#fbcc15','mm');
   }catch(err){
     st.className='err'; st.textContent = err.message || String(err);
   }
@@ -2549,5 +2648,5 @@ supRow({x:10, type:'3', set:0});
 loadRow({type:'UDL', a:0, b:10, v1:10, v2:10, dir:'Downward'});
 calculate();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4fa094e38cadb51',t:'MTc5Mjg1NTk2OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4fb299f3891ce4d',t:'MTc5Mjg2Nzc3OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

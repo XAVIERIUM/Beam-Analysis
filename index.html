@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prof.X Beam Analysis — Web Edition</title>
+<style>
+  :root{
+    --bg:#141417; --surface:#1e1e23; --surface2:#26262c; --line:#3a3a42;
+    --text:#e8e8ec; --muted:#9a9aa4; --violet:#7c6cf0; --violet2:#6a58e0;
+    --green:#3ecf8e; --red:#e05c5c; --yellow:#e8c15a; --cyan:#5ac8e8; --magenta:#c86ae8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font:14px/1.45 "Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{padding:18px 22px;border-bottom:1px solid var(--line);
+         display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  header h1{margin:0;font-size:20px}
+  header .sub{color:var(--muted);font-size:12.5px}
+  main{display:grid;grid-template-columns:minmax(340px,430px) 1fr;gap:18px;padding:18px 22px}
+  @media (max-width:980px){main{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+  .card h2{margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  label{display:block;color:var(--muted);font-size:11.5px;margin:6px 0 2px}
+  input,select{width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--line);
+               border-radius:6px;padding:6px 8px;font:inherit}
+  input:focus,select:focus{outline:1px solid var(--violet)}
+  .row{display:grid;gap:8px}
+  .row.c4{grid-template-columns:repeat(4,1fr)}
+  .row.c2{grid-template-columns:repeat(2,1fr)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{border:1px solid var(--line);padding:4px 6px;text-align:left}
+  th{color:var(--muted);font-weight:600;background:var(--surface2)}
+  td input,td select{border:none;background:transparent;padding:3px 4px}
+  td input:focus,td select:focus{background:var(--surface2)}
+  .btn{border:none;border-radius:7px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer}
+  .btn.primary{background:var(--violet);color:#fff}
+  .btn.primary:hover{background:var(--violet2)}
+  .btn.ghost{background:var(--surface2);color:var(--text);border:1px solid var(--line)}
+  .btn.danger{background:transparent;color:var(--red);border:1px solid var(--red)}
+  .btn.sm{padding:4px 9px;font-size:12px;font-weight:600}
+  .btnrow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  #status{padding:8px 10px;border-radius:7px;background:var(--surface2);border:1px solid var(--line);
+          color:var(--muted);font-size:12.5px;margin-bottom:12px}
+  #status.ok{color:var(--green);border-color:#2b5c46}
+  #status.err{color:var(--red);border-color:#6b3030}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .kpi .t{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+  .kpi .v{font-size:17px;font-weight:700;margin-top:2px}
+  .kpi .w{color:var(--muted);font-size:11.5px}
+  svg{width:100%;height:auto;display:block;background:var(--surface);border:1px solid var(--line);
+      border-radius:10px;margin-bottom:12px}
+  footer{padding:14px 22px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
+  .del{color:var(--red);cursor:pointer;text-align:center;user-select:none}
+  a{color:var(--cyan)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Prof.X Beam Analysis</h1>
+  <span class="sub">Web Edition &middot; direct-stiffness engine ported from the MATLAB app (solveBeamFE) &middot; units kN, m</span>
+</header>
+<main>
+  <!-- ============ INPUTS ============ -->
+  <section>
+    <div class="card">
+      <h2>Beam</h2>
+      <label>Title</label><input id="fTitle" value="Beam">
+      <div class="row c4">
+        <div><label>Length L (m)</label><input id="fL" type="number" step="any" value="10"></div>
+        <div><label>E (kN/m&sup2;)</label><input id="fE" type="number" step="any" value="200e6"></div>
+        <div><label>I (mm&#8308;)</label><input id="fI" type="number" step="any" value="500e6"></div>
+        <div><label>Hinges x (m, list)</label><input id="fHinge" placeholder="e.g. 4 7"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Supports</h2>
+      <table id="supTable">
+        <thead><tr><th></th><th>x (m)</th><th>Type</th><th>Settlement (m)</th><th>k (kN/m)</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="btnrow">
+        <button class="btn ghost sm" id="addSup">+ Add support</button>
+        <button class="btn danger sm" id="delSup">- Delete selected</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Loads</h2>
+      <table id="loadTable">
+        <thead><tr><th></th><th>Type</th><th>a (m)</th><th>b (m)</th><th>V1</th><th>V2</th><th>Direction</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="btnrow">
+        <button class="btn ghost sm" id="addLoad">+ Add load</button>
+        <button class="btn danger sm" id="delLoad">- Delete selected</button>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn primary" id="calc">CALCULATE</button>
+      <select id="solMethod" style="max-width:230px" title="Step-by-step method">
+        <option value="tm">Three-Moment Equation</option>
+        <option value="sd">Slope-Deflection Method</option>
+        <option value="md">Moment Distribution Method</option>
+        <option value="fm">Force Method</option>
+      </select>
+      <button class="btn primary" id="viewSol" style="background:#5a4bd0">VIEW SOLUTION</button>
+      <button class="btn ghost" id="clear">CLEAR ALL</button>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section>
+    <div id="status">Ready. Enter the beam and press CALCULATE.</div>
+    <div class="kpis" id="kpis"></div>
+    <div class="card" id="reactCard" style="display:none">
+      <h2>Reactions</h2>
+      <table id="reactTable"><thead><tr><th>Reaction</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div id="plots"></div>
+    <div class="card" id="solCard" style="display:none">
+      <h2 style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <span>Step-by-step solution</span>
+        <span style="display:flex;gap:6px">
+          <button class="btn ghost sm" id="solDl">Download .txt</button>
+          <button class="btn danger sm" id="solClose">Close</button>
+        </span>
+      </h2>
+      <pre id="solPre" style="background:#101013;border:1px solid var(--line);border-radius:8px;
+           padding:12px;font:11.5px/1.4 Consolas,Menlo,monospace;color:#d8d8e0;overflow:auto;
+           max-height:70vh;white-space:pre"></pre>
+    </div>
+  </section>
+</main>
+<footer>
+  Numerical engine: built-in direct-stiffness (matrix) beam solver &mdash; a JavaScript port of
+  <code>solveBeamFE</code> from <code>MATLABAlamisApp.m</code> (R2025b App Designer app).
+  <strong>VIEW SOLUTION</strong> prints the full step-by-step working by any of the
+  FOUR methods &mdash; Three-Moment Equation, Slope-Deflection, Force Method and
+  Moment Distribution &mdash; exactly as the desktop app's Solution window,
+  downloadable as .txt.
+  Sign rules: reactions up positive, moments counterclockwise positive, sagging bending moment positive, deflection positive up.
+</footer>
+
+<script>
+/*SOLVER-START*/
+/* Direct-stiffness beam solver — faithful JS port of solveBeamFE (MATLABAlamisApp.m).
+   Units: kN, m.  B = {L, spanX[], E[], I[], hinge[], P[[x,p]], M[[x,m]], W[[a,b,w1,w2]], H[[x,h]],
+   sup[[x, type, settlement, k]]  type: 1 fixed, 2 pinned, 3 roller, 4 spring}               */
+function solveBeam(B){
+  var L = B.L;
+  // E and I are per-span arrays (like the MATLAB app): expand a single value to all spans
+  var nsp = Math.max(1, B.spanX.length-1);
+  var EArr = B.E.slice(), IArr = B.I.slice();
+  while(EArr.length<nsp) EArr.push(EArr[EArr.length-1]);
+  while(IArr.length<nsp) IArr.push(IArr[IArr.length-1]);
+  var pts = B.spanX.concat(B.hinge);
+  B.P.forEach(function(p){pts.push(p[0]);});
+  B.M.forEach(function(p){pts.push(p[0]);});
+  B.W.forEach(function(w){pts.push(w[0]); pts.push(w[1]);});
+  pts = pts.filter(function(p){return p>=-1e-9 && p<=L+1e-9;});
+  var set = {};
+  pts.forEach(function(p){set[Math.round(p*1e9)/1e9]=1;});
+  var xb = Object.keys(set).map(Number).sort(function(a,b){return a-b;});
+  var nb = xb.length;
+  if(nb<2) throw new Error('Beam needs at least two distinct node points (supports/loads).');
+  var m = Math.max(2, Math.min(150, Math.ceil(300/(nb-1))));
+  var x = [xb[0]];
+  for(var k=0;k<nb-1;k++){
+    for(var j=1;j<=m;j++) x.push(xb[k]+(xb[k+1]-xb[k])*j/m);
+  }
+  x = x.filter(function(v,i){return i===0 || v>x[i-1]+1e-12;});
+  var n = x.length, ne = n-1;
+
+  var isHinge = new Array(n).fill(false);
+  B.hinge.forEach(function(h){
+    var i = x.findIndex(function(v){return Math.abs(v-h)<1e-8;});
+    if(i>=0) isHinge[i]=true;
+  });
+
+  var thR = new Array(n), thL = new Array(n), c = n;
+  for(var i=0;i<n;i++){
+    thR[i]=c++;
+    if(isHinge[i]){ thL[i]=c++; } else { thL[i]=thR[i]; }
+  }
+  var nd = c;
+  var K = [], F = new Float64Array(nd);
+  for(i=0;i<nd;i++) K.push(new Float64Array(nd));
+  var KE = [], FE = [];
+
+  for(var e=0;e<ne;e++){
+    var l = x[e+1]-x[e], xm = (x[e]+x[e+1])/2;
+    var ki = -1;
+    for(var s2=0;s2<B.spanX.length-1;s2++){ if(xm>B.spanX[s2] && xm<B.spanX[s2+1]){ ki=s2; break; } }
+    if(ki<0 || ki>=EArr.length) ki = EArr.length-1;
+    var EI = EArr[ki]*IArr[ki];
+    var l3 = l*l*l;
+    var ke = [
+      [ 12,   6*l,   -12,   6*l ],
+      [ 6*l,  4*l*l, -6*l,  2*l*l],
+      [-12,  -6*l,    12,  -6*l ],
+      [ 6*l,  2*l*l, -6*l,  4*l*l]
+    ].map(function(r){return r.map(function(v){return v*EI/l3;});});
+    var dof = [e, thR[e], e+1, thL[e+1]];
+    for(var a=0;a<4;a++) for(var b=0;b<4;b++) K[dof[a]][dof[b]] += ke[a][b];
+    KE.push(ke);
+    var q1=0, q2=0;
+    B.W.forEach(function(w){
+      var wa=w[0], wb=w[1];
+      if(xm>wa && xm<wb){
+        q1 += w[2] + (w[3]-w[2])*(x[e]  -wa)/(wb-wa);
+        q2 += w[2] + (w[3]-w[2])*(x[e+1]-wa)/(wb-wa);
+      }
+    });
+    var fe = [ l*(7*q1+3*q2)/20, l*l*(3*q1+2*q2)/60, l*(3*q1+7*q2)/20, -l*l*(2*q1+3*q2)/60 ];
+    FE.push(fe);
+    for(a=0;a<4;a++) F[dof[a]] -= fe[a];
+  }
+
+  B.P.forEach(function(p){
+    var i2 = x.findIndex(function(v){return Math.abs(v-p[0])<1e-8;});
+    F[i2] -= p[1];
+  });
+  B.M.forEach(function(pm){
+    var i2 = x.findIndex(function(v){return Math.abs(v-pm[0])<1e-8;});
+    F[thL[i2]] += pm[1];
+  });
+
+  var ns = B.sup.length;
+  var pres = new Array(nd).fill(false), uval = new Float64Array(nd), sn = new Array(ns);
+  var rr = 0;
+  for(var s=0;s<ns;s++){
+    var si = x.findIndex(function(v){return Math.abs(v-B.sup[s][0])<1e-8;});
+    if(si<0) throw new Error('Support at x='+B.sup[s][0]+' does not coincide with a node.');
+    sn[s]=si;
+    var t = B.sup[s][1];
+    if(t<=3){ pres[si]=true; uval[si]=-B.sup[s][2]; }
+    if(t===1){ pres[thR[si]]=true; pres[thL[si]]=true; rr+=3; }
+    else if(t===2){ rr+=2; }
+    else { rr+=1; }
+    if(t===4) K[si][si] += B.sup[s][3];
+  }
+  var DI = rr - 3 - B.hinge.length;
+
+  var Rx = new Array(ns).fill(0);
+  var sumH = B.H.reduce(function(acc,h){return acc+h[1];},0);
+  if(Math.abs(sumH)>0){
+    var j = B.sup.findIndex(function(sp){return sp[1]<=2;});
+    if(j<0) throw new Error('Horizontal loads need a pinned or fixed support.');
+    Rx[j] = -sumH;
+  }
+
+  var fr=[], ff=[];
+  for(i=0;i<nd;i++){ if(pres[i]) fr.push(i); else ff.push(i); }
+  var u = new Float64Array(nd);
+  fr.forEach(function(idx){u[idx]=uval[idx];});
+  var stable = DI>=0;
+  if(stable){
+    var nf = ff.length, A = [];
+    for(a=0;a<nf;a++){
+      var rhs = F[ff[a]];
+      fr.forEach(function(idx){ rhs -= K[ff[a]][idx]*u[idx]; });
+      var row = new Float64Array(nf+1);
+      for(b=0;b<nf;b++) row[b] = K[ff[a]][ff[b]];
+      row[nf] = rhs;
+      A.push(row);
+    }
+    for(var col=0;col<nf;col++){
+      var piv=col;
+      for(var r2=col+1;r2<nf;r2++) if(Math.abs(A[r2][col])>Math.abs(A[piv][col])) piv=r2;
+      if(Math.abs(A[piv][col]) <= 1e-13*Math.abs(A[col][col]||1)){ stable=false; break; }
+      var tmp=A[col]; A[col]=A[piv]; A[piv]=tmp;
+      for(r2=col+1;r2<nf;r2++){
+        var f=A[r2][col]/A[col][col];
+        if(f===0) continue;
+        for(b=col;b<=nf;b++) A[r2][b] -= f*A[col][b];
+      }
+    }
+    if(stable){
+      for(a=nf-1;a>=0;a--){
+        var sv=A[a][nf];
+        for(b=a+1;b<nf;b++) sv -= A[a][b]*u[ff[b]];
+        u[ff[a]] = sv/A[a][a];
+      }
+    }
+  }
+  if(!stable){
+    return {DI:Math.min(DI,-1), Rx:Rx, Ry:new Array(ns).fill(0), Mr:new Array(ns).fill(0),
+            xp:[0,L], Vp:[0,0], Mp:[0,0], vp:[0,0], Vmax:0,xV:0, Mmax:0,xM:0, dmax:0,xd:0, unstable:true};
+  }
+
+  var Rc = new Float64Array(nd);
+  for(i=0;i<nd;i++){
+    var acc2=0;
+    for(var jj=0;jj<nd;jj++) acc2 += K[i][jj]*u[jj];
+    Rc[i] = acc2 - F[i];
+  }
+  var Ry = new Array(ns), Mr = new Array(ns);
+  for(s=0;s<ns;s++){
+    var ii=sn[s], tt=B.sup[s][1];
+    if(tt===4) Ry[s] = -B.sup[s][3]*u[ii];
+    else       Ry[s] = Rc[ii];
+    if(tt===1) Mr[s] = Rc[thR[ii]] + (thL[ii]!==thR[ii] ? Rc[thL[ii]] : 0);
+    else Mr[s]=0;
+  }
+
+  var xp=[], Vp=[], Mp=[], vp=[];
+  for(e=0;e<ne;e++){
+    dof = [e, thR[e], e+1, thL[e+1]];
+    var fm = [0,0,0,0];
+    for(a=0;a<4;a++){ var ssum=0; for(b=0;b<4;b++) ssum += KE[e][a][b]*u[dof[b]]; fm[a]=ssum+FE[e][a]; }
+    xp.push(x[e]);   Vp.push(fm[0]);  Mp.push(-fm[1]); vp.push(u[e]);
+    xp.push(x[e+1]); Vp.push(-fm[2]); Mp.push(fm[3]);  vp.push(u[e+1]);
+  }
+  function absMax(xs, ys){
+    var mx=0; for(var q=0;q<ys.length;q++) mx=Math.max(mx,Math.abs(ys[q]));
+    if(mx===0) return [0, xs[0]];
+    for(q=0;q<ys.length;q++) if(Math.abs(ys[q])>=mx*(1-1e-9)) return [ys[q], xs[q]];
+    return [0,xs[0]];
+  }
+  var aV=absMax(xp,Vp), aM=absMax(xp,Mp), aD=absMax(xp,vp);
+  return {DI:DI, Rx:Rx, Ry:Ry, Mr:Mr, xp:xp, Vp:Vp, Mp:Mp, vp:vp,
+          Vmax:aV[0], xV:aV[1], Mmax:aM[0], xM:aM[1], dmax:aD[0], xd:aD[1], u:u, unstable:false};
+}
+/*SOLVER-END*/
+
+/*TM-START*/
+/* ============ THREE-MOMENT EQUATION: analysis + step-by-step report ============
+   Faithful JS port of tmAnalyze / tmPrintSolution / buildSolutionText from
+   MATLABAlamisApp.m.  Signs: reactions up +, moments ccw +, sagging M +,
+   loads down +, settlements down +, deflection up +.  Units kN, m.          */
+function zr(v){ return Math.abs(v)<5e-5 ? 0 : v; }
+function fmtN(x){
+  if(x===0) return '0';
+  if(Math.abs(x)>=1e6 || Math.abs(x)<1e-3) return x.toExponential(4).replace('e','e');
+  return x.toFixed(4);
+}
+function numStr(x){
+  var t = x.toFixed(4).replace(/\.?0+$/,'');
+  if(t===''||t==='-'||t==='-0') t='0';
+  return t;
+}
+function matG(v,p){                       // MATLAB %g / %.10g style
+  p = p||6;
+  if(v===0) return '0';
+  var e = Math.floor(Math.log10(Math.abs(v)));
+  if(e>=p || e<-5){
+    var m = v/Math.pow(10,e);
+    var ms = m.toFixed(p-1).replace(/\.?0+$/,'');
+    var ee = e<0 ? '-'+String(Math.abs(e)).padStart(2,'0') : '+'+String(e).padStart(2,'0');
+    return ms+'e'+ee;
+  }
+  var s = v.toPrecision(p);
+  return String(Number(s));
+}
+function sgnT(x){ return x<0 ? '-' : '+'; }
+function linEq(c0, co, names){
+  var e='';
+  if(c0!==null && c0!==undefined) e=fmtN(c0);
+  for(var k=0;k<co.length;k++){
+    var t = fmtN(Math.abs(co[k]))+' '+names[k];
+    if(e==='') e = co[k]<0 ? '- '+t : t;
+    else e += ' '+sgnT(co[k])+' '+t;
+  }
+  if(e==='') e='0';
+  return e;
+}
+function lrStr(a,b){
+  if(Math.abs(a)<5e-5) a=0;
+  if(Math.abs(b)<5e-5) b=0;
+  if(Math.abs(a-b)<5e-5) return a.toFixed(4);
+  return a.toFixed(4)+' | '+b.toFixed(4);
+}
+function jn(j){ return j<=26 ? String.fromCharCode(64+j) : 'J'+j; }
+function ptLabel(jx,x,tol){
+  for(var j=0;j<jx.length;j++) if(Math.abs(jx[j]-x)<tol) return jn(j+1);
+  return '-';
+}
+function rxnStr(v,k,nS){
+  v=zr(v);
+  if(k<=nS){
+    var d = v>0?'  (up)':(v<0?'  (down)':'');
+    return v.toFixed(4)+' kN'+d;
+  }
+  var d2 = v>0?'  (counter-clockwise)':(v<0?'  (clockwise)':'');
+  return v.toFixed(4)+' kNm'+d2;
+}
+function clipW(w,xa,xb){
+  var a=Math.max(w[0],xa), b=Math.min(w[1],xb);
+  var s=(w[3]-w[2])/(w[1]-w[0]);
+  return [a,b, w[2]+s*(a-w[0]), w[2]+s*(b-w[0])];
+}
+function wForce(W,xa,xb){
+  var f=0;
+  (W||[]).forEach(function(w){
+    var c=clipW(w,xa,xb);
+    if(c[1]>c[0]) f += (c[2]+c[3])/2*(c[1]-c[0]);
+  });
+  return f;
+}
+function wMoment(W,xa,xb,p){
+  var m=0;
+  (W||[]).forEach(function(w){
+    var c=clipW(w,xa,xb);
+    if(c[1]>c[0]){
+      var l=c[1]-c[0], mm=(c[3]-c[2])/l, cc=c[0]-p;
+      m += c[2]*l*l/2 + c[2]*cc*l + mm*l*l*l/3 + mm*cc*l*l/2;
+    }
+  });
+  return m;
+}
+function fieldVM(xs, ry, mr, B, withLoads){
+  var arr = Array.isArray(xs)?xs:[xs];
+  var V = new Array(arr.length).fill(0), M = new Array(arr.length).fill(0);
+  B.sup.forEach(function(sp,k){
+    for(var i=0;i<arr.length;i++) if(arr[i]>sp[0]){ V[i]+=ry[k]; M[i]+=ry[k]*(arr[i]-sp[0]); }
+  });
+  var fi=0;
+  B.sup.forEach(function(sp){
+    if(sp[1]===1){ for(var i=0;i<arr.length;i++) if(arr[i]>sp[0]) M[i]-=mr[fi]; fi++; }
+  });
+  if(!withLoads) return [V,M];
+  (B.P||[]).forEach(function(p){
+    for(var i=0;i<arr.length;i++) if(arr[i]>p[0]){ V[i]-=p[1]; M[i]-=p[1]*(arr[i]-p[0]); }
+  });
+  (B.M||[]).forEach(function(pm){
+    for(var i=0;i<arr.length;i++) if(arr[i]>pm[0]) M[i]-=pm[1];
+  });
+  (B.W||[]).forEach(function(w){
+    var s1=w[0],s2=w[1],w1=w[2],mm=(w[3]-w1)/(s2-s1);
+    for(var i=0;i<arr.length;i++){
+      var u=Math.min(Math.max(arr[i]-s1,0),s2-s1);
+      V[i]-= (w1*u+mm*u*u/2);
+      M[i]-= ((arr[i]-s1)*(w1*u+mm*u*u/2) - (w1*u*u/2+mm*u*u*u/3));
+    }
+  });
+  return [V,M];
+}
+function cumtrapz(x,y){
+  var out=[0];
+  for(var i=1;i<x.length;i++) out.push(out[i-1]+(y[i-1]+y[i])/2*(x[i]-x[i-1]));
+  return out;
+}
+function bisect(f,a,b){
+  var fa=f(a);
+  for(var i=0;i<80;i++){
+    var m=(a+b)/2, fm=f(m);
+    if(fa*fm<=0) b=m; else { a=m; fa=fm; }
+  }
+  return (a+b)/2;
+}
+function maxDeflection(x,v,s){
+  var i0=0;
+  for(var i=1;i<v.length;i++) if(Math.abs(v[i])>Math.abs(v[i0])) i0=i;
+  var vm=v[i0], xm=x[i0];
+  for(var k=0;k<x.length-1;k++){
+    var h=x[k+1]-x[k];
+    if(h>1e-6 && s[k]*s[k+1]<0){
+      var xr=x[k]-s[k]*h/(s[k+1]-s[k]), t=(xr-x[k])/h;
+      var vr=(2*t*t*t-3*t*t+1)*v[k]+(t*t*t-2*t*t+t)*h*s[k]
+            +(-2*t*t*t+3*t*t)*v[k+1]+(t*t*t-t*t)*h*s[k+1];
+      if(Math.abs(vr)>Math.abs(vm)){ vm=vr; xm=xr; }
+    }
+  }
+  return [vm,xm];
+}
+function tmSpanData(B,xa,xb){
+  var tol=1e-7*Math.max(1,B.L), l=xb-xa;
+  var Pl=[],Ml=[],Wl=[];
+  (B.P||[]).forEach(function(p){ if(p[0]>xa+tol&&p[0]<xb-tol) Pl.push([p[0]-xa,p[1]]); });
+  (B.M||[]).forEach(function(pm){ if(pm[0]>xa+tol&&pm[0]<xb-tol) Ml.push([pm[0]-xa,pm[1]]); });
+  (B.W||[]).forEach(function(w){
+    var c=clipW(w,xa,xb);
+    if(c[1]-c[0]>tol) Wl.push([c[0]-xa,c[1]-xa,c[2],c[3]]);
+  });
+  var sP=0,sPx=0,sM=0;
+  Pl.forEach(function(p){ sP+=p[1]; sPx+=p[1]*(l-p[0]); });
+  Ml.forEach(function(pm){ sM+=pm[1]; });
+  var RA=(sPx - wMoment(Wl,0,l,l) + sM)/l;
+  var RB=sP + wForce(Wl,0,l) - RA;
+  var Bs={sup:[[0,2,0,0],[l,2,0,0]], P:Pl, M:Ml, W:Wl};
+  var pts=[0,l];
+  Pl.forEach(function(p){pts.push(p[0]);});
+  Ml.forEach(function(pm){pts.push(pm[0]);});
+  Wl.forEach(function(w){pts.push(w[0]);pts.push(w[1]);});
+  var set={}; pts.forEach(function(p){set[Math.round(p*1e9)/1e9]=1;});
+  var bk=Object.keys(set).map(Number).sort(function(a,b){return a-b;});
+  var gx=[-0.8611363115940526,-0.3399810435848563,0.3399810435848563,0.8611363115940526];
+  var gw=[0.3478548451374538,0.6521451548625461,0.6521451548625461,0.3478548451374538];
+  var Ta=0,Tb=0;
+  for(var s=0;s<bk.length-1;s++){
+    var a=bk[s], c=bk[s+1];
+    for(var q=0;q<4;q++){
+      var xg=(a+c)/2+(c-a)/2*gx[q], wg=(c-a)/2*gw[q];
+      var ms=fieldVM([xg],[RA,RB],[],Bs,true)[1][0];
+      Ta+=wg*ms*xg; Tb+=wg*ms*(l-xg);
+    }
+  }
+  return {l:l, RA:RA, RB:RB, Ta:Ta, Tb:Tb};
+}
+function tmOverhangM(B,side,xk,tol){
+  var m=0;
+  if(side==='left'){
+    (B.P||[]).forEach(function(p){ if(p[0]<xk-tol) m -= p[1]*(xk-p[0]); });
+    m += wMoment(B.W,0,xk,xk);
+    (B.M||[]).forEach(function(pm){ if(pm[0]<xk-tol) m -= pm[1]; });
+  }else{
+    (B.P||[]).forEach(function(p){ if(p[0]>xk+tol) m -= p[1]*(p[0]-xk); });
+    m -= wMoment(B.W,xk,B.L,xk);
+    (B.M||[]).forEach(function(pm){ if(pm[0]>xk+tol) m += pm[1]; });
+  }
+  return m;
+}
+function mrFOf(Mr, typ){
+  var out=[]; typ.forEach(function(t,i){ if(t===1) out.push(Mr[i]); });
+  return out;
+}
+function beamDiagrams(B, Ry, mrF){
+  var L=B.L, xs=B.sup.map(function(s){return s[0];}), tol=1e-7*Math.max(1,L);
+  var jset={}; [0,L].concat(xs).forEach(function(v){jset[Math.round(v*1e9)/1e9]=1;});
+  var jx=Object.keys(jset).map(Number).sort(function(a,b){return a-b;});
+  var tiny=1e-9*L;
+  var br=(B.P||[]).map(function(p){return p[0];}).concat((B.M||[]).map(function(pm){return pm[0];}));
+  var EIx=expandEI(B), EArr=EIx[0], IArr=EIx[1];
+  var segs=[], isSpanSeg=[];
+  for(var s=0;s<jx.length-1;s++){
+    var a=jx[s], c=jx[s+1];
+    var xx=[];
+    for(var q=0;q<251;q++) xx.push(a+(c-a)*q/250);
+    br.forEach(function(bv){ if(bv-tiny>=a&&bv-tiny<=c) xx.push(bv-tiny); if(bv+tiny>=a&&bv+tiny<=c) xx.push(bv+tiny); });
+    xx=xx.filter(function(v,i,arr){return i===0||v>arr[i-1]+1e-12;});
+    var xe=xx.map(function(v){return Math.min(Math.max(v,a+tiny),c-tiny);});
+    var V1=fieldVM(xe,Ry,mrF,B,true)[0];
+    var extra=[];
+    for(q=0;q<xx.length-1;q++){
+      if(V1[q]*V1[q+1]<0 && xx[q+1]-xx[q]>1e-6*L)
+        extra.push(bisect(function(t){return fieldVM([Math.min(Math.max(t,a+tiny),c-tiny)],Ry,mrF,B,true)[0][0];},xx[q],xx[q+1]));
+    }
+    xx=xx.concat(extra).sort(function(p1,p2){return p1-p2;})
+        .filter(function(v,i,arr){return i===0||v>arr[i-1]+1e-12;});
+    xe=xx.map(function(v){return Math.min(Math.max(v,a+tiny),c-tiny);});
+    var VM=fieldVM(xe,Ry,mrF,B,true);
+    var xmm=(a+c)/2, kk=-1;
+    for(q=0;q<B.spanX.length-1;q++) if(xmm>=B.spanX[q]&&xmm<=B.spanX[q+1]){ kk=q; break; }
+    if(kk<0) kk=EArr.length-1;
+    segs.push({a:a,c:c,x:xx,V:VM[0],M:VM[1],EI:EArr[kk]*IArr[kk],v:null,s:null});
+    isSpanSeg.push(false);
+  }
+  var nS=xs.length;
+  var dl=B.sup.map(function(sp){return sp[2]||0;});
+  var vN=dl.map(function(d){return -d;});
+  var nodeSl=new Array(nS).fill(0);
+  for(s=0;s<segs.length;s++){
+    var qg=segs[s], jj=-1;
+    for(q=0;q<nS;q++) if(Math.abs(xs[q]-qg.a)<tol) jj=q;
+    if(jj>=0 && jj<nS-1 && Math.abs(xs[jj+1]-qg.c)<tol){
+      isSpanSeg[s]=true;
+      var lg=qg.c-qg.a, xl=qg.x.map(function(v){return v-qg.a;});
+      var kap=qg.M.map(function(mv){return mv/qg.EI;});
+      var I1=cumtrapz(qg.x,kap), I2=cumtrapz(qg.x,I1);
+      qg.v=xl.map(function(xv,i){return vN[jj]+(vN[jj+1]-vN[jj])*xv/lg + I2[i] - xv/lg*I2[I2.length-1];});
+      qg.s=I1.map(function(iv,i){return (vN[jj+1]-vN[jj])/lg + iv - I2[I2.length-1]/lg;});
+      nodeSl[jj]=qg.s[0]; nodeSl[jj+1]=qg.s[qg.s.length-1];
+    }
+  }
+  for(s=0;s<segs.length;s++){
+    if(isSpanSeg[s]) continue;
+    var qo=segs[s], kapp=qo.M.map(function(mv){return mv/qo.EI;});
+    if(qo.c<=xs[0]+tol){
+      var xr=qo.x.slice().reverse(), kr=kapp.slice().reverse();
+      var J1=cumtrapz(xr,kr), J2=cumtrapz(xr,J1);
+      var vr=J2.map(function(iv,i){return vN[0]+nodeSl[0]*(xr[i]-qo.c)+iv;});
+      qo.v=vr.reverse();
+      qo.s=J1.map(function(iv){return nodeSl[0]+iv;}).reverse();
+    }else{
+      var K1=cumtrapz(qo.x,kapp), K2=cumtrapz(qo.x,K1);
+      qo.v=K2.map(function(iv,i){return vN[nS-1]+nodeSl[nS-1]*(qo.x[i]-qo.a)+iv;});
+      qo.s=K1.map(function(iv){return nodeSl[nS-1]+iv;});
+    }
+  }
+  var xp=[],Vp=[],Mp=[],vp=[],sp_=[];
+  segs.forEach(function(qg){
+    xp=xp.concat(qg.x); Vp=Vp.concat(qg.V); Mp=Mp.concat(qg.M); vp=vp.concat(qg.v); sp_=sp_.concat(qg.s);
+  });
+  var iV=0,iM=0;
+  for(q=1;q<Vp.length;q++) if(Math.abs(Vp[q])>Math.abs(Vp[iV])) iV=q;
+  for(q=1;q<Mp.length;q++) if(Math.abs(Mp[q])>Math.abs(Mp[iM])) iM=q;
+  var md=maxDeflection(xp,vp,sp_);
+  return {jx:jx, xp:xp, Vp:Vp, Mp:Mp, vp:vp, sp:sp_,
+          Vmax:Vp[iV], xV:xp[iV], Mmax:Mp[iM], xM:xp[iM], dmax:md[0], xd:md[1]};
+}
+function expandEI(B){
+  var nsp = Math.max(1, B.spanX.length-1);
+  var EArr = B.E.slice(), IArr = B.I.slice();
+  while(EArr.length<nsp) EArr.push(EArr[EArr.length-1]);
+  while(IArr.length<nsp) IArr.push(IArr[IArr.length-1]);
+  return [EArr, IArr];
+}
+function tmAnalyze(B){
+  var L=B.L, sup=B.sup, tol=1e-7*Math.max(1,L);
+  var EIx = expandEI(B), EArr = EIx[0], IArr = EIx[1];
+  if(!sup.length) throw new Error('Add at least one support.');
+  sup.forEach(function(s){ if(s[0]<-tol||s[0]>L+tol) throw new Error('A support is outside the beam.'); });
+  (B.W||[]).forEach(function(w){ if(w[1]<=w[0]) throw new Error('Distributed load: end must be greater than start.'); });
+  var nS=sup.length;
+  var xs=sup.map(function(s){return s[0];});
+  var typ=sup.map(function(s){return s[1];});
+  var dl=sup.map(function(s){return s[2]||0;});
+  typ.forEach(function(t,i){ if(t===4) throw new Error('Spring supports are not available in the three-moment method. Use the slope-deflection or force method.'); });
+  if(B.hinge && B.hinge.length) throw new Error('Internal hinges are not available in the three-moment method. Use the slope-deflection or force method.');
+  typ.forEach(function(t,i){ if(t===1 && xs[i]>tol && xs[i]<L-tol)
+    throw new Error('A fixed support must be at an end of the beam (the three-moment equation is for continuous beams).'); });
+  if(nS===1 && typ[0]!==1) throw new Error('The beam is unstable (mechanism). Add another support.');
+  (B.M||[]).forEach(function(pm){ xs.forEach(function(x){ if(Math.abs(x-pm[0])<tol)
+    throw new Error('Do not place a moment exactly at a support.'); }); });
+  var hasLO=xs[0]>tol, hasRO=xs[nS-1]<L-tol;
+  var nSpan=nS-1;
+  var lsp=[],EIsp=[],psi=[],SD=[];
+  for(var s=0;s<nSpan;s++){
+    SD.push(tmSpanData(B,xs[s],xs[s+1]));
+    lsp.push(SD[s].l);
+    var xm=(xs[s]+xs[s+1])/2, k=-1;
+    for(var q=0;q<B.spanX.length-1;q++) if(xm>=B.spanX[q]&&xm<=B.spanX[q+1]){ k=q; break; }
+    if(k<0) k=EArr.length-1;
+    EIsp.push(EArr[k]*IArr[k]);
+    psi.push((dl[s+1]-dl[s])/SD[s].l);
+  }
+  var Mkn=new Array(nS).fill(NaN), how=new Array(nS).fill('');
+  if(hasLO){ Mkn[0]=tmOverhangM(B,'left',xs[0],tol); how[0]='overhang'; }
+  if(hasRO){ Mkn[nS-1]=tmOverhangM(B,'right',xs[nS-1],tol); how[nS-1]='overhang'; }
+  if(isNaN(Mkn[0])  && typ[0]!==1){ Mkn[0]=0; how[0]='simple end support'; }
+  if(isNaN(Mkn[nS-1]) && typ[nS-1]!==1){ Mkn[nS-1]=0; how[nS-1]='simple end support'; }
+  if(nS===1 && typ[0]===1){ Mkn[0]=tmOverhangM(B, xs[0]<=tol?'right':'left', xs[0], tol); how[0]='statics (cantilever)'; }
+
+  var Aq=[], bq=new Array(nS).fill(0), kind=new Array(nS).fill(0);
+  var dv=new Array(nS).fill(1), ldL=new Array(nS).fill(0), ldR=new Array(nS).fill(0), stm=new Array(nS).fill(0);
+  for(var j=0;j<nS;j++){
+    Aq.push(new Array(nS).fill(0));
+    if(!isNaN(Mkn[j])){ Aq[j][j]=1; bq[j]=Mkn[j]; continue; }
+    var cr=new Array(nS).fill(0), f, lL, lR, sm;
+    if(j===0 && typ[0]===1){                     // fixed left end: slope = 0
+      kind[j]=2; s=0; f=lsp[s]/EIsp[s];
+      cr[0]=2*f; if(nS>1) cr[1]=f;
+      lL=0; lR=-6*SD[s].Tb/(EIsp[s]*lsp[s]); sm=-6*psi[s];
+    }else if(j===nS-1 && typ[nS-1]===1){         // fixed right end: slope = 0
+      kind[j]=3; s=nSpan-1; f=lsp[s]/EIsp[s];
+      cr[nS-2]=f; cr[nS-1]=2*f;
+      lL=-6*SD[s].Ta/(EIsp[s]*lsp[s]); lR=0; sm=6*psi[s];
+    }else{                                       // three-moment equation at joint j
+      kind[j]=1; var s1=j-1, s2=j;
+      var fl=lsp[s1]/EIsp[s1], fr=lsp[s2]/EIsp[s2]; f=fl;
+      cr[j-1]=fl; cr[j]=2*(fl+fr); cr[j+1]=fr;
+      lL=-6*SD[s1].Ta/(EIsp[s1]*lsp[s1]);
+      lR=-6*SD[s2].Tb/(EIsp[s2]*lsp[s2]);
+      sm=6*(psi[s1]-psi[s2]);
+    }
+    dv[j]=f;
+    for(q=0;q<nS;q++) Aq[j][q]=cr[q]/f;
+    ldL[j]=lL/f; ldR[j]=lR/f; stm[j]=sm/f;
+    bq[j]=ldL[j]+ldR[j]+stm[j];
+  }
+  // solve the small dense system (Gauss, partial pivoting)
+  var unk=[]; for(j=0;j<nS;j++) if(kind[j]>0) unk.push(j);
+  var nU=unk.length;
+  var Mn=new Array(nS).fill(0);
+  for(j=0;j<nS;j++) if(!isNaN(Mkn[j])) Mn[j]=Mkn[j];
+  if(nU>0){
+    var A=[], bb=[];
+    unk.forEach(function(rw){
+      A.push(unk.map(function(c){return Aq[rw][c];}));
+      var rhs=bq[rw];
+      for(var c=0;c<nS;c++) if(!isNaN(Mkn[c]) && unk.indexOf(c)<0) rhs -= Aq[rw][c]*Mkn[c];
+      bb.push(rhs);
+    });
+    for(var col=0;col<nU;col++){
+      var piv=col;
+      for(var r2=col+1;r2<nU;r2++) if(Math.abs(A[r2][col])>Math.abs(A[piv][col])) piv=r2;
+      if(Math.abs(A[piv][col])<1e-12) throw new Error('The equations are singular. Check the supports.');
+      var tmp=A[col]; A[col]=A[piv]; A[piv]=tmp;
+      var t2=bb[col]; bb[col]=bb[piv]; bb[piv]=t2;
+      for(r2=col+1;r2<nU;r2++){
+        var ff=A[r2][col]/A[col][col];
+        for(var b2=col;b2<nU;b2++) A[r2][b2]-=ff*A[col][b2];
+        bb[r2]-=ff*bb[col];
+      }
+    }
+    var sol=new Array(nU);
+    for(var a2=nU-1;a2>=0;a2--){
+      var sv=bb[a2];
+      for(b2=a2+1;b2<nU;b2++) sv-=A[a2][b2]*sol[b2];
+      sol[a2]=sv/A[a2][a2];
+    }
+    unk.forEach(function(rw,i){ Mn[rw]=sol[i]; });
+  }
+  var corr=[],Fl=[],Fr=[];
+  for(s=0;s<nSpan;s++){
+    corr.push((Mn[s+1]-Mn[s])/lsp[s]);
+    Fl.push(SD[s].RA+corr[s]);
+    Fr.push(SD[s].RB-corr[s]);
+  }
+  var Ry=new Array(nS).fill(0), ovF=new Array(nS).fill(0), Psup=new Array(nS).fill(0);
+  for(j=0;j<nS;j++){
+    Psup[j]=(B.P||[]).reduce(function(acc,p){ return acc+(Math.abs(p[0]-xs[j])<tol?p[1]:0); },0);
+    if(j===0&&hasLO)  ovF[j]=(B.P||[]).reduce(function(acc,p){return acc+(p[0]<xs[0]-tol?p[1]:0);},0)+wForce(B.W,0,xs[0]);
+    if(j===nS-1&&hasRO) ovF[j]+= (B.P||[]).reduce(function(acc,p){return acc+(p[0]>xs[nS-1]+tol?p[1]:0);},0)+wForce(B.W,xs[nS-1],L);
+    var v=ovF[j]+Psup[j];
+    if(j<nS-1) v+=Fl[j];
+    if(j>0)    v+=Fr[j-1];
+    Ry[j]=v;
+  }
+  var Mr=new Array(nS).fill(0);
+  for(j=0;j<nS;j++) if(typ[j]===1) Mr[j]= xs[j]<=tol ? -Mn[j] : Mn[j];
+  var Rx=new Array(nS).fill(0);
+  var sumH=(B.H||[]).reduce(function(acc,h){return acc+h[1];},0);
+  var ih=-1; for(j=0;j<nS;j++) if(typ[j]<=2){ ih=j; break; }
+  if(ih>=0) Rx[ih]=-sumH;
+  var rTot=0; typ.forEach(function(t){ rTot += t===1?3:(t===2?2:(t===3?1:0)); });
+
+  var DG = beamDiagrams(B, Ry, mrFOf(Mr, typ));
+  var jx = DG.jx, xp = DG.xp, Vp = DG.Vp, Mp = DG.Mp, vp = DG.vp;
+  var kpset={};
+  jx.concat((B.P||[]).map(function(p){return p[0];}), (B.M||[]).map(function(pm){return pm[0];}),
+            (B.W||[]).map(function(w){return w[0];}), (B.W||[]).map(function(w){return w[1];}))
+    .forEach(function(v){kpset[Math.round(v*1e9)/1e9]=1;});
+  var kp=Object.keys(kpset).map(Number).sort(function(a,b){return a-b;})
+           .filter(function(v){return v>=0&&v<=L;});
+  var sl=xs.map(function(x){ for(var i2=0;i2<jx.length;i2++) if(Math.abs(jx[i2]-x)<tol) return jn(i2+1); return '?'; });
+  return {DI:rTot-3, rTot:rTot, Ry:Ry, Rx:Rx, Mr:Mr, xp:xp, Vp:Vp, Mp:Mp, vp:vp,
+          Vmax:DG.Vmax, xV:DG.xV, Mmax:DG.Mmax, xM:DG.xM, dmax:DG.dmax, xd:DG.xd,
+          sol:{xs:xs,typ:typ,dl:dl,nS:nS,nSpan:nSpan,jx:jx,kp:kp,sl:sl,lsp:lsp,EIsp:EIsp,
+               psi:psi,SD:SD,Mkn:Mkn,how:how,kind:kind,Aq:Aq,bq:bq,dv:dv,ldL:ldL,ldR:ldR,
+               stm:stm,Mn:Mn,corr:corr,Fl:Fl,Fr:Fr,ovF:ovF,Psup:Psup,unk:unk}};
+}
+
+/* ---------- the printed step-by-step working (lines, mirrors tmPrintSolution) ---------- */
+function tmPrint(B,R){
+  var EIx=expandEI(B), EArr=EIx[0], IArr=EIx[1];
+  var S=R.sol, xs=S.xs, nS=S.nS, nSpan=S.nSpan, typ=S.typ, jx=S.jx;
+  var tolx=1e-7*Math.max(1,B.L), sl=S.sl, kp=S.kp;
+  var tn={1:'fixed',2:'pinned',3:'roller'};
+  var nm=sl.map(function(c){return 'M_'+c;});
+  var dbl=new Array(79).join('=');
+  var unk=S.unk, nU=unk.length;
+  var T=[];
+  function line(s){ T.push(s===undefined?'':s); }
+  function stepHead(st,ttl){
+    var ln=new Array(79).join('-');
+    line(); line('   '+ln); line('   STEP '+st+' : '+ttl); line('   '+ln); line();
+  }
+  line(); line('   '+dbl); line('   FULL SOLUTION - THREE-MOMENT EQUATION'); line('   '+dbl);
+  line('   Signs : reactions up +, reaction moments counter-clockwise +, bending moment sagging +');
+  line('           (support moments are negative when they cause tension at the top)');
+  line('           loads downward +, settlement downward +, deflection up +');
+  line('   Units : kN, m, kNm');
+  var st=1;
+  stepHead(st,'JOINTS AND SPANS');
+  jx.forEach(function(x,i){
+    var k=-1; xs.forEach(function(xs2,q){ if(Math.abs(xs2-x)<tolx) k=q; });
+    var d='free end';
+    if(k>=0){ d=tn[typ[k]]; if(S.dl[k]!==0) d+= ', settlement '+numStr(S.dl[k]*1000)+' mm'; }
+    line('      Joint '+jn(i+1).padEnd(4)+' x = '+x.toFixed(2).padStart(6)+' m    '+d);
+  });
+  line();
+  for(var s=0;s<jx.length-1;s++){
+    var xm=(jx[s]+jx[s+1])/2, k2=-1;
+    for(var q=0;q<B.spanX.length-1;q++) if(xm>=B.spanX[q]&&xm<=B.spanX[q+1]){ k2=q; break; }
+    if(k2<0) k2=EArr.length-1;
+    var d2='';
+    if(jx[s+1]<=xs[0]+tolx || jx[s]>=xs[nS-1]-tolx) d2='   (overhang)';
+    line('      Span  '+(jn(s+1)+jn(s+2)).padEnd(4)+' L = '+(jx[s+1]-jx[s]).toFixed(2).padStart(6)+' m    EI = '+matG(EArr[k2]*IArr[k2])+' kNm^2'+d2);
+  }
+  st++; stepHead(st,'REDUNDANTS');
+  line('      Reaction components            : r = '+R.rTot);
+  line('      Degree of indeterminacy        : i = r - 3 = '+R.DI); line();
+  if(nU>0){
+    line('      The unknown bending moments at the supports are taken as the redundants:'); line();
+    unk.forEach(function(j){ line('         '+nm[j].padEnd(4)+'  (bending moment at joint '+sl[j]+')'); });
+  }else{
+    line('      There is no unknown support moment: all support moments follow from statics,');
+    line('      so no three-moment equation is needed.');
+  }
+  var kn=[]; for(var j2=0;j2<nS;j2++) if(unk.indexOf(j2)<0) kn.push(j2);
+  if(kn.length){
+    line(); line('      Known support moments:'); line();
+    kn.forEach(function(j){
+      var tx = S.how[j]==='simple end support' ? 'simple end support, M = 0'
+             : (S.how[j]==='overhang' ? 'moment of the loads on the overhang (statics)' : S.how[j]);
+      line('         '+nm[j].padEnd(4)+' = '+zr(S.Mkn[j]).toFixed(4).padEnd(12)+' ('+tx+')');
+    });
+  }
+  var eqTxt=[];
+  if(nU>0){
+    st++; stepHead(st,'THREE-MOMENT EQUATIONS');
+    line('      Three-moment equation for supports A, B, C  (span AB: L, EI    span BC: L\', EI\'):'); line();
+    line('         M_A (L/EI) + 2 M_B (L/EI + L\'/EI\'\') + M_C (L\'\'/EI\'\')');
+    line('            = -6 A a/(EI L) - 6 A\' b\'/(EI\' L\') - 6 [ (D_A - D_B)/L + (D_C - D_B)/L\' ]'); line();
+    line('      A a  = Integral( Ms x ) dx   about the left support of span AB,');
+    line('      A\' b\' = Integral( Ms x\' ) dx  about the right support of span BC,');
+    line('      Ms = bending moment of the simple beam under the span loads,  D = settlement.');
+    if(S.kind.indexOf(2)>=0||S.kind.indexOf(3)>=0){
+      line(); line('      At a fixed end the slope is zero, which gives (psi = chord rotation of the end span):'); line();
+      if(S.kind.indexOf(2)>=0) line('         fixed end A :  2 M_A (L/EI) + M_B (L/EI) = -6 A b/(EI L) - 6 psi,   psi = (D_B - D_A)/L');
+      if(S.kind.indexOf(3)>=0) line('         fixed end B :  M_A (L/EI) + 2 M_B (L/EI) = -6 A a/(EI L) + 6 psi,   psi = (D_B - D_A)/L');
+    }
+    line(); line('      Each equation is divided by L/EI of its left span so that the first coefficient is 1.');
+    unk.forEach(function(j,eqi){
+      var cols=[]; for(var c2=0;c2<nS;c2++) if(Math.abs(S.Aq[j][c2])>1e-12) cols.push(c2);
+      if(S.kind[j]===1){
+        line(); line('      Joint '+sl[j]+'   (supports '+sl[j-1]+', '+sl[j]+', '+sl[j+1]+')'); line();
+        line('         Span '+sl[j-1]+sl[j]+' : L = '+S.lsp[j-1].toFixed(2)+' m,  EI = '+matG(S.EIsp[j-1])+' kNm^2');
+        line('         Span '+sl[j]+sl[j+1]+' : L = '+S.lsp[j].toFixed(2)+' m,  EI = '+matG(S.EIsp[j])+' kNm^2');
+        line('         Settlements : D_'+sl[j-1]+' = '+S.dl[j-1]+' m,  D_'+sl[j]+' = '+S.dl[j]+' m,  D_'+sl[j+1]+' = '+S.dl[j+1]+' m');
+        line('         Load term, span '+sl[j-1]+sl[j]+'   : '+zr(S.ldL[j]).toFixed(4).replace(/^/,'+').replace('+-','-'));
+        line('         Load term, span '+sl[j]+sl[j+1]+'   : '+zr(S.ldR[j]).toFixed(4).replace(/^/,'+').replace('+-','-'));
+        line('         Settlement term        : '+zr(S.stm[j]).toFixed(4).replace(/^/,'+').replace('+-','-')); line();
+      }else if(S.kind[j]===2){
+        line(); line('      Fixed end '+sl[j]+'   (slope = 0, span '+sl[j]+sl[j+1]+')'); line();
+        line('         Span '+sl[j]+sl[j+1]+' : L = '+S.lsp[0].toFixed(2)+' m,  EI = '+matG(S.EIsp[0])+' kNm^2');
+        line('         Settlements : D_'+sl[j]+' = '+S.dl[j]+' m,  D_'+sl[j+1]+' = '+S.dl[j+1]+' m');
+        line('         Load term, span '+sl[j]+sl[j+1]+'   : '+zr(S.ldR[j]).toFixed(4).replace(/^/,'+').replace('+-','-'));
+        line('         Settlement term        : '+zr(S.stm[j]).toFixed(4).replace(/^/,'+').replace('+-','-')); line();
+      }else{
+        line(); line('      Fixed end '+sl[j]+'   (slope = 0, span '+sl[j-1]+sl[j]+')'); line();
+        line('         Span '+sl[j-1]+sl[j]+' : L = '+S.lsp[nSpan-1].toFixed(2)+' m,  EI = '+matG(S.EIsp[nSpan-1])+' kNm^2');
+        line('         Settlements : D_'+sl[j-1]+' = '+S.dl[j-1]+' m,  D_'+sl[j]+' = '+S.dl[j]+' m');
+        line('         Load term, span '+sl[j-1]+sl[j]+'   : '+zr(S.ldL[j]).toFixed(4).replace(/^/,'+').replace('+-','-'));
+        line('         Settlement term        : '+zr(S.stm[j]).toFixed(4).replace(/^/,'+').replace('+-','-')); line();
+      }
+      var full=linEq(null, cols.map(function(c3){return S.Aq[j][c3];}), cols.map(function(c3){return nm[c3];}));
+      line('         '+full);
+      line('            = '+fmtN(zr(S.bq[j]))+'      (sum of the three terms)');
+      var known=cols.filter(function(c4){return !isNaN(S.Mkn[c4]);});
+      if(!known.length){
+        eqTxt[eqi]=full+' = '+fmtN(zr(S.bq[j]));
+        line(); line('         '+eqTxt[eqi]+'      ('+(eqi+1)+')');
+      }else{
+        line();
+        known.forEach(function(k3){
+          var tx2 = S.how[k3]==='simple end support' ? sl[k3]+' is a simple end support' : sl[k3]+' is the end of an overhang';
+          line('         Since '+tx2+', '+nm[k3]+' = '+fmtN(zr(S.Mkn[k3])));
+        });
+        var uk=cols.filter(function(c5){return isNaN(S.Mkn[c5]);});
+        var rhs=S.bq[j]-known.reduce(function(acc,k4){return acc+S.Aq[j][k4]*S.Mkn[k4];},0);
+        eqTxt[eqi]=linEq(null, uk.map(function(c6){return S.Aq[j][c6];}), uk.map(function(c6){return nm[c6];}))+' = '+fmtN(zr(rhs));
+        line('         the equation simplifies to'); line();
+        line('         '+eqTxt[eqi]+'      ('+(eqi+1)+')');
+      }
+    });
+    st++; stepHead(st,'SUPPORT BENDING MOMENTS');
+    if(nU===1) { line('      Solving Eq. (1):'); line(); }
+    else{
+      line('      Solving Eqs. (1) to ('+nU+') simultaneously:'); line();
+      eqTxt.forEach(function(et,q3){ line('         '+et+'      ('+(q3+1)+')'); });
+      line();
+    }
+    unk.forEach(function(j3){ line('         '+nm[j3].padEnd(4)+' = '+zr(S.Mn[j3]).toFixed(4)+' kNm'); });
+  }
+  st++; stepHead(st,'SPAN END SHEARS   (free body of every span)');
+  if(nSpan===0) line('      The beam has no span between supports (cantilever).');
+  for(s=0;s<nSpan;s++){
+    var q4=S.SD[s], aa=sl[s], bb2=sl[s+1];
+    line('      Span '+aa+bb2+'   (L = '+q4.l.toFixed(2)+' m)'); line();
+    line('         End moments               M_'+aa+' = '+zr(S.Mn[s]).toFixed(4).padEnd(14)+' M_'+bb2+' = '+zr(S.Mn[s+1]).toFixed(4));
+    line('         Simple-beam reactions     '+aa+'   = '+zr(q4.RA).toFixed(4).padEnd(14)+' '+bb2+'   = '+zr(q4.RB).toFixed(4));
+    line('         Moment correction         (M_'+bb2+' - M_'+aa+')/L = '+zr(S.corr[s]).toFixed(4));
+    line('         End shears (up +)         '+aa+'   = '+zr(S.Fl[s]).toFixed(4).padEnd(14)+' '+bb2+'   = '+zr(S.Fr[s]).toFixed(4)); line();
+  }
+  st++; stepHead(st,'SUPPORT REACTIONS');
+  line('      Ry = (end shear of the left span) + (end shear of the right span)');
+  line('           [+ load on an overhang] [+ load acting directly on the support]'); line();
+  var ih2=-1; for(j2=0;j2<nS;j2++) if(typ[j2]<=2){ ih2=j2; break; }
+  var sumH2=(B.H||[]).reduce(function(acc,h){return acc+h[1];},0);
+  for(j2=0;j2<nS;j2++){
+    var tv=[];
+    if(j2>0) tv.push(S.Fr[j2-1]);
+    if(j2<nS-1) tv.push(S.Fl[j2]);
+    if(S.ovF[j2]!==0) tv.push(S.ovF[j2]);
+    if(S.Psup[j2]!==0) tv.push(S.Psup[j2]);
+    var ln2='';
+    tv.forEach(function(vv,q5){
+      if(q5===0) ln2=vv.toFixed(4);
+      else ln2+=' '+sgnT(vv)+' '+Math.abs(vv).toFixed(4);
+    });
+    if(ln2==='') ln2='0';
+    line('         Ry_'+sl[j2].padEnd(3)+' = '+ln2+' = '+rxnStr(R.Ry[j2],1,nS));
+  }
+  for(j2=0;j2<nS;j2++) if(typ[j2]===1){
+    if(xs[j2]<=tolx) line('         M_'+sl[j2].padEnd(3)+' = -('+zr(S.Mn[j2]).toFixed(4)+') = '+rxnStr(R.Mr[j2],nS+1,nS)+'      (fixed support, moment reaction)');
+    else             line('         M_'+sl[j2].padEnd(3)+' = ('+zr(S.Mn[j2]).toFixed(4)+') = '+rxnStr(R.Mr[j2],nS+1,nS)+'      (fixed support, moment reaction)');
+  }
+  if(ih2>=0){
+    if(sumH2===0) line('         Rx_'+sl[ih2].padEnd(3)+' = 0   (no horizontal load)');
+    else          line('         Rx_'+sl[ih2].padEnd(3)+' = -('+sumH2.toFixed(4)+') = '+zr(R.Rx[ih2]).toFixed(4)+' kN');
+  }
+  line(); line('      Support reactions of the beam:'); line();
+  line('         '+'Joint'.padEnd(6)+' '+'x (m)'.padEnd(8)+' '+'Support'.padEnd(9)+' '+'Ry (kN)'.padEnd(12)+' '+'M (kNm)'.padEnd(14)+' Rx (kN)');
+  for(var k5=0;k5<nS;k5++){
+    var mS='-', xS='-';
+    if(typ[k5]===1) mS=zr(R.Mr[k5]).toFixed(4);
+    if(typ[k5]<=2)  xS=zr(R.Rx[k5]).toFixed(4);
+    line('         '+sl[k5].padEnd(6)+' '+xs[k5].toFixed(2).padEnd(8)+' '+tn[typ[k5]].padEnd(9)+' '+zr(R.Ry[k5]).toFixed(4).padEnd(12)+' '+mS.padEnd(14)+' '+xS);
+  }
+  st++; stepHead(st,'SHEAR AND BENDING MOMENT');
+  line('      Values are computed from the final reactions.  Two values separated by | are the');
+  line('      values just left and just right of the point (a jump = point load or reaction).'); line();
+  line('         '+'x (m)'.padEnd(8)+' '+'joint'.padEnd(6)+' '+'V (kN)'.padEnd(26)+' M (kNm)');
+  kp.forEach(function(x2){
+    var t=1e-9*Math.max(1,B.L);
+    var q6a=fieldVM([x2-t],R.Ry,R.Mr.map(function(mv,i3){return typ[i3]===1?mv:0;}).filter(function(mv,i3){return typ[i3]===1;}),B,true);
+    var q6b=fieldVM([x2+t],R.Ry,R.Mr.map(function(mv,i3){return typ[i3]===1?mv:0;}).filter(function(mv,i3){return typ[i3]===1;}),B,true);
+    line('         '+x2.toFixed(2).padEnd(8)+' '+ptLabel(jx,x2,tolx).padEnd(6)+' '+lrStr(q6a[0][0],q6b[0][0]).padEnd(26)+' '+lrStr(q6a[1][0],q6b[1][0]));
+  });
+  line(); line('   '+dbl);
+  return T;
+}
+/*TM-END*/
+
+/*SD-START*/
+/* ============ SLOPE-DEFLECTION METHOD: analysis + step-by-step report ============
+   Faithful JS port of sdAnalyze / sdPrintSolution from MATLABAlamisApp.m.
+   Member end moments printed sagging-positive (as used by sdSpanVM);
+   joint equations follow the app's clockwise+ convention text.              */
+function sdNum(v){
+  if(Math.abs(v)<1e-12) return '0';
+  if(Math.abs(v)>=1e7 || Math.abs(v)<1e-3) return v.toExponential(4);
+  return v.toFixed(4);
+}
+function sdVstr(v){ return Math.abs(v)<1e-15 ? '0' : v.toExponential(6); }
+function sdKval(name,v){ return name.slice(0,5)==='delta' ? matG(v*1000)+' mm' : matG(v); }
+function sdSumStr(v){ return v.map(function(x){ return x<0 ? '('+x.toFixed(4)+')' : x.toFixed(4); }).join(' + '); }
+function sdLinStr(c, nm, c0){
+  var s='', big=0;
+  c.forEach(function(x){ big=Math.max(big,Math.abs(x)); });
+  for(var k=0;k<c.length;k++){
+    if(Math.abs(c[k])<=1e-12*big) continue;
+    var term=sdNum(Math.abs(c[k]))+' '+nm[k];
+    if(s==='') s = c[k]<0 ? '-'+term : term;
+    else s += c[k]<0 ? ' - '+term : ' + '+term;
+  }
+  if(Math.abs(c0)>1e-9){
+    if(s==='') s=sdNum(c0);
+    else s += c0<0 ? ' - '+sdNum(Math.abs(c0)) : ' + '+sdNum(c0);
+  }
+  if(s==='') s='0';
+  return s;
+}
+function gauss4(f,a,b){
+  var gx=[-0.8611363115940526,-0.3399810435848563,0.3399810435848563,0.8611363115940526];
+  var gw=[0.3478548451374538,0.6521451548625461,0.6521451548625461,0.3478548451374538];
+  var s=0;
+  for(var i=0;i<4;i++){ var t=(a+b)/2+(b-a)/2*gx[i]; s+=(b-a)/2*gw[i]*f(t); }
+  return s;
+}
+function sdLoadEffects(l,P,C,W){
+  var fab=0,fba=0,T=0,Mb=0,Cs=0;
+  (P||[]).forEach(function(p){
+    var a=p[0], pv=p[1];
+    fab += -pv*a*Math.pow(l-a,2)/l/l;  fba += pv*a*a*(l-a)/l/l;
+    T += pv;  Mb += pv*(l-a);
+  });
+  (C||[]).forEach(function(cc){
+    var a=cc[0], cv=cc[1];
+    fab += cv*(l-a)*(l-3*a)/l/l;  fba += -cv*a*(2*l-3*a)/l/l;
+    Cs += cv;
+  });
+  (W||[]).forEach(function(w){
+    var s1=w[0], s2=w[1], w1=w[2], w2=w[3];
+    var q=function(t){ return w1+(w2-w1)*(t-s1)/(s2-s1); };
+    fab += -gauss4(function(t){ return q(t)*t*Math.pow(l-t,2)/l/l; }, s1, s2);
+    fba +=  gauss4(function(t){ return q(t)*t*t*(l-t)/l/l; }, s1, s2);
+    T   +=  gauss4(q, s1, s2);
+    Mb  +=  gauss4(function(t){ return q(t)*(l-t); }, s1, s2);
+  });
+  return [fab,fba,T,Mb,Cs];
+}
+function sdFeList(l,P,C,W){
+  var D=[], F=[];
+  (P||[]).forEach(function(p){
+    var a=p[0], pv=p[1];
+    D.push('Point load '+matG(pv)+' kN at a = '+a.toFixed(2)+' m');
+    F.push([-pv*a*Math.pow(l-a,2)/l/l, pv*a*a*(l-a)/l/l]);
+  });
+  (C||[]).forEach(function(cc){
+    var a=cc[0], cv=cc[1];
+    D.push('Point moment '+matG(cv)+' kNm (ccw) at a = '+a.toFixed(2)+' m');
+    F.push([cv*(l-a)*(l-3*a)/l/l, -cv*a*(2*l-3*a)/l/l]);
+  });
+  (W||[]).forEach(function(w){
+    var s1=w[0], s2=w[1], w1=w[2], w2=w[3];
+    var q=function(t){ return w1+(w2-w1)*(t-s1)/(s2-s1); };
+    var f1=-gauss4(function(t){ return q(t)*t*Math.pow(l-t,2)/l/l; }, s1, s2);
+    var f2= gauss4(function(t){ return q(t)*t*t*(l-t)/l/l; }, s1, s2);
+    D.push(w1===w2 ? 'Uniform load '+matG(w1)+' kN/m, x = '+s1.toFixed(2)+' to '+s2.toFixed(2)+' m'
+                   : 'Distributed load '+matG(w1)+' to '+matG(w2)+' kN/m, x = '+s1.toFixed(2)+' to '+s2.toFixed(2)+' m');
+    F.push([f1,f2]);
+  });
+  return [D,F];
+}
+function sdSpanVM(q,x){
+  var arr=Array.isArray(x)?x:[x];
+  var V=arr.map(function(){return q.Va;});
+  var M=arr.map(function(v){return q.Mab+q.Va*v;});
+  (q.P||[]).forEach(function(p){
+    for(var i=0;i<arr.length;i++) if(arr[i]>p[0]){ V[i]-=p[1]; M[i]-=p[1]*(arr[i]-p[0]); }
+  });
+  (q.C||[]).forEach(function(cc){
+    for(var i=0;i<arr.length;i++) if(arr[i]>cc[0]) M[i]-=cc[1];
+  });
+  (q.W||[]).forEach(function(w){
+    var s1=w[0],s2=w[1],w1=w[2],mm=(w[3]-w1)/(s2-s1);
+    for(var i=0;i<arr.length;i++){
+      var u=Math.min(Math.max(arr[i]-s1,0),s2-s1);
+      V[i]-=(w1*u+mm*u*u/2);
+      M[i]-=((arr[i]-s1)*(w1*u+mm*u*u/2)-(w1*u*u/2+mm*u*u*u/3));
+    }
+  });
+  return [V,M];
+}
+function gaussSolve(A,b){
+  var n=b.length, Mx=A.map(function(r,i){ return r.slice().concat([b[i]]); });
+  for(var col=0;col<n;col++){
+    var piv=col;
+    for(var r=col+1;r<n;r++) if(Math.abs(Mx[r][col])>Math.abs(Mx[piv][col])) piv=r;
+    if(Math.abs(Mx[piv][col])<1e-13) return null;
+    var t=Mx[col]; Mx[col]=Mx[piv]; Mx[piv]=t;
+    for(r=col+1;r<n;r++){
+      var f=Mx[r][col]/Mx[col][col];
+      if(f===0) continue;
+      for(var c=col;c<=n;c++) Mx[r][c]-=f*Mx[col][c];
+    }
+  }
+  var x=new Array(n);
+  for(var i=n-1;i>=0;i--){
+    var s=Mx[i][n];
+    for(var j=i+1;j<n;j++) s-=Mx[i][j]*x[j];
+    x[i]=s/Mx[i][i];
+  }
+  return x;
+}
+function sdAnalyze(B){
+  var L=B.L, sup=B.sup, tol=1e-7*Math.max(1,L);
+  if(!sup.length) throw new Error('Add at least one support.');
+  sup.forEach(function(s){ if(s[0]<-tol||s[0]>L+tol) throw new Error('A support is outside the beam.'); });
+  (B.hinge||[]).forEach(function(h){ if(h<=tol||h>=L-tol) throw new Error('Hinges must be inside the beam.'); });
+  (B.W||[]).forEach(function(w){ if(w[1]<=w[0]) throw new Error('Distributed load: end must be greater than start.'); });
+  var jset={};
+  [0,L].concat(sup.map(function(s){return s[0];}), B.hinge||[]).forEach(function(v){jset[Math.round(v*1e9)/1e9]=1;});
+  var jx=Object.keys(jset).map(Number).sort(function(a,b){return a-b;}).filter(function(v){return v>=0&&v<=L;});
+  var nj=jx.length, nS=nj-1;
+  function jOf(x){ for(var j=0;j<nj;j++) if(Math.abs(jx[j]-x)<tol) return j; return -1; }
+  var isHinge=new Array(nj).fill(false);
+  (B.hinge||[]).forEach(function(h){ isHinge[jOf(h)]=true; });
+  var Pj=new Array(nj).fill(0), Cj=new Array(nj).fill(0);
+  var spP=[],spC=[],spW=[];
+  for(var s=0;s<nS;s++){ spP.push([]); spC.push([]); spW.push([]); }
+  (B.P||[]).forEach(function(p){
+    var j=jOf(p[0]);
+    if(j>=0) Pj[j]+=p[1];
+    else { for(var q=0;q<nS;q++) if(p[0]>jx[q]&&p[0]<jx[q+1]) spP[q].push([p[0]-jx[q],p[1]]); }
+  });
+  (B.M||[]).forEach(function(pm){
+    var j=jOf(pm[0]);
+    if(j>=0) Cj[j]+=pm[1];
+    else { for(var q=0;q<nS;q++) if(pm[0]>jx[q]&&pm[0]<jx[q+1]) spC[q].push([pm[0]-jx[q],pm[1]]); }
+  });
+  isHinge.forEach(function(hg,j){ if(hg&&Cj[j]!==0) throw new Error('Do not place a moment exactly at a hinge.'); });
+  (B.W||[]).forEach(function(w){
+    var x1=w[0],x2=w[1],w1=w[2],w2=w[3];
+    for(var q=0;q<nS;q++){
+      var a=Math.max(x1,jx[q]), b=Math.min(x2,jx[q+1]);
+      if(b-a>tol){
+        var wa=w1+(w2-w1)*(a-x1)/(x2-x1), wb=w1+(w2-w1)*(b-x1)/(x2-x1);
+        spW[q].push([a-jx[q],b-jx[q],wa,wb]);
+      }
+    }
+  });
+  var vd=[],tl=[],tr=[],nd=0;
+  for(var j=0;j<nj;j++){
+    vd.push(nd+1); tl.push(nd+2); nd+=2;
+    if(isHinge[j]){ tr.push(nd+1); nd+=1; } else tr.push(tl[j]);
+  }
+  var names=new Array(nd), dofJ=new Array(nd), dofK=new Array(nd);
+  for(j=0;j<nj;j++){
+    names[vd[j]-1]='delta_'+jn(j+1); dofJ[vd[j]-1]=j; dofK[vd[j]-1]=1;
+    if(isHinge[j]){ names[tl[j]-1]='theta_'+jn(j+1)+'(L)'; names[tr[j]-1]='theta_'+jn(j+1)+'(R)'; dofJ[tr[j]-1]=j; dofK[tr[j]-1]=3; }
+    else names[tl[j]-1]='theta_'+jn(j+1);
+    dofJ[tl[j]-1]=j; dofK[tl[j]-1]=2;
+  }
+  var A=[], rhs=new Array(nd).fill(0);
+  for(var i=0;i<nd;i++) A.push(new Array(nd).fill(0));
+  var SP=[];
+  var EIx=expandEI(B), EArr=EIx[0], IArr=EIx[1];
+  for(s=0;s<nS;s++){
+    var l=jx[s+1]-jx[s], xm=(jx[s]+jx[s+1])/2, k=-1;
+    for(var q2=0;q2<B.spanX.length-1;q2++) if(xm>=B.spanX[q2]&&xm<=B.spanX[q2+1]){ k=q2; break; }
+    if(k<0) k=EArr.length-1;
+    var EI=EArr[k]*IArr[k];
+    var le=sdLoadEffects(l,spP[s],spC[s],spW[s]);
+    var fab=le[0], fba=le[1], T=le[2], Mb=le[3], Cs=le[4];
+    var c=2*EI/l;
+    var rab=[-3/l,2,3/l,1].map(function(v){return v*c;});
+    var rba=[-3/l,1,3/l,2].map(function(v){return v*c;});
+    var rVa=rab.map(function(v,i){return -(v+rba[i])/l;});
+    var cVa=(Mb+Cs-fab-fba)/l;
+    var rVb=rVa.map(function(v){return -v;});
+    var cVb=T-cVa;
+    var ii=s, jj=s+1;
+    var d=[vd[ii], tr[ii], vd[jj], tl[jj]];
+    function add(row,coef,constv){ for(var t=0;t<4;t++) A[row-1][d[t]-1]+=coef[t]; rhs[row-1]+=constv; }
+    add(tr[ii], rab, -fab);
+    add(tl[jj], rba, -fba);
+    add(vd[ii], rVa, -cVa);
+    add(vd[jj], rVb, -cVb);
+    SP.push({l:l,EI:EI,d:d,rab:rab,rba:rba,fab:fab,fba:fba,rVa:rVa,cVa:cVa,rVb:rVb,cVb:cVb,T:T,Mb:Mb,Cs:Cs,
+             P:spP[s],C:spC[s],W:spW[s]});
+  }
+  for(j=0;j<nj;j++){
+    if(!isHinge[j]) rhs[tl[j]-1]-=Cj[j];
+    rhs[vd[j]-1]-=Pj[j];
+  }
+  var cdof=[], cval=[], kJ=new Array(nj).fill(0), supJ=new Array(sup.length).fill(0);
+  sup.forEach(function(sp2,s2){
+    var j3=jOf(sp2[0]), settle=sp2[2]||0; supJ[s2]=j3;
+    if(sp2[1]===1){
+      cdof.push(vd[j3], tl[j3]); cval.push(-settle, 0);
+      if(tr[j3]!==tl[j3]){ cdof.push(tr[j3]); cval.push(0); }
+    }else if(sp2[1]===2||sp2[1]===3){
+      cdof.push(vd[j3]); cval.push(-settle);
+    }else{
+      A[vd[j3]-1][vd[j3]-1]+=sp2[3]; kJ[j3]=sp2[3];
+    }
+  });
+  if(new Set(cdof).size!==cdof.length) throw new Error('Two supports restrain the same point.');
+  var fr=[]; for(i=0;i<nd;i++) if(cdof.indexOf(i+1)<0) fr.push(i+1);
+  var X=new Array(nd).fill(0);
+  cdof.forEach(function(dd,i2){ X[dd-1]=cval[i2]; });
+  if(fr.length){
+    var Ar=fr.map(function(r2){ return fr.map(function(c2){ return A[r2-1][c2-1]; }); });
+    var br2=fr.map(function(r2){
+      var v2=rhs[r2-1];
+      cdof.forEach(function(cc2,i3){ v2-=A[r2-1][cc2-1]*cval[i3]; });
+      return v2;
+    });
+    var sol=gaussSolve(Ar,br2);
+    if(!sol) throw new Error('The beam is unstable (mechanism). Add or move supports, or remove a hinge.');
+    fr.forEach(function(r2,i3){ X[r2-1]=sol[i3]; });
+  }
+  var vL=new Array(nj).fill(0), vR=vL.slice(), mL=vL.slice(), mR=vL.slice();
+  SP.forEach(function(q3,s3){
+    var xd=q3.d.map(function(dd){ return X[dd-1]; });
+    q3.Mab=q3.rab.reduce(function(acc,v,i4){return acc+v*xd[i4];},0)+q3.fab;
+    q3.Mba=q3.rba.reduce(function(acc,v,i4){return acc+v*xd[i4];},0)+q3.fba;
+    q3.Va =q3.rVa.reduce(function(acc,v,i4){return acc+v*xd[i4];},0)+q3.cVa;
+    q3.Vb =q3.rVb.reduce(function(acc,v,i4){return acc+v*xd[i4];},0)+q3.cVb;
+    q3.th=xd[1]; q3.Da=xd[0]; q3.Db=xd[2];
+    mR[s3]=q3.Mab; mL[s3+1]=q3.Mba;
+    vR[s3]=q3.Va;  vL[s3+1]=q3.Vb;
+  });
+  var ns=sup.length, Ry=new Array(ns).fill(0), Mr=new Array(ns).fill(0), Rx=new Array(ns).fill(0);
+  sup.forEach(function(sp3,s4){
+    var j4=jOf(sp3[0]);
+    if(sp3[1]===1){ Ry[s4]=vL[j4]+vR[j4]+Pj[j4]; Mr[s4]=-(mL[j4]+mR[j4]+Cj[j4]); }
+    else if(sp3[1]===2||sp3[1]===3){ Ry[s4]=vL[j4]+vR[j4]+Pj[j4]; }
+    else Ry[s4]=-sp3[3]*X[vd[j4]-1];
+  });
+  var sumH=(B.H||[]).reduce(function(acc,h){return acc+h[1];},0);
+  var ih=-1; sup.forEach(function(sp4,i5){ if(ih<0&&sp4[1]<=2) ih=i5; });
+  if(ih>=0) Rx[ih]=-sumH;
+  var nF=0,nP=0,nR=0,nSp=0;
+  sup.forEach(function(sp5){ if(sp5[1]===1)nF++; else if(sp5[1]===2)nP++; else if(sp5[1]===3)nR++; else nSp++; });
+  var rTot=3*nF+2*nP+nR+nSp;
+  // diagrams
+  var xp=[],Vp=[],Mp=[],vp=[],sp_=[];
+  SP.forEach(function(q4,s5){
+    var l2=q4.l, tiny=1e-9*L;
+    var br3=(q4.P||[]).map(function(p){return p[0];}).concat((q4.C||[]).map(function(cc){return cc[0];}));
+    var xx=[];
+    for(var t2=0;t2<251;t2++) xx.push(l2*t2/250);
+    br3.forEach(function(bv){ if(bv-tiny>=0&&bv-tiny<=l2) xx.push(bv-tiny); if(bv+tiny>=0&&bv+tiny<=l2) xx.push(bv+tiny); });
+    xx=xx.sort(function(a2,b2){return a2-b2;}).filter(function(v3,i6,arr){return i6===0||v3>arr[i6-1]+1e-12;});
+    var VV=sdSpanVM(q4,xx)[0];
+    var extra=[];
+    for(var t3=0;t3<xx.length-1;t3++)
+      if(VV[t3]*VV[t3+1]<0 && xx[t3+1]-xx[t3]>1e-6*L)
+        extra.push(bisect(function(t4){ return sdSpanVM(q4,[t4])[0][0]; }, xx[t3], xx[t3+1]));
+    xx=xx.concat(extra).sort(function(a3,b3){return a3-b3;}).filter(function(v4,i7,arr){return i7===0||v4>arr[i7-1]+1e-12;});
+    var VM=sdSpanVM(q4,xx);
+    var slope=VM[1].map(function(mv,i8){ return -q4.th; });
+    var I1=cumtrapz(xx, VM[1].map(function(mv){ return mv/q4.EI; }));
+    slope=I1.map(function(v5){ return -q4.th+v5; });
+    var v6=cumtrapz(xx,slope).map(function(v7){ return q4.Da+v7; });
+    var err=q4.Db-v6[v6.length-1];
+    v6=v6.map(function(v8,i9){ return v8+err*xx[i9]/l2; });
+    slope=slope.map(function(sl2){ return sl2+err/l2; });
+    xp=xp.concat(xx.map(function(v9){ return jx[s5]+v9; }));
+    Vp=Vp.concat(VM[0]); Mp=Mp.concat(VM[1]); vp=vp.concat(v6); sp_=sp_.concat(slope);
+  });
+  var iV=0,iM=0;
+  for(var q5=1;q5<Vp.length;q5++) if(Math.abs(Vp[q5])>Math.abs(Vp[iV])) iV=q5;
+  for(q5=1;q5<Mp.length;q5++) if(Math.abs(Mp[q5])>Math.abs(Mp[iM])) iM=q5;
+  var md2=maxDeflection(xp,vp,sp_);
+  return {DI:rTot-3-(B.hinge||[]).length, rTot:rTot, Ry:Ry, Rx:Rx, Mr:Mr,
+          xp:xp, Vp:Vp, Mp:Mp, vp:vp, Vmax:Vp[iV], xV:xp[iV], Mmax:Mp[iM], xM:xp[iM],
+          dmax:md2[0], xd:md2[1],
+          T:{jx:jx,isHinge:isHinge,vd:vd,tl:tl,tr:tr,names:names,dofJ:dofJ,dofK:dofK,
+             Pj:Pj,Cj:Cj,kJ:kJ,supJ:supJ,SP:SP,A:A,rhs:rhs,cdof:cdof,cval:cval,fr:fr,X:X}};
+}
+
+/* ---------- printed step-by-step working (mirrors sdPrintSolution) ---------- */
+function sdPrint(B,R){
+  var TR=R.T, jx=TR.jx, nj=jx.length, nS=nj-1;
+  var nm=TR.names, nd=nm.length, X=TR.X;
+  var isK=new Array(nd).fill(false), val=new Array(nd).fill(0);
+  TR.cdof.forEach(function(d,i){ isK[d-1]=true; val[d-1]=TR.cval[i]; });
+  var tn={1:'Fixed',2:'Pinned',3:'Roller',4:'Spring'};
+  function symv(d){ return isK[d-1] ? sdVstr(val[d-1]) : nm[d-1]; }
+  function memRow(q,which){
+    var row=new Array(nd).fill(0), c0;
+    if(which==='ab'){ q.d.forEach(function(d,i){row[d-1]=q.rab[i];}); c0=q.fab; }
+    else if(which==='ba'){ q.d.forEach(function(d,i){row[d-1]=q.rba[i];}); c0=q.fba; }
+    else if(which==='va'){ q.d.forEach(function(d,i){row[d-1]=q.rVa[i];}); c0=q.cVa; }
+    else { q.d.forEach(function(d,i){row[d-1]=q.rVb[i];}); c0=q.cVb; }
+    return [row,c0];
+  }
+  function memStr(q,which){
+    var rc=memRow(q,which), row=rc[0], c0=rc[1];
+    var c2=row.slice(); var k0=c0;
+    for(var i=0;i<nd;i++) if(isK[i]){ k0+=row[i]*val[i]; c2[i]=0; }
+    return sdLinStr(c2,nm,k0);
+  }
+  var T=[];
+  function line(s){ T.push(s===undefined?'':s); }
+  line('   ==============================================================');
+  line('   SOLUTION BY THE SLOPE-DEFLECTION METHOD');
+  line('   ==============================================================');
+  line('   Sign convention : end moments and rotations clockwise +,');
+  line('                     deflection up +, chord rotation');
+  line('                     psi = (delta_near - delta_far)/L  (clockwise +)');
+  line('   For a member from its near end to its far end:');
+  line('      M_near = (2EI/L) [ 2 theta_near + theta_far - 3 psi ] + FEM_near');
+  line('      M_far  = (2EI/L) [ theta_near + 2 theta_far - 3 psi ] + FEM_far'); line();
+  line('   STEP 1 - JOINTS, MEMBERS AND UNKNOWNS');
+  for(var j=0;j<nj;j++){
+    var si=-1; TR.supJ.forEach(function(sv,i2){ if(si<0&&sv===j) si=i2; });
+    var parts=[];
+    if(si>=0) parts.push(tn[B.sup[si][1]]);
+    if(TR.isHinge[j]){ if(!parts.length) parts.push('Hinge'); else parts.push('hinge'); }
+    if(!parts.length) parts.push('Free end');
+    var desc=parts.join(' + ');
+    var dl=[TR.vd[j], TR.tl[j]];
+    if(TR.isHinge[j]) dl.push(TR.tr[j]);
+    var kn='', un='';
+    dl.forEach(function(d){
+      if(isK[d-1]) kn+=nm[d-1]+' = '+sdKval(nm[d-1],val[d-1])+', ';
+      else un+=nm[d-1]+', ';
+    });
+    line('      Joint '+jn(j+1)+'  (x = '+jx[j].toFixed(2)+' m)  '+desc);
+    line('         known   : '+kn);
+    line('         unknown : '+un);
+  }
+  for(var s=0;s<nS;s++){
+    var q=TR.SP[s];
+    line('      Member '+jn(s+1)+jn(s+2)+' : '+jn(s+1)+' (x = '+jx[s].toFixed(2)+' m) to '+jn(s+2)+
+         ' (x = '+jx[s+1].toFixed(2)+' m),  L = '+q.l.toFixed(2)+' m,  EI = '+q.EI.toExponential(4)+' kNm^2');
+  }
+  line('      Unknown displacements = '+TR.fr.length+',   equations available = '+TR.fr.length); line();
+  line('   STEP 2 - FIXED-END MOMENTS (FEM, kNm)');
+  line('      a = distance from the left end of the member, b = L - a');
+  line('      Point load P         : FEM_AB = -P a b^2/L^2         FEM_BA = +P a^2 b/L^2');
+  line('      Point moment M (ccw) : FEM_AB = +M b (L-3a)/L^2      FEM_BA = -M a (2L-3a)/L^2');
+  line('      Uniform load w (whole member) : FEM_AB = -wL^2/12    FEM_BA = +wL^2/12');
+  line('      Other distributed loads : integrated over the loaded length');
+  for(s=0;s<nS;s++){
+    q=TR.SP[s]; var na=jn(s+1), nb=jn(s+2);
+    line('      Member '+na+nb+'  (L = '+q.l.toFixed(2)+' m)');
+    var DF=sdFeList(q.l,q.P,q.C,q.W), D=DF[0], F=DF[1];
+    if(!D.length) line('         no load on the member');
+    for(var r=0;r<D.length;r++)
+      line('         '+D[r].padEnd(48)+' FEM_'+na+nb+' = '+F[r][0].toFixed(4).padStart(10)+'   FEM_'+nb+na+' = '+F[r][1].toFixed(4).padStart(10));
+    line('         '+'TOTAL'.padEnd(48)+' FEM_'+na+nb+' = '+q.fab.toFixed(4).padStart(10)+'   FEM_'+nb+na+' = '+q.fba.toFixed(4).padStart(10));
+  }
+  line(); line('   STEP 3 - SLOPE-DEFLECTION EQUATIONS');
+  line('      (known values are substituted;  rotations in rad, deflections in m)');
+  for(s=0;s<nS;s++){
+    q=TR.SP[s]; var d=q.d; na=jn(s+1); nb=jn(s+2); var k=2*q.EI/q.l;
+    line('      Member '+na+nb+'   (2EI/L = '+sdNum(k)+' kNm)');
+    line('         M_'+na+nb+' = '+sdNum(k)+' [ 2('+symv(d[2])+') + ('+symv(d[4])+') - 3(('+symv(d[1])+') - ('+symv(d[3])+'))/'+q.l.toFixed(2)+' ] + ('+sdNum(q.fab)+')');
+    line('         M_'+nb+na+' = '+sdNum(k)+' [ ('+symv(d[2])+') + 2('+symv(d[4])+') - 3(('+symv(d[1])+') - ('+symv(d[3])+'))/'+q.l.toFixed(2)+' ] + ('+sdNum(q.fba)+')');
+    line('         simplified:');
+    line('            M_'+na+nb+' = '+memStr(q,'ab'));
+    line('            M_'+nb+na+' = '+memStr(q,'ba'));
+  }
+  line(); line('   STEP 4 - EQUILIBRIUM EQUATIONS  (one for every unknown displacement)');
+  line('      Joint moments : sum of the end moments + applied moment C = 0');
+  line('      Hinge         : the end moment on each side of the hinge = 0');
+  line('      Joint forces  : V (member end shears) + point load P (+ spring force k delta) = 0');
+  if(!TR.fr.length) line('      No equations are needed: every joint displacement is known.');
+  TR.fr.forEach(function(rw,e){
+    var j2=TR.dofJ[rw-1], kind=TR.dofK[rw-1];
+    var pcs=[], sy=[], ttl;
+    if(kind===1){
+      ttl='Joint '+jn(j2+1)+' - vertical forces';
+      if(j2>0){ pcs.push(memStr(TR.SP[j2-1],'vb')); sy.push('V_'+jn(j2+1)+jn(j2)); }
+      if(j2<nS){ pcs.push(memStr(TR.SP[j2],'va')); sy.push('V_'+jn(j2+1)+jn(j2+2)); }
+      if(TR.Pj[j2]!==0){ pcs.push(sdNum(TR.Pj[j2])); sy.push('P_'+jn(j2+1)); }
+      if(TR.kJ[j2]>0){ pcs.push(sdNum(TR.kJ[j2])+' '+nm[rw-1]); sy.push('k delta_'+jn(j2+1)); }
+    }else if(kind===2){
+      if(TR.isHinge[j2]){ ttl='Joint '+jn(j2+1)+' (hinge, left side) - moment';
+        pcs.push(memStr(TR.SP[j2-1],'ba')); sy.push('M_'+jn(j2+1)+jn(j2)); }
+      else{ ttl='Joint '+jn(j2+1)+' - moments';
+        if(j2>0){ pcs.push(memStr(TR.SP[j2-1],'ba')); sy.push('M_'+jn(j2+1)+jn(j2)); }
+        if(j2<nS){ pcs.push(memStr(TR.SP[j2],'ab')); sy.push('M_'+jn(j2+1)+jn(j2+2)); }
+        if(TR.Cj[j2]!==0){ pcs.push(sdNum(TR.Cj[j2])); sy.push('C_'+jn(j2+1)); } }
+    }else{
+      ttl='Joint '+jn(j2+1)+' (hinge, right side) - moment';
+      pcs.push(memStr(TR.SP[j2],'ab')); sy.push('M_'+jn(j2+1)+jn(j2+2));
+    }
+    var c3=TR.A[rw-1].slice(); var rr=TR.rhs[rw-1];
+    for(var i=0;i<nd;i++) if(isK[i]){ rr-=TR.A[rw-1][i]*val[i]; c3[i]=0; }
+    line('      ('+(e+1)+') '+ttl);
+    line('            '+sy.join(' + ')+' = 0');
+    line('            ('+pcs.join(') + (')+') = 0');
+    line('            collect terms :  '+sdLinStr(c3,nm,0)+' = '+sdNum(rr));
+  });
+  line(); line('   STEP 5 - SOLVING THE EQUATIONS');
+  if(!TR.fr.length) line('      There are no unknown displacements.');
+  else{
+    line('      The '+TR.fr.length+' equation(s) are solved simultaneously:');
+    TR.fr.forEach(function(r2){
+      if(nm[r2-1].slice(0,5)==='delta') line('         '+nm[r2-1].padEnd(14)+' = '+(X[r2-1]*1000).toFixed(6).padStart(12)+' mm   ('+X[r2-1].toExponential(6)+' m)');
+      else line('         '+nm[r2-1].padEnd(14)+' = '+X[r2-1].toExponential(6).padStart(14)+' rad');
+    });
+    var res=0;
+    TR.fr.forEach(function(r3){
+      var v=0;
+      TR.fr.forEach(function(c4){ v+=TR.A[r3-1][c4-1]*X[c4-1]; });
+      var rhs2=TR.rhs[r3-1];
+      TR.cdof.forEach(function(cc,i2){ rhs2-=TR.A[r3-1][cc-1]*TR.cval[i2]; });
+      res=Math.max(res,Math.abs(v-rhs2));
+    });
+    line('      Largest residual of the equations = '+res.toExponential(2));
+  }
+  line(); line('   STEP 6 - END MOMENTS  (displacements substituted back, kNm)');
+  for(s=0;s<nS;s++){
+    q=TR.SP[s]; d=q.d; na=jn(s+1); nb=jn(s+2); k=2*q.EI/q.l;
+    var thA=X[d[1]-1], thB=X[d[3]-1], psi=(X[d[0]-1]-X[d[2]-1])/q.l;
+    line('      Member '+na+nb+'   (theta_near = '+sdVstr(thA)+', theta_far = '+sdVstr(thB)+', psi = '+sdVstr(psi)+')');
+    line('         M_'+na+nb+' = '+sdNum(k)+' [ 2('+sdVstr(thA)+') + ('+sdVstr(thB)+') - 3('+sdVstr(psi)+') ] + ('+sdNum(q.fab)+') = '+q.Mab.toFixed(2));
+    line('         M_'+nb+na+' = '+sdNum(k)+' [ ('+sdVstr(thA)+') + 2('+sdVstr(thB)+') - 3('+sdVstr(psi)+') ] + ('+sdNum(q.fba)+') = '+q.Mba.toFixed(2));
+  }
+  line(); line('   STEP 7 - END SHEARS  (upward force on the member at each end, kN)');
+  line('      V_near = [ (moment of the member loads about the far end) - (M_near + M_far) ] / L');
+  line('      V_far  = (total load on the member) - V_near');
+  for(s=0;s<nS;s++){
+    q=TR.SP[s]; na=jn(s+1); nb=jn(s+2);
+    line('      Member '+na+nb+'   (total load = '+q.T.toFixed(4)+' kN,  moment of loads about '+nb+' = '+(q.Mb+q.Cs).toFixed(4)+' kNm)');
+    line('         V_'+na+nb+' = [ '+(q.Mb+q.Cs).toFixed(4)+' - ( ('+q.Mab.toFixed(4)+') + ('+q.Mba.toFixed(4)+') ) ] / '+q.l.toFixed(2)+' = '+q.Va.toFixed(2));
+    line('         V_'+nb+na+' = '+q.T.toFixed(4)+' - ('+q.Va.toFixed(4)+') = '+q.Vb.toFixed(2));
+  }
+  line(); line('   STEP 8 - SUPPORT REACTIONS');
+  B.sup.forEach(function(sp,s2){
+    var j3=TR.supJ[s2], t=sp[1];
+    line('      Support '+(s2+1)+' - '+tn[t]+' at joint '+jn(j3+1)+' (x = '+sp[0].toFixed(2)+' m)');
+    if(t<=3){
+      var sy2=[], nv=[];
+      if(j3>0){ sy2.push('V_'+jn(j3+1)+jn(j3)); nv.push(TR.SP[j3-1].Vb); }
+      if(j3<nS){ sy2.push('V_'+jn(j3+1)+jn(j3+2)); nv.push(TR.SP[j3].Va); }
+      if(TR.Pj[j3]!==0){ sy2.push('P_'+jn(j3+1)); nv.push(TR.Pj[j3]); }
+      line('         Ry = '+sy2.join(' + '));
+      line('            = '+sdSumStr(nv)+' = '+R.Ry[s2].toFixed(2)+' kN');
+    }else{
+      line('         Ry = -k delta_'+jn(j3+1));
+      line('            = -('+sdNum(sp[3])+')('+sdVstr(X[TR.vd[j3]-1])+') = '+R.Ry[s2].toFixed(2)+' kN');
+    }
+    if(t===1){
+      var sy3=[], nv2=[];
+      if(j3>0){ sy3.push('M_'+jn(j3+1)+jn(j3)); nv2.push(TR.SP[j3-1].Mba); }
+      if(j3<nS){ sy3.push('M_'+jn(j3+1)+jn(j3+2)); nv2.push(TR.SP[j3].Mab); }
+      if(TR.Cj[j3]!==0){ sy3.push('C_'+jn(j3+1)); nv2.push(TR.Cj[j3]); }
+      line('         M  = -( '+sy3.join(' + ')+' )');
+      line('            = -( '+sdSumStr(nv2)+' ) = '+R.Mr[s2].toFixed(2)+' kNm  (counter-clockwise +)');
+    }
+    if(t<=2 && R.Rx[s2]!==0) line('         Rx = -(sum of horizontal loads) = '+R.Rx[s2].toFixed(2)+' kN');
+  });
+  var tot=0, mom0=0;
+  (B.P||[]).forEach(function(p){ tot+=p[1]; mom0+=p[0]*p[1]; });
+  (B.M||[]).forEach(function(pm){ mom0-=pm[1]; });
+  (B.W||[]).forEach(function(w){
+    var s1=w[0],s2b=w[1],w1=w[2],w2=w[3];
+    tot+=0.5*(w1+w2)*(s2b-s1);
+    mom0+=(s2b-s1)*(w1*(2*s1+s2b)+w2*(s1+2*s2b))/6;
+  });
+  var sFy=R.Ry.reduce(function(a2,b2){return a2+b2;},0);
+  var sM=0; B.sup.forEach(function(sp2,i3){ sM+=R.Ry[i3]*sp2[0]+R.Mr[i3]; });
+  line(); line('   STEP 9 - EQUILIBRIUM CHECK');
+  line('      Sum Fy = 0          : reactions = '+sFy.toFixed(4)+' kN,  loads = '+tot.toFixed(4)+' kN,  difference = '+(sFy-tot).toExponential(2));
+  line('      Sum M about x = 0   : reactions = '+sM.toFixed(4)+' kNm, loads = '+mom0.toFixed(4)+' kNm, difference = '+(sM-mom0).toExponential(2)); line();
+  return T;
+}
+/*SD-END*/
+
+/*MD-START*/
+/* ============ MOMENT DISTRIBUTION: analysis + final-answer report ============
+   Faithful JS port of analyzeMomentDistribution / mdSpanFE / mdPrint from
+   MATLABAlamisApp.m.  Member end moments clockwise +, loads down +, couples ccw +. */
+function mdSpanFE(l, SP, SM, SW){
+  var T=0, Mb=0;
+  (SP||[]).forEach(function(p){ T+=p[1]; Mb+=p[1]*(l-p[0]); });
+  (SM||[]).forEach(function(cc){ Mb+=cc[1]; });
+  (SW||[]).forEach(function(w){
+    var t1=w[0], t2=w[1], w1=w[2], w2=w[3];
+    var d=t2-t1, m=(w2-w1)/d, c=l-t1;
+    T += (w1+w2)/2*d;
+    Mb += w1*d*c - w1*d*d/2 + m*d*d/2*c - m*d*d*d/3;
+  });
+  var pts=[0,l];
+  (SP||[]).forEach(function(p){pts.push(p[0]);});
+  (SM||[]).forEach(function(cc){pts.push(cc[0]);});
+  (SW||[]).forEach(function(w){pts.push(w[0]);pts.push(w[1]);});
+  var set={}; pts.forEach(function(v){set[Math.round(Math.min(Math.max(v,0),l)*1e9)/1e9]=1;});
+  var bk=Object.keys(set).map(Number).sort(function(a,b){return a-b;});
+  var gx=[-0.8611363115940526,-0.3399810435848563,0.3399810435848563,0.8611363115940526];
+  var gw=[0.3478548451374538,0.6521451548625461,0.6521451548625461,0.3478548451374538];
+  var RA=Mb/l, al=0, be=0;
+  for(var q=0;q<bk.length-1;q++){
+    var a=bk[q], c=bk[q+1], xm=(a+c)/2;
+    for(var i=0;i<4;i++){
+      var t=xm+(c-a)/2*gx[i], wt=(c-a)/2*gw[i];
+      var M0=RA*t;
+      (SP||[]).forEach(function(p){ if(t>p[0]) M0-=p[1]*(t-p[0]); });
+      (SM||[]).forEach(function(cc){ if(t>cc[0]) M0-=cc[1]; });
+      (SW||[]).forEach(function(w){
+        var s1=w[0],s2=w[1],w1=w[2],m=(w[3]-w1)/(s2-s1);
+        var u=Math.min(Math.max(t-s1,0),s2-s1);
+        M0-=((t-s1)*(w1*u+m*u*u/2)-(w1*u*u/2+m*u*u*u/3));
+      });
+      al+=wt*M0*(l-t)/l;
+      be+=wt*M0*t/l;
+    }
+  }
+  var mA=(4*al-2*be)/l, mB=(4*be-2*al)/l;
+  return [-mA, mB, T, Mb];
+}
+function mdAnalyze(B){
+  var L=B.L, sup=B.sup, nS=sup.length, tol=1e-7*Math.max(1,L);
+  sup.forEach(function(sp){ if(sp[1]===4) throw new Error('Spring supports are not available in the moment distribution method. Use the slope-deflection or force method.'); });
+  if((B.hinge||[]).length) throw new Error('Internal hinges are not available in the moment distribution method. Use the slope-deflection or force method.');
+  var jset0={};
+  [0,B.L].concat(sup.map(function(sp){return sp[0];})).forEach(function(v){jset0[Math.round(v*1e9)/1e9]=1;});
+  var jx=Object.keys(jset0).map(Number).sort(function(a,b){return a-b;}).filter(function(v){return v>=-1e-9&&v<=B.L+1e-9;});
+  var nj=jx.length, nSeg=nj-1;
+  var lseg=[]; for(var s=0;s<nSeg;s++) lseg.push(jx[s+1]-jx[s]);
+  var EIx=expandEI(B), EArr=EIx[0], IArr=EIx[1];
+  var EI=[];
+  for(s=0;s<nSeg;s++){
+    var xm0=(jx[s]+jx[s+1])/2, k0=-1;
+    for(var q0=0;q0<B.spanX.length-1;q0++) if(xm0>=B.spanX[q0]&&xm0<=B.spanX[q0+1]){ k0=q0; break; }
+    if(k0<0) k0=EArr.length-1;
+    EI.push(EArr[k0]*IArr[k0]);
+  }
+  var isSup=new Array(nj).fill(false), supOf=new Array(nj).fill(0), settle=new Array(nj).fill(0);
+  sup.forEach(function(sp,k){
+    for(var j=0;j<nj;j++) if(Math.abs(jx[j]-sp[0])<tol){ isSup[j]=true; supOf[j]=k; settle[j]=sp[2]||0; }
+  });
+  var isFix=new Array(nj).fill(false);
+  for(j=0;j<nj;j++) if(isSup[j]) isFix[j]= sup[supOf[j]][1]===1;
+  var ov=new Array(nSeg).fill(false);
+  ov[0]=!isSup[0];
+  ov[nSeg-1]=ov[nSeg-1]||!isSup[nj-1];
+  var SP=[],SM=[],SW=[];
+  for(s=0;s<nSeg;s++){ SP.push([]); SM.push([]); SW.push([]); }
+  var Pj=new Array(nj).fill(0), Mj=new Array(nj).fill(0);
+  (B.P||[]).forEach(function(p){
+    var x=p[0], v=p[1], j=-1;
+    for(var q=0;q<nj;q++) if(Math.abs(jx[q]-x)<tol) j=q;
+    if(j>=0 && isSup[j]) Pj[j]+=v;
+    else{
+      var s2=-1;
+      if(j<0){ for(q=0;q<nSeg;q++) if(x>jx[q]&&x<jx[q+1]) s2=q; }
+      else if(j===0) s2=0; else s2=nSeg-1;
+      SP[s2].push([x-jx[s2],v]);
+    }
+  });
+  (B.M||[]).forEach(function(pm){
+    var x=pm[0], v=pm[1], j=-1;
+    for(var q=0;q<nj;q++) if(Math.abs(jx[q]-x)<tol) j=q;
+    if(j>=0 && isSup[j]) Mj[j]+=v;
+    else{
+      var s2=-1;
+      if(j<0){ for(q=0;q<nSeg;q++) if(x>jx[q]&&x<jx[q+1]) s2=q; }
+      else if(j===0) s2=0; else s2=nSeg-1;
+      SM[s2].push([x-jx[s2],v]);
+    }
+  });
+  (B.W||[]).forEach(function(w){
+    for(var q=0;q<nSeg;q++){
+      var a=Math.max(w[0],jx[q]), b=Math.min(w[1],jx[q+1]);
+      if(b-a>tol){
+        var wa=w[2]+(w[3]-w[2])*(a-w[0])/(w[1]-w[0]);
+        var wb=w[2]+(w[3]-w[2])*(b-w[0])/(w[1]-w[0]);
+        SW[q].push([a-jx[q], b-jx[q], wa, wb]);
+      }
+    }
+  });
+  var fab=new Array(nSeg).fill(0), fba=fab.slice(), T=fab.slice(), Mb=fab.slice();
+  for(s=0;s<nSeg;s++){
+    var le=mdSpanFE(lseg[s],SP[s],SM[s],SW[s]);
+    fab[s]=le[0]; fba[s]=le[1]; T[s]=le[2]; Mb[s]=le[3];
+  }
+  var Mab=fab.slice(), Mba=fba.slice();
+  for(s=0;s<nSeg;s++){
+    if(ov[s]){
+      if(s===0 && !isSup[0]){ Mab[s]=0; Mba[s]=Mb[s]; }
+      else { Mba[s]=0; Mab[s]=Mb[s]-T[s]*lseg[s]; }
+    }else{
+      var psi=(settle[s+1]-settle[s])/lseg[s];
+      Mab[s]-=6*EI[s]*psi/lseg[s];
+      Mba[s]-=6*EI[s]*psi/lseg[s];
+    }
+  }
+  var active=[];
+  for(j=0;j<nj;j++) if(isSup[j]&&!isFix[j]) active.push(j);
+  var DFl=new Array(nj).fill(0), DFr=new Array(nj).fill(0);
+  active.forEach(function(j2){
+    var kl=0, kr=0;
+    if(j2>0 && !ov[j2-1]) kl=EI[j2-1]/lseg[j2-1];
+    if(j2<nj-1 && !ov[j2]) kr=EI[j2]/lseg[j2];
+    if(kl+kr>0){ DFl[j2]=kl/(kl+kr); DFr[j2]=kr/(kl+kr); }
+  });
+  function unbal(j3){
+    var u=Mj[j3];
+    if(j3>0) u+=Mba[j3-1];
+    if(j3<nj-1) u+=Mab[j3];
+    return u;
+  }
+  var cycles=0, worst=0;
+  for(var cyc=1;cyc<=5000;cyc++){
+    cycles=cyc;
+    active.forEach(function(j4){
+      if(DFl[j4]+DFr[j4]===0) return;
+      var u=unbal(j4);
+      var dl=-u*DFl[j4], dr=-u*DFr[j4];
+      if(j4>0 && DFl[j4]>0){ Mba[j4-1]+=dl; Mab[j4-1]+=dl/2; }
+      if(j4<nj-1 && DFr[j4]>0){ Mab[j4]+=dr; Mba[j4]+=dr/2; }
+    });
+    worst=0;
+    active.forEach(function(j5){ worst=Math.max(worst,Math.abs(unbal(j5))); });
+    if(worst<1e-10) break;
+  }
+  var scale=1;
+  Mab.concat(Mba).forEach(function(v){ scale=Math.max(scale,Math.abs(v)); });
+  if(worst>1e-6*scale) throw new Error('The beam is unstable (mechanism) or the moment distribution did not converge. Check the supports.');
+  var Va=[], Vb=[];
+  for(s=0;s<nSeg;s++){ Va.push((Mb[s]-Mab[s]-Mba[s])/lseg[s]); Vb.push(T[s]-Va[s]); }
+  var Ry=new Array(nS).fill(0), Mr=new Array(nS).fill(0);
+  sup.forEach(function(sp,k2){
+    var j6=-1;
+    for(var q=0;q<nj;q++) if(Math.abs(jx[q]-sp[0])<tol) j6=q;
+    var rv=Pj[j6];
+    if(j6>0) rv+=Vb[j6-1];
+    if(j6<nj-1) rv+=Va[j6];
+    Ry[k2]=rv;
+    if(sp[1]===1){
+      var sm=0;
+      if(j6>0) sm+=Mba[j6-1];
+      if(j6<nj-1) sm+=Mab[j6];
+      Mr[k2]=-sm-Mj[j6];
+    }
+  });
+  var Rx=new Array(nS).fill(0);
+  var sumH=(B.H||[]).reduce(function(acc,h){return acc+h[1];},0);
+  var ih=-1; sup.forEach(function(sp2,i2){ if(ih<0&&sp2[1]<=2) ih=i2; });
+  if(ih>=0) Rx[ih]=-sumH;
+  var fixIdx=[]; sup.forEach(function(sp3,i3){ if(sp3[1]===1) fixIdx.push(i3); });
+  var DG=beamDiagrams(B, Ry, fixIdx.map(function(i4){ return Mr[i4]; }));
+  var nF=0,nP=0,nR=0;
+  sup.forEach(function(sp4){ if(sp4[1]===1)nF++; else if(sp4[1]===2)nP++; else if(sp4[1]===3)nR++; });
+  return {DI:3*nF+2*nP+nR-3, rTot:3*nF+2*nP+nR, Ry:Ry, Rx:Rx, Mr:Mr,
+          xp:DG.xp, Vp:DG.Vp, Mp:DG.Mp, vp:DG.vp,
+          Vmax:DG.Vmax, xV:DG.xV, Mmax:DG.Mmax, xM:DG.xM, dmax:DG.dmax, xd:DG.xd,
+          md:{jx:jx, Mab:Mab, Mba:Mba, fab:fab, fba:fba, DFl:DFl, DFr:DFr, cycles:cycles, ov:ov}};
+}
+function mdPrint(B,R){
+  var md=R.md, jx=md.jx, nSeg=md.Mab.length, tol=1e-7*Math.max(1,B.L);
+  var T=[];
+  function line(s){ T.push(s===undefined?'':s); }
+  line(); line('   FINAL ANSWER  (moment distribution, '+md.cycles+' cycle(s))'); line();
+  line('   Fixed-end moments and distribution factors');
+  for(var s=0;s<nSeg;s++){
+    if(md.ov[s]) line('      Span '+jn(s+1)+jn(s+2)+' : overhang - end moment by statics');
+    else line('      Span '+jn(s+1)+jn(s+2)+' : FEM_'+jn(s+1)+jn(s+2)+' = '+md.fab[s].toFixed(2).padStart(9)+
+              '   FEM_'+jn(s+2)+jn(s+1)+' = '+md.fba[s].toFixed(2).padStart(9));
+  }
+  for(var j=0;j<jx.length;j++)
+    if(md.DFl[j]+md.DFr[j]>0)
+      line('      Joint '+jn(j+1)+' : DF left = '+md.DFl[j].toFixed(4)+'   DF right = '+md.DFr[j].toFixed(4));
+  line(); line('   End moments (kNm, clockwise +)');
+  for(s=0;s<nSeg;s++)
+    line('      M_'+jn(s+1)+jn(s+2)+' = '+md.Mab[s].toFixed(2).padStart(9)+'      M_'+jn(s+2)+jn(s+1)+' = '+md.Mba[s].toFixed(2).padStart(9));
+  line(); line('   Support reactions (Ry up +, M counter-clockwise +)');
+  B.sup.forEach(function(sp,k){
+    var j2=-1;
+    for(var q=0;q<jx.length;q++) if(Math.abs(jx[q]-sp[0])<tol) j2=q;
+    line('      Ry_'+jn(j2+1)+' = '+R.Ry[k].toFixed(2).padStart(9)+' kN');
+    if(sp[1]===1) line('      M_'+jn(j2+1)+'  = '+R.Mr[k].toFixed(2).padStart(9)+' kNm');
+  });
+  line();
+  return T;
+}
+/*MD-END*/
+
+/*FM-START*/
+/* ============ FORCE METHOD (consistent deformations): analysis + report ============
+   Faithful JS port of analyzeForceMethod / fmDiagrams / printSolution from
+   MATLABAlamisApp.m.  Reactions up +, reaction moments ccw +, sagging M +.      */
+function matRank(rows){
+  var M=rows.map(function(r){return r.slice();});
+  var nr=M.length, nc=M[0].length, rank=0;
+  for(var col=0;col<nc&&rank<nr;col++){
+    var piv=-1;
+    for(var r=rank;r<nr;r++) if(Math.abs(M[r][col])>1e-9){ if(piv<0||Math.abs(M[r][col])>Math.abs(M[piv][col])) piv=r; }
+    if(piv<0) continue;
+    var t=M[rank]; M[rank]=M[piv]; M[piv]=t;
+    for(r=rank+1;r<nr;r++){
+      var f=M[r][col]/M[rank][col];
+      if(f===0) continue;
+      for(var c=col;c<nc;c++) M[r][c]-=f*M[rank][c];
+    }
+    rank++;
+  }
+  return rank;
+}
+function loadTerms(B, kind, xh){
+  var tol=1e-7*Math.max(1,B.L), T=[];
+  (B.P||[]).forEach(function(p){
+    var x=p[0], P=p[1], v, t;
+    if(kind===1){ v=P; t=numStr(Math.abs(P)); }
+    else if(kind===2){ v=P*x; t=numStr(Math.abs(P))+'('+numStr(x)+')'; }
+    else { if(x>=xh-tol) return; v=P*(xh-x); t=numStr(Math.abs(P))+'('+numStr(xh-x)+')'; }
+    if(v!==0) T.push([v,t]);
+  });
+  (B.W||[]).forEach(function(row){
+    var xb = kind===3 ? xh : B.L;
+    var F=wForce([row],0,xb);
+    if(Math.abs(F)<1e-12) return;
+    var cen=wMoment([row],0,xb,0)/F, v, t;
+    if(kind===1){ v=F; t=numStr(Math.abs(F)); }
+    else if(kind===2){ v=F*cen; t=numStr(Math.abs(F))+'('+numStr(cen)+')'; }
+    else { v=F*(xh-cen); t=numStr(Math.abs(F))+'('+numStr(xh-cen)+')'; }
+    if(v!==0) T.push([v,t]);
+  });
+  (B.M||[]).forEach(function(pm){
+    var x=pm[0], Mv=pm[1], v;
+    if(kind===2) v=-Mv;
+    else if(kind===3 && x<xh-tol) v=Mv;
+    else return;
+    if(v!==0) T.push([v,numStr(Math.abs(Mv))]);
+  });
+  return T;
+}
+function equilText(co, nm, known, valK, T){
+  var s='';
+  for(var k=0;k<co.length;k++){
+    if(Math.abs(co[k])<1e-12) continue;
+    var sg, t;
+    if(known[k]){
+      if(Math.abs(Math.abs(co[k])-1)<1e-12){ sg=sgnT(co[k]*valK[k]); t=numStr(Math.abs(valK[k])); }
+      else { sg=sgnT(co[k]); t=numStr(Math.abs(co[k]))+'('+numStr(valK[k])+')'; }
+    }else{
+      sg=sgnT(co[k]);
+      if(Math.abs(Math.abs(co[k])-1)<1e-12) t=nm[k];
+      else t=numStr(Math.abs(co[k]))+'*'+nm[k];
+    }
+    s+=' '+sg+' '+t;
+  }
+  T.forEach(function(q){
+    s += ' '+(q[0]>0?'-':'+')+' '+q[1];
+  });
+  s=s.trim();
+  if(s.slice(0,2)==='+ ') s=s.slice(2);
+  return s+' = 0';
+}
+function fmDeflection(B, Ry, mrF, jx, isHinge){
+  var L=B.L, sup=B.sup, nS=sup.length, tol=1e-7*Math.max(1,L);
+  var nj=jx.length, nSeg=nj-1, tiny=1e-9*L;
+  var EIx=expandEI(B), EArr=EIx[0], IArr=EIx[1];
+  var SG=[];
+  for(var s=0;s<nSeg;s++){
+    var a=jx[s], c=jx[s+1], l=c-a, xm=(a+c)/2, k=-1;
+    for(var q=0;q<B.spanX.length-1;q++) if(xm>=B.spanX[q]&&xm<=B.spanX[q+1]){ k=q; break; }
+    if(k<0) k=EArr.length-1;
+    var EI=EArr[k]*IArr[k];
+    var br=(B.P||[]).map(function(p){return p[0];}).concat((B.M||[]).map(function(pm){return pm[0];}));
+    var xx=[];
+    for(q=0;q<251;q++) xx.push(a+(c-a)*q/250);
+    br.forEach(function(bv){ if(bv-tiny>=a&&bv-tiny<=c) xx.push(bv-tiny); if(bv+tiny>=a&&bv+tiny<=c) xx.push(bv+tiny); });
+    xx=xx.sort(function(u,v){return u-v;}).filter(function(v,i,arr){return i===0||v>arr[i-1]+1e-12;});
+    var xe=xx.map(function(v){return Math.min(Math.max(v,a+tiny),c-tiny);});
+    var V1=fieldVM(xe,Ry,mrF,B,true)[0];
+    var extra=[];
+    for(q=0;q<xx.length-1;q++)
+      if(V1[q]*V1[q+1]<0 && xx[q+1]-xx[q]>1e-6*L)
+        extra.push(bisect(function(t){return fieldVM([Math.min(Math.max(t,a+tiny),c-tiny)],Ry,mrF,B,true)[0][0];},xx[q],xx[q+1]));
+    xx=xx.concat(extra).sort(function(u,v){return u-v;}).filter(function(v,i,arr){return i===0||v>arr[i-1]+1e-12;});
+    xe=xx.map(function(v){return Math.min(Math.max(v,a+tiny),c-tiny);});
+    var VM=fieldVM(xe,Ry,mrF,B,true);
+    var kap=VM[1].map(function(mv){return mv/EI;});
+    var I1=cumtrapz(xx,kap), I2=cumtrapz(xx,I1);
+    SG.push({a:a,l:l,EI:EI,x:xx,V:VM[0],M:VM[1],I1:I1,I2:I2});
+  }
+  var nu=2*nSeg, Ac=[], bc=[];
+  function last(v){ return v[v.length-1]; }
+  for(var j=0;j<nj;j++){
+    var vrow=new Array(nu).fill(0), vc=0;
+    if(j<nSeg) vrow[2*j]=1;
+    else { var s2=nSeg-1; vrow[2*s2]=1; vrow[2*s2+1]=SG[s2].l; vc=last(SG[s2].I2); }
+    if(j>0 && j<nSeg){
+      var s3=j-1, r1=new Array(nu).fill(0);
+      r1[2*j]=1; r1[2*s3]=-1; r1[2*s3+1]=-SG[s3].l;
+      Ac.push(r1); bc.push(last(SG[s3].I2));
+      if(!isHinge[j]){ var r2=new Array(nu).fill(0); r2[2*j+1]=1; r2[2*s3+1]=-1; Ac.push(r2); bc.push(last(SG[s3].I1)); }
+    }
+    for(var k2=0;k2<nS;k2++){
+      if(Math.abs(sup[k2][0]-jx[j])<tol){
+        var t=sup[k2][1];
+        var tgt = t===4 ? -Ry[k2]/sup[k2][3] : -(sup[k2][2]||0);
+        Ac.push(vrow.slice()); bc.push(tgt-vc);
+        if(t===1){
+          if(j<nSeg){ var r3=new Array(nu).fill(0); r3[2*j+1]=1; Ac.push(r3); bc.push(0); }
+          if(j>0){ var s4=j-1, r4=new Array(nu).fill(0); r4[2*s4+1]=1; Ac.push(r4); bc.push(-last(SG[s4].I1)); }
+        }
+      }
+    }
+  }
+  var N=[], rhs2=new Array(nu).fill(0);
+  for(var i=0;i<nu;i++) N.push(new Array(nu).fill(0));
+  Ac.forEach(function(row,ri){
+    for(var i2=0;i2<nu;i2++){
+      rhs2[i2]+=row[i2]*bc[ri];
+      for(var j2=0;j2<nu;j2++) N[i2][j2]+=row[i2]*row[j2];
+    }
+  });
+  var u=gaussSolve(N,rhs2);
+  if(!u) throw new Error('The beam is unstable (mechanism). Add or move supports, or remove a hinge.');
+  var xp=[],Vp=[],Mp=[],vp=[],sp_=[];
+  for(s=0;s<nSeg;s++){
+    var qg=SG[s];
+    var xl=qg.x.map(function(v){return v-qg.a;});
+    xp=xp.concat(qg.x); Vp=Vp.concat(qg.V); Mp=Mp.concat(qg.M);
+    vp=vp.concat(qg.I2.map(function(iv,i){ return u[2*s]+u[2*s+1]*xl[i]+iv; }));
+    sp_=sp_.concat(qg.I1.map(function(iv){ return u[2*s+1]+iv; }));
+  }
+  var md=maxDeflection(xp,vp,sp_);
+  var iV=0,iM=0;
+  for(q=1;q<Vp.length;q++) if(Math.abs(Vp[q])>Math.abs(Vp[iV])) iV=q;
+  for(q=1;q<Mp.length;q++) if(Math.abs(Mp[q])>Math.abs(Mp[iM])) iM=q;
+  return {xp:xp,Vp:Vp,Mp:Mp,vp:vp,Vmax:Vp[iV],xV:xp[iV],Mmax:Mp[iM],xM:xp[iM],dmax:md[0],xd:md[1],
+          EIseg:SG.map(function(g){return g.EI;}), lseg:SG.map(function(g){return g.l;})};
+}
+function fmAnalyze(B){
+  var L=B.L, sup=B.sup, tol=1e-7*Math.max(1,L);
+  if(!sup.length) throw new Error('Add at least one support.');
+  sup.forEach(function(s){ if(s[0]<-tol||s[0]>L+tol) throw new Error('A support is outside the beam.'); });
+  (B.hinge||[]).forEach(function(h){ if(h<=tol||h>=L-tol) throw new Error('Hinges must be inside the beam.'); });
+  (B.hinge||[]).forEach(function(h){
+    (B.M||[]).forEach(function(pm){ if(Math.abs(pm[0]-h)<tol) throw new Error('Do not place a moment exactly at a hinge.'); });
+    sup.forEach(function(sp){ if(sp[1]===1&&Math.abs(sp[0]-h)<tol) throw new Error('Do not place a hinge exactly at a fixed support.'); });
+  });
+  var nS=sup.length;
+  var fixIdx=[]; sup.forEach(function(sp,i){ if(sp[1]===1) fixIdx.push(i); });
+  var nF=fixIdx.length;
+  var nR=nS+nF, nH=(B.hinge||[]).length, nEq=2+nH;
+  var jset={};
+  [0,L].concat(sup.map(function(s){return s[0];}), B.hinge||[]).forEach(function(v){jset[Math.round(v*1e9)/1e9]=1;});
+  var jx=Object.keys(jset).map(Number).sort(function(a,b){return a-b;}).filter(function(v){return v>=0&&v<=L;});
+  var nj=jx.length;
+  function jOf(x){ for(var j=0;j<nj;j++) if(Math.abs(jx[j]-x)<tol) return j+1; return -1; }
+  var isHinge=new Array(nj).fill(false);
+  (B.hinge||[]).forEach(function(h){ isHinge[jOf(h)-1]=true; });
+  var rn=[];
+  for(var k=0;k<nS;k++) rn.push('Ry_'+jn(jOf(sup[k][0])));
+  for(var f=0;f<nF;f++) rn.push('M_'+jn(jOf(sup[fixIdx[f]][0])));
+  var xs=sup.map(function(s){return s[0];});
+  var A=[], b=[], eqLab=[];
+  for(var e=0;e<nEq;e++) A.push(new Array(nR).fill(0));
+  for(k=0;k<nS;k++) A[0][k]=1;
+  b[0]=(B.P||[]).reduce(function(acc,p){return acc+p[1];},0)+wForce(B.W,0,L);
+  eqLab[0]='Sum Fy = 0   (up +)';
+  for(k=0;k<nS;k++) A[1][k]=xs[k];
+  for(f=0;f<nF;f++) A[1][nS+f]=1;
+  b[1]=(B.P||[]).reduce(function(acc,p){return acc+p[0]*p[1];},0)+wMoment(B.W,0,L,0)-(B.M||[]).reduce(function(acc,pm){return acc+pm[1];},0);
+  eqLab[1]='Sum M about joint '+jn(1)+' (x = 0) = 0   (counter-clockwise +)';
+  (B.hinge||[]).forEach(function(xh,h){
+    var r=2+h;
+    for(var k2=0;k2<nS;k2++) A[r][k2]= xs[k2]<xh-tol ? (xh-xs[k2]) : 0;
+    fixIdx.forEach(function(fi,q){ A[r][nS+q]= xs[fi]<xh-tol ? -1 : 0; });
+    var bp=0;
+    (B.P||[]).forEach(function(p){ if(p[0]<xh-tol) bp+=p[1]*(xh-p[0]); });
+    var cm=0;
+    (B.M||[]).forEach(function(pm){ if(pm[0]<xh-tol) cm+=pm[1]; });
+    b[r]=bp - wMoment(B.W,0,xh,xh) + cm;
+    eqLab[r]='Sum M about hinge '+jn(jOf(xh))+', left part = 0   (counter-clockwise +)';
+  });
+  if(matRank(A)<nEq) throw new Error('The beam is unstable (mechanism). Add or move supports, or remove a hinge.');
+  // redundants choice (mirrors the desktop ordering)
+  var posR=[]; for(k=0;k<nS;k++) posR.push(xs[k]);
+  fixIdx.forEach(function(fi){ posR.push(xs[fi]); });
+  var isFx=sup.map(function(sp){return sp[1]===1;});
+  var isSp=sup.map(function(sp){return sp[1]===4;});
+  var rest=[]; for(k=0;k<nS;k++) if(!isFx[k]&&!isSp[k]) rest.push(k);
+  rest.sort(function(a2,b2){
+    var ae=(xs[a2]<=tol||xs[a2]>=L-tol)?0:1, be=(xs[b2]<=tol||xs[b2]>=L-tol)?0:1;
+    return ae-be || xs[a2]-xs[b2];
+  });
+  var spr=[]; for(k=0;k<nS;k++) if(isSp[k]) spr.push(k);
+  spr.sort(function(a2,b2){ return xs[a2]-xs[b2]; });
+  var keepOrder=fixIdx.slice();
+  for(f=0;f<nF;f++) keepOrder.push(nS+f);
+  keepOrder=keepOrder.concat(rest.map(function(i3){return i3;}), spr.map(function(i4){return i4;}));
+  var ret=[];
+  for(var c=0;c<keepOrder.length;c++){
+    var cand=keepOrder[c];
+    var cols=ret.concat([cand]);
+    var rows=A.map(function(row){ return cols.map(function(cc){ return row[cc]; }); });
+    if(matRank(rows)>ret.length){ ret.push(cand); }
+    if(ret.length===nEq) break;
+  }
+  if(ret.length<nEq) throw new Error('The beam is unstable (mechanism). Add or move supports, or remove a hinge.');
+  var red=[]; for(k=0;k<nR;k++) if(ret.indexOf(k)<0) red.push(k);
+  red.sort(function(a3,b3){
+    return (posR[a3]-posR[b3]) || ((a3>nS?1:0)-(b3>nS?1:0));
+  });
+  var nRed=red.length;
+  var Ar=A.map(function(row){ return ret.map(function(cc){ return row[cc]; }); });
+  var R0=new Array(nR).fill(0);
+  var r0=gaussSolve(Ar.map(function(r2){return r2.slice();}), b.slice());
+  if(!r0) throw new Error('The beam is unstable (mechanism). Add or move supports, or remove a hinge.');
+  ret.forEach(function(cc,i5){ R0[cc]=r0[i5]; });
+  var Ru=[]; for(k=0;k<nR;k++) Ru.push(new Array(nRed).fill(0));
+  for(var j6=0;j6<nRed;j6++){
+    Ru[red[j6]][j6]=1;
+    var col=A.map(function(row){ return row[red[j6]]; });
+    var sol=gaussSolve(Ar.map(function(r3){return r3.slice();}), col.slice());
+    ret.forEach(function(cc,i6){ Ru[cc][j6]=-sol[i6]; });
+  }
+  // flexibility coefficients by 4-point Gauss per breakpoint piece
+  var bkset={};
+  [0,L].concat(xs, B.hinge||[], (B.P||[]).map(function(p){return p[0];}), (B.M||[]).map(function(pm){return pm[0];}),
+             (B.W||[]).map(function(w){return w[0];}), (B.W||[]).map(function(w){return w[1];}), B.spanX)
+    .forEach(function(v){bkset[Math.round(v*1e9)/1e9]=1;});
+  var bk=Object.keys(bkset).map(Number).sort(function(a4,b4){return a4-b4;});
+  var gx=[-0.8611363115940526,-0.3399810435848563,0.3399810435848563,0.8611363115940526];
+  var gw=[0.3478548451374538,0.6521451548625461,0.6521451548625461,0.3478548451374538];
+  var xg=[], wg=[], kg=[];
+  for(var s5=0;s5<bk.length-1;s5++){
+    var a5=bk[s5], c5=bk[s5+1], xm5=(a5+c5)/2;
+    var k5=-1;
+    for(var q5=0;q5<B.spanX.length-1;q5++) if(xm5>=B.spanX[q5]&&xm5<=B.spanX[q5+1]){ k5=q5; break; }
+    for(var i7=0;i7<4;i7++){ xg.push(xm5+(c5-a5)/2*gx[i7]); wg.push((c5-a5)/2*gw[i7]); kg.push(k5); }
+  }
+  var EIx=expandEI(B), EArr=EIx[0], IArr=EIx[1];
+  var EIg=xg.map(function(v,i8){ var kk=kg[i8]; if(kk<0||kk>=EArr.length) kk=EArr.length-1; return EArr[kk]*IArr[kk]; });
+  var M0g=fieldVM(xg, R0.slice(0,nS), R0.slice(nS), B, true)[1];
+  var mg=[];
+  for(var j7=0;j7<nRed;j7++){
+    var colv=[]; for(var i9=0;i9<xg.length;i9++) colv.push(0);
+    var Mcol=fieldVM(xg, Ru.map(function(row){return row[j7];}).slice(0,nS), Ru.map(function(row){return row[j7];}).slice(nS), B, false)[1];
+    mg.push(Mcol);
+  }
+  var nSp=EArr.length;
+  var Fsp=[], Dsp=[];
+  for(var k6=0;k6<nRed;k6++){ Fsp.push([]); for(var k7=0;k7<nRed;k7++) Fsp[k6].push(new Array(nSp).fill(0)); }
+  for(k6=0;k6<nRed;k6++) Dsp.push(new Array(nSp).fill(0));
+  for(k6=0;k6<nSp;k6++){
+    for(var i10=0;i10<xg.length;i10++){
+      if(kg[i10]!==k6) continue;
+      var w=wg[i10]/EIg[i10];
+      for(var i11=0;i11<nRed;i11++){
+        Dsp[i11][k6]+=mg[i11][i10]*M0g[i10]*w;
+        for(var j8=0;j8<nRed;j8++) Fsp[i11][j8][k6]+=mg[i11][i10]*mg[j8][i10]*w;
+      }
+    }
+  }
+  var Fb=[], D0=new Array(nRed).fill(0);
+  for(i11=0;i11<nRed;i11++){
+    Fb.push(new Array(nRed).fill(0));
+    for(j8=0;j8<nRed;j8++){
+      var sv=0; for(k6=0;k6<nSp;k6++) sv+=Fsp[i11][j8][k6];
+      Fb[i11][j8]=sv;
+    }
+    var sv2=0; for(k6=0;k6<nSp;k6++) sv2+=Dsp[i11][k6];
+    D0[i11]=sv2;
+  }
+  var Ff=Fb.map(function(r4){return r4.slice();});
+  var dS=new Array(nRed).fill(0), dP=new Array(nRed).fill(0);
+  for(k=0;k<nS;k++){
+    if(sup[k][1]===4){
+      for(i11=0;i11<nRed;i11++){
+        for(j8=0;j8<nRed;j8++) Ff[i11][j8]+=Ru[k][i11]*Ru[k][j8]/sup[k][3];
+        dP[i11]-=Ru[k][i11]*R0[k]/sup[k][3];
+      }
+    }else{
+      for(i11=0;i11<nRed;i11++) dS[i11]-=Ru[k][i11]*(sup[k][2]||0);
+    }
+  }
+  var d=new Array(nRed);
+  for(i11=0;i11<nRed;i11++) d[i11]=-D0[i11]+dS[i11]+dP[i11];
+  var X=new Array(nRed).fill(0);
+  if(nRed>0){
+    var solX=gaussSolve(Ff.map(function(r5){return r5.slice();}), d.slice());
+    if(!solX) throw new Error('The compatibility equations are singular. Check the supports and hinges.');
+    X=solX;
+  }
+  var Rf=R0.slice();
+  for(k=0;k<nR;k++){ var add=0; for(j8=0;j8<nRed;j8++) add+=Ru[k][j8]*X[j8]; Rf[k]+=add; }
+  var Ry=Rf.slice(0,nS);
+  var Mr=new Array(nS).fill(0);
+  fixIdx.forEach(function(fi,i12){ Mr[fi]=Rf[nS+i12]; });
+  var Rx=new Array(nS).fill(0);
+  var sumH=(B.H||[]).reduce(function(acc,h){return acc+h[1];},0);
+  var ih=-1; sup.forEach(function(sp2,i13){ if(ih<0&&sp2[1]<=2) ih=i13; });
+  if(ih>=0) Rx[ih]=-sumH;
+  var nFx=0,nPn=0,nRl=0,nSpg=0;
+  sup.forEach(function(sp3){ if(sp3[1]===1)nFx++; else if(sp3[1]===2)nPn++; else if(sp3[1]===3)nRl++; else nSpg++; });
+  var DG=fmDeflection(B, Ry, fixIdx.map(function(i14){return Mr[i14];}), jx, isHinge);
+  var kpset={};
+  jx.concat((B.P||[]).map(function(p){return p[0];}), (B.M||[]).map(function(pm){return pm[0];}),
+            (B.W||[]).map(function(w){return w[0];}), (B.W||[]).map(function(w){return w[1];}))
+    .forEach(function(v){kpset[Math.round(v*1e9)/1e9]=1;});
+  var kp=Object.keys(kpset).map(Number).sort(function(a6,b6){return a6-b6;}).filter(function(v){return v>=0&&v<=L;});
+  return {DI:3*nFx+2*nPn+nRl+nSpg-3-nH, rTot:3*nFx+2*nPn+nRl+nSpg, nh:nH, nRed:nRed,
+          Ry:Ry, Rx:Rx, Mr:Mr, xp:DG.xp, Vp:DG.Vp, Mp:DG.Mp, vp:DG.vp,
+          Vmax:DG.Vmax, xV:DG.xV, Mmax:DG.Mmax, xM:DG.xM, dmax:DG.dmax, xd:DG.xd,
+          sol:{jx:jx, isHinge:isHinge, nS:nS, nF:nF, fixIdx:fixIdx, nEq:nEq, rn:rn, eqLab:eqLab,
+               A:A, b:b, ret:ret, red:red, R0:R0, Ru:Ru, X:X, Rf:Rf, Fb:Fb, Ff:Ff, D0:D0,
+               Fsp:Fsp, Dsp:Dsp, dS:dS, dP:dP, d:d, kp:kp, EIseg:DG.EIseg, lseg:DG.lseg}};
+}
+
+/* ---------- printed step-by-step working (mirrors printSolution) ---------- */
+function fmPrint(B,R){
+  var S=R.sol, jx=S.jx, nj=jx.length, nSeg=nj-1, sup=B.sup;
+  var nS=S.nS, rn=S.rn, red=S.red, ret=S.ret, nRed=red.length, nR=rn.length;
+  var tn={1:'fixed',2:'pinned',3:'roller',4:'spring'};
+  var tolx=1e-7*Math.max(1,B.L), kp=S.kp;
+  function jOfx(x){ for(var j=0;j<nj;j++) if(Math.abs(jx[j]-x)<tolx) return j+1; return -1; }
+  var dbl=new Array(79).join('=');
+  var jl=[];
+  for(var k=0;k<nR;k++){
+    var xk = k<nS ? sup[k][0] : sup[S.fixIdx[k-nS]][0];
+    jl.push(jn(jOfx(xk)));
+  }
+  var lab=red.map(function(rd){ return rd<nS ? jl[rd] : 'M'+jl[rd]; });
+  var sepc='';
+  if(lab.some(function(l2){return l2.length>1;})) sepc=',';
+  function dN(i){ return 'Delta_'+lab[i]+'0'; }
+  function fN(i,j){ return 'f_'+lab[i]+sepc+lab[j]; }
+  var EIs=S.EIseg, sc, un;
+  var mx=Math.max.apply(null,EIs), mn=Math.min.apply(null,EIs);
+  if(mx-mn<=1e-9*mx){ sc=EIs[0]; un=' / EI'; } else { sc=1; un=''; }
+  var D0s=S.D0.map(function(v){return v*sc;});
+  var Fbs=S.Fb.map(function(r){return r.map(function(v){return v*sc;});});
+  var Ffs=S.Ff.map(function(r){return r.map(function(v){return v*sc;});});
+  var ds=S.d.map(function(v){return v*sc;});
+  var sR=S.dS.map(function(v,i){return (v+S.dP[i])*sc;});
+  var T=[];
+  function line(s){ T.push(s===undefined?'':s); }
+  function stepHead(st,ttl){
+    var ln=new Array(79).join('-');
+    line(); line('   '+ln); line('   STEP '+st+' : '+ttl); line('   '+ln); line();
+  }
+  line(); line('   '+dbl); line('   FULL SOLUTION - FORCE METHOD   (method of consistent deformations)'); line('   '+dbl);
+  line('   Signs : reactions up +, reaction moments counter-clockwise +, bending moment sagging +');
+  line('           loads downward +, deflection up +');
+  line('   Units : kN, m, kNm');
+  var st=1;
+  stepHead(st,'JOINTS AND SPANS');
+  for(var j=0;j<nj;j++){
+    var k2=-1; sup.forEach(function(sp,i){ if(Math.abs(sp[0]-jx[j])<tolx) k2=i; });
+    var d='free joint';
+    if(k2>=0){
+      d = sup[k2][1]===4 ? 'spring, k = '+matG(sup[k2][3])+' kN/m' : tn[sup[k2][1]];
+      if(sup[k2][2]) d+= ', settlement '+matG(sup[k2][2]*1000)+' mm';
+    }
+    if(S.isHinge[j]) d+=' + hinge';
+    line('      Joint '+jn(j+1).padEnd(4)+' x = '+jx[j].toFixed(2).padStart(6)+' m    '+d);
+  }
+  line();
+  for(var s=0;s<nSeg;s++)
+    line('      Span  '+jn(s+1)+jn(s+2).padEnd(2)+' L = '+S.lseg[s].toFixed(2).padStart(6)+' m    EI = '+matG(S.EIseg[s])+' kNm^2');
+  st++; stepHead(st,'DEGREE OF INDETERMINACY');
+  var ht = R.nh>0 ? ', '+R.nh+' hinge condition(s)' : '';
+  line('      Unknown reaction components : '+nR+'   ('+rn.join(', ')+')');
+  line('      Equilibrium equations       : '+S.nEq+'   (sum Fy, sum M'+ht+')');
+  line('      Degree of indeterminacy     : i = '+nR+' - '+S.nEq+' = '+nRed);
+  if(nRed===0){
+    line(); line('      The beam is statically determinate: the reactions follow from equilibrium alone,');
+    line('      so no compatibility equation is needed.');
+  }
+  if(nRed>0){
+    st++; stepHead(st,'PRIMARY BEAM   (redundants removed)');
+    line('      The redundants are removed to obtain a statically determinate, stable primary beam:'); line();
+    red.forEach(function(rd,i3){
+      var dsc = rd<nS ? 'vertical reaction at joint' : 'moment reaction at joint';
+      line('         X'+(i3+1)+' = '+rn[rd].padEnd(6)+'  ('+dsc+' '+jl[rd]+')');
+    });
+    line(); line('      Supports of the primary beam:'); line();
+    var so=sup.map(function(sp,i4){return i4;}).sort(function(a2,b2){return sup[a2][0]-sup[b2][0];});
+    so.forEach(function(k3){
+      var f=-1; S.fixIdx.forEach(function(fi,i5){ if(fi===k3) f=i5; });
+      var hasRy = red.indexOf(k3)<0;
+      var hasM  = f>=0 && red.indexOf(nS+f)<0;
+      var tx;
+      if(sup[k3][1]===1){
+        if(hasRy&&hasM) tx='fixed support kept';
+        else if(hasRy) tx='moment released, acts as a pin / roller';
+        else if(hasM) tx='vertical restraint removed, only the moment restraint kept';
+        else tx='support removed';
+      }else if(sup[k3][1]===4){
+        tx = hasRy ? 'spring kept' : 'spring removed';
+      }else{
+        tx = hasRy ? tn[sup[k3][1]]+' support kept' : 'support removed';
+      }
+      line('         Joint '+jl[k3].padEnd(4)+' x = '+sup[k3][0].toFixed(2).padStart(6)+' m    '+tx);
+    });
+    st++; stepHead(st,'PRIMARY BEAM UNDER THE EXTERNAL LOADS   (all X = 0)');
+    line('      Reactions of the primary beam:'); line();
+    ret.slice().sort(function(a3,b3){return a3-b3;}).forEach(function(k4){
+      line('         '+rn[k4].padEnd(6)+' = '+rxnStr(S.R0[k4], k4+1<=nS?k4+1:nS+1, nS));
+    });
+    line(); line('      Bending moment M0 of the primary beam:'); line();
+    line('         '+'x (m)'.padEnd(8)+' '+'joint'.padEnd(6)+' M0 (kNm)');
+    kp.forEach(function(x){
+      var t=1e-9*Math.max(1,B.L);
+      var m1=fieldVM([x-t],S.R0.slice(0,nS),S.R0.slice(nS),B,true)[1][0];
+      var m2=fieldVM([x+t],S.R0.slice(0,nS),S.R0.slice(nS),B,true)[1][0];
+      line('         '+x.toFixed(2).padEnd(8)+' '+ptLabel(jx,x,tolx).padEnd(6)+' '+lrStr(m1,m2));
+    });
+    st++; stepHead(st,'PRIMARY BEAM UNDER THE UNIT REDUNDANTS   (loads removed)');
+    line('      Reactions of the primary beam when one redundant X_j = 1 is applied:'); line();
+    for(var j2=0;j2<nRed;j2++){
+      var ln2='';
+      ret.slice().sort(function(a4,b4){return a4-b4;}).forEach(function(k5){ ln2+='   '+rn[k5]+' = '+S.Ru[k5][j2].toFixed(4).padStart(8); });
+      line('         X'+(j2+1)+' = 1 ('+rn[red[j2]]+') :'+ln2);
+    }
+    line(); line('      Bending moment m_j of the primary beam per unit redundant:'); line();
+    var hd='         '+'x (m)'.padEnd(8)+' '+'joint'.padEnd(6);
+    for(j2=0;j2<nRed;j2++) hd+=' '+('m_'+lab[j2]).padEnd(22);
+    line(hd);
+    kp.forEach(function(x){
+      var t=1e-9*Math.max(1,B.L);
+      var ln3='         '+x.toFixed(2).padEnd(8)+' '+ptLabel(jx,x,tolx).padEnd(6);
+      for(var j3=0;j3<nRed;j3++){
+        var ru=S.Ru.map(function(row){return row[j3];});
+        var mm1=fieldVM([x-t],ru.slice(0,nS),ru.slice(nS),B,false)[1][0];
+        var mm2=fieldVM([x+t],ru.slice(0,nS),ru.slice(nS),B,false)[1][0];
+        ln3+=' '+lrStr(mm1,mm2).padEnd(22);
+      }
+      line(ln3);
+    });
+    st++; stepHead(st,'COMPATIBILITY EQUATIONS');
+    line('      The displacement of the primary beam at every removed restraint must equal the');
+    line('      real support displacement (zero for a support that does not move):'); line();
+    for(var i=0;i<nRed;i++){
+      var ln4=dN(i);
+      for(j2=0;j2<nRed;j2++) ln4+=' + '+fN(i,j2)+'*'+rn[red[j2]];
+      var rhs = sR[i]===0 ? '0' : 's_'+lab[i];
+      line('         '+ln4+' = '+rhs+'      ('+(i+1)+')');
+    }
+    line(); line('      where  Delta_i0 = displacement at i due to the external loads (primary beam)');
+    line('             f_ij     = displacement at i due to a unit value of X_j (primary beam)');
+    if(sR.some(function(v){return v!==0;})) line('             s_i      = support settlement / spring term (given below)');
+    st++; stepHead(st,'DEFLECTIONS OF THE PRIMARY BEAM UNDER THE LOADS');
+    line('      Delta_i0 = Integral( m_i * M0 / EI ) dx      (positive in the direction of X_i)'); line();
+    for(i=0;i<nRed;i++) line('         '+dN(i).padEnd(10)+' = '+fmtN(D0s[i])+un);
+    if(sR.some(function(v){return v!==0;})){
+      line(); line('      Support displacement terms  s_i = -Sum( R_i * settlement ) - Sum( R_i * R0 / k ):'); line();
+      for(i=0;i<nRed;i++) line('         '+('s_'+lab[i]).padEnd(10)+' = '+fmtN(sR[i])+un);
+    }
+    st++; stepHead(st,'FLEXIBILITY COEFFICIENTS');
+    line('      f_ij = Integral( m_i * m_j / EI ) dx'); line();
+    for(i=0;i<nRed;i++) for(j2=0;j2<=i;j2++) line('         '+fN(i,j2).padEnd(10)+' = '+fmtN(Fbs[i][j2])+un);
+    if(nRed>1){
+      line(); line("      By applying Maxwell's law,  f_ij = f_ji :"); line();
+      for(i=0;i<nRed-1;i++) for(j2=i+1;j2<nRed;j2++)
+        line('         '+fN(i,j2).padEnd(10)+' = '+fN(j2,i).padEnd(10)+' = '+fmtN(Fbs[i][j2])+un);
+    }
+    if(sup.some(function(sp){return sp[1]===4;})){
+      line(); line('      Springs add their own flexibility:  f_ij(total) = f_ij + Sum( R_i * R_j / k )'); line();
+      sup.forEach(function(sp,i6){ if(sp[1]===4) line('         spring at joint '+jl[i6]+' : k = '+matG(sp[3])+' kN/m,  1/k = '+fmtN(1/sp[3])); });
+      line(); line('      Total flexibility coefficients:'); line();
+      for(i=0;i<nRed;i++) for(j2=0;j2<=i;j2++) line('         '+fN(i,j2).padEnd(10)+' = '+fmtN(Ffs[i][j2])+un);
+    }
+    st++; stepHead(st,'MAGNITUDES OF THE REDUNDANTS');
+    line('      Substituting the deflections and flexibility coefficients into the compatibility');
+    line('      equations:'); line();
+    var nm2=red.map(function(rd){return rn[rd];});
+    for(i=0;i<nRed;i++) line('         '+linEq(D0s[i], Ffs[i], nm2)+' = '+fmtN(sR[i])+'      ('+(i+1)+')');
+    line(); line('      or'); line();
+    for(i=0;i<nRed;i++) line('         '+linEq(null, Ffs[i], nm2)+' = '+fmtN(ds[i])+'      ('+(i+1)+'a)');
+    if(nRed===1){ line(); line('      Solving Eq. (1a) :'); line(); }
+    else { line(); line('      Solving Eqs. (1a) to ('+nRed+'a) simultaneously :'); line(); }
+    for(j2=0;j2<nRed;j2++) line('         X'+(j2+1)+' = '+rn[red[j2]].padEnd(6)+' = '+rxnStr(S.X[j2], red[j2]<nS?red[j2]+1:nS+1, nS));
+  }
+  st++;
+  if(nRed>0) stepHead(st,'REACTIONS   (equilibrium of the indeterminate beam)');
+  else stepHead(st,'REACTIONS   (equilibrium of the beam)');
+  if(nRed>0){
+    line('      The remaining reactions follow from the equilibrium equations of the whole beam,');
+    line('      with the redundants now known:'); line();
+  }
+  var ih2=-1; sup.forEach(function(sp,i7){ if(ih2<0&&sp[1]<=2) ih2=i7; });
+  var sumH2=(B.H||[]).reduce(function(acc,h){return acc+h[1];},0);
+  line('      Sum Fx = 0   (right +)');
+  if(ih2>=0){
+    var rxn='Rx_'+jl[ih2];
+    if(sumH2===0) line('         '+rxn+' = 0');
+    else line('         '+rxn+' '+sgnT(sumH2)+' '+numStr(Math.abs(sumH2))+' = 0');
+  }else{
+    line(sumH2!==0 ? '         no pinned or fixed support to resist the horizontal load' : '         no horizontal load');
+  }
+  line();
+  var known=new Array(nR).fill(false); red.forEach(function(rd){known[rd]=true;});
+  var valK=S.Rf;
+  for(var r=0;r<S.nEq;r++){
+    var TT = r===0 ? loadTerms(B,1,0) : (r===1 ? loadTerms(B,2,0) : loadTerms(B,3,B.hinge[r-2]));
+    line('      '+S.eqLab[r]);
+    line('         '+equilText(S.A[r], rn, known, valK, TT)); line();
+  }
+  line('      Solving the equilibrium equations :'); line();
+  if(ih2>=0 && sumH2!==0) line('         '+('Rx_'+jl[ih2]).padEnd(6)+' = '+zr(R.Rx[ih2]).toFixed(4)+' kN');
+  ret.slice().sort(function(a5,b5){return a5-b5;}).forEach(function(k6){
+    line('         '+rn[k6].padEnd(6)+' = '+rxnStr(S.Rf[k6], k6<nS?k6+1:nS+1, nS));
+  });
+  line(); line('      Support reactions of the beam:'); line();
+  line('         '+'Joint'.padEnd(6)+' '+'x (m)'.padEnd(8)+' '+'Support'.padEnd(9)+' '+'Ry (kN)'.padEnd(12)+' '+'M (kNm)'.padEnd(14)+' Rx (kN)');
+  sup.map(function(sp,i8){return i8;}).sort(function(a6,b6){return sup[a6][0]-sup[b6][0];}).forEach(function(k7){
+    var mS='-', xS='-';
+    if(sup[k7][1]===1) mS=zr(R.Mr[k7]).toFixed(4);
+    if(sup[k7][1]<=2)  xS=zr(R.Rx[k7]).toFixed(4);
+    line('         '+jl[k7].padEnd(6)+' '+sup[k7][0].toFixed(2).padEnd(8)+' '+tn[sup[k7][1]].padEnd(9)+' '+zr(R.Ry[k7]).toFixed(4).padEnd(12)+' '+mS.padEnd(14)+' '+xS);
+  });
+  sup.forEach(function(sp,i9){
+    if(sp[1]===4) line(); line('      Spring at joint '+jl[i9]+' : v = -Ry/k = -('+R.Ry[i9].toFixed(4)+')/('+matG(sp[3])+') = '+matG(-R.Ry[i9]/sp[3])+' m');
+  });
+  st++; stepHead(st,'SHEAR AND BENDING MOMENT');
+  line('      Values are computed from the final reactions.  Two values separated by | are the');
+  line('      values just left and just right of the point (a jump = point load or moment).'); line();
+  line('         '+'x (m)'.padEnd(8)+' '+'joint'.padEnd(6)+' '+'V (kN)'.padEnd(26)+' M (kNm)');
+  kp.forEach(function(x){
+    var t=1e-9*Math.max(1,B.L);
+    var q1=fieldVM([x-t],S.Rf.slice(0,nS),S.Rf.slice(nS),B,true);
+    var q2=fieldVM([x+t],S.Rf.slice(0,nS),S.Rf.slice(nS),B,true);
+    line('         '+x.toFixed(2).padEnd(8)+' '+ptLabel(jx,x,tolx).padEnd(6)+' '+lrStr(q1[0][0],q2[0][0]).padEnd(26)+' '+lrStr(q1[1][0],q2[1][0]));
+  });
+  line(); line('   '+dbl);
+  return T;
+}
+/*FM-END*/
+
+/* ---------- full report wrapper (mirrors buildSolutionText) ---------- */
+function buildSolutionTextJS(B, loads, method, R, capturedLines){
+  var tn={1:'Fixed',2:'Pinned',3:'Roller',4:'Spring'};
+  var bar=new Array(79).join('='), thin=new Array(79).join('-');
+  var T=[];
+  T.push(bar); T.push('   MATLAB - ALAMIS   |   BEAM ANALYSIS SOLUTION'); T.push(bar);
+  T.push('   Beam    : '+(B.name||'Beam'));
+  T.push('   Method  : '+method);
+  T.push('   Date    : '+new Date().toISOString().slice(0,16).replace('T',' '));
+  T.push('   Units   : kN, m, kNm   (E in kN/m^2, I in mm^4)');
+  T.push('');
+  T.push(thin); T.push('   1.  INPUT DATA'); T.push(thin);
+  T.push('   Beam length L = '+matG(B.L)+' m');
+  var uniqI={}; B.I.forEach(function(v){uniqI[v.toFixed(12)]=1;});
+  T.push(Object.keys(uniqI).length>1 ? '   Moment of inertia: VARYING from span to span'
+                                     : '   Moment of inertia: UNIFORM (same I for every span)');
+  T.push(''); T.push('   Spans:');
+  for(var k=0;k<B.E.length;k++){
+    T.push('      Span '+(k+1)+' : x = '+matG(B.spanX[k])+' to '+matG(B.spanX[k+1])+' m   L = '+matG(B.spanX[k+1]-B.spanX[k])+
+           ' m   E = '+matG(B.E[k],10)+'   I = '+matG(B.I[k]*1e12,10)+'   EI = '+matG(B.E[k]*B.I[k],10)+' kNm^2');
+  }
+  T.push(''); T.push('   Supports:');
+  B.sup.forEach(function(sp,i){
+    var ex='';
+    if(sp[1]===4) ex='   k = '+matG(sp[3])+' kN/m';
+    if(Math.abs(sp[2]||0)>0) ex+='   settlement = '+matG(sp[2]*1000)+' mm';
+    T.push('      '+(i<26?String.fromCharCode(65+i):'S'+(i+1)).padEnd(3)+' x = '+matG(sp[0])+' m   '+tn[sp[1]]+ex);
+  });
+  if(B.hinge && B.hinge.length){ T.push(''); T.push('   Internal hinges at x = '+B.hinge.map(matG).join(', ')+' m'); }
+  T.push(''); T.push('   Loads:');
+  if(!loads.length) T.push('      (none)');
+  loads.forEach(function(ld,i){ T.push('      '+(i+1)+'.  '+loadRowText(ld)); });
+  T.push('');
+  T.push(thin); T.push('   2.  SOLUTION'); T.push(thin);
+  var cap=capturedLines.join('\n').replace(/^(\s*\n)+/,'').replace(/\s+$/,'');
+  T.push(cap || '   No step-by-step working was produced by the solver used for this run.');
+  T.push('');
+  T.push(thin); T.push('   3.  FINAL RESULTS'); T.push(thin);
+  var cls = R.DI<0 ? 'Unstable' : (R.DI===0 ? 'Statically determinate' : 'Statically indeterminate, degree '+R.DI);
+  T.push('   Degree of indeterminacy: '+R.DI+'  ('+cls+')');
+  if(R.DI<0) T.push('   WARNING: the beam is unstable - the values below are not valid.');
+  T.push('');
+  T.push('   Support reactions (Ry up +, Rx right +, M counter-clockwise +):');
+  B.sup.forEach(function(sp,i){
+    var nmx=i<26?String.fromCharCode(65+i):'S'+(i+1);
+    var ry=zr(R.Ry[i]);
+    T.push('      '+(nmx+'y').padEnd(4)+' = '+ry.toFixed(2).padStart(10)+' kN      ('+(ry>=0?'up':'down')+', x = '+matG(sp[0])+' m, '+tn[sp[1]]+')');
+    if(sp[1]<=2) T.push('      '+(nmx+'x').padEnd(4)+' = '+zr(R.Rx[i]).toFixed(2).padStart(10)+' kN');
+    if(sp[1]===1) T.push('      '+'M'+nmx+'  '.padEnd(0)+' = '+zr(R.Mr[i]).toFixed(2).padStart(10)+' kN-m');
+  });
+  T.push(''); T.push('   Maximum values:');
+  T.push('      Shear      : '+zr(R.Vmax).toFixed(2).padStart(10)+' kN     at x = '+R.xV.toFixed(2)+' m');
+  T.push('      Moment     : '+zr(R.Mmax).toFixed(2).padStart(10)+' kN-m   at x = '+R.xM.toFixed(2)+' m');
+  T.push('      Deflection : '+zr(R.dmax*1000).toFixed(2).padStart(10)+' mm     at x = '+R.xd.toFixed(2)+' m');
+  T.push(''); T.push('   Values along the beam (read from the diagram data):');
+  T.push('      '+'x (m)'.padEnd(9)+' '+'V (kN)'.padEnd(13)+' '+'M (kN-m)'.padEnd(15)+' Deflection (mm)');
+  var xset={};
+  for(var q=0;q<=10;q++) xset[Math.round(B.L*q/10*1e6)/1e6]=1;
+  B.sup.forEach(function(sp){xset[Math.round(sp[0]*1e6)/1e6]=1;});
+  Object.keys(xset).map(Number).sort(function(a,b){return a-b;}).forEach(function(x){
+    var i2=0; for(var i3=1;i3<R.xp.length;i3++) if(Math.abs(R.xp[i3]-x)<Math.abs(R.xp[i2]-x)) i2=i3;
+    T.push('      '+x.toFixed(2).padEnd(9)+' '+zr(R.Vp[i2]).toFixed(2).padEnd(13)+' '+zr(R.Mp[i2]).toFixed(2).padEnd(15)+' '+zr(R.vp[i2]*1000).toFixed(3));
+  });
+  T.push(''); T.push(bar); T.push('   END OF SOLUTION'); T.push(bar);
+  return T.join('\n');
+}
+function loadRowText(ld){
+  var dn=ld.dir.toLowerCase(), s;
+  if(ld.type==='Point')       s=['Point load','x = '+matG(ld.a)+' m',matG(ld.v1)+' kN, '+dn];
+  else if(ld.type==='Moment') s=['Moment','x = '+matG(ld.a)+' m',matG(ld.v1)+' kN·m, '+(ld.dir==='Clockwise'?'CW':'CCW')];
+  else if(ld.type==='Horizontal') s=['Horizontal','x = '+matG(ld.a)+' m',matG(ld.v1)+' kN, '+dn.replace('to the ','')];
+  else if(ld.type==='UDL')    s=['UDL',matG(ld.a)+' to '+matG(ld.b)+' m',matG(ld.v1)+' kN/m, '+dn.replace('ward','')];
+  else                        s=['UVL',matG(ld.a)+' to '+matG(ld.b)+' m',matG(ld.v1)+' to '+matG(ld.v2)+' kN/m, '+dn.replace('ward','')];
+  return s[0].padEnd(11)+' '+s[1].padEnd(14)+' '+s[2];
+}
+
+/* ================= UI ================= */
+var SUP_TYPES = {1:'Fixed', 2:'Pinned', 3:'Roller', 4:'Spring'};
+function el(id){return document.getElementById(id);}
+function num(v){ v=parseFloat(v); return isFinite(v)?v:NaN; }
+function fmt(v,d){
+  if(!isFinite(v)) return '—';
+  if(Math.abs(v)<5e-3) v=0;
+  var s = Math.abs(v)>=100 ? v.toFixed(d===undefined?1:d)
+        : Math.abs(v)>=1   ? v.toFixed(d===undefined?2:d)
+        : v.toFixed(d===undefined?3:d);
+  return s.replace(/\.?0+$/,'') === '-0' ? '0' : s;
+}
+
+function supRow(d){
+  d = d || {x:'', type:'3', set:'0', k:''};
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td class="del" title="select">&#9675;</td>'+
+    '<td><input class="sx" type="number" step="any" value="'+d.x+'"></td>'+
+    '<td><select class="st"><option value="1"'+(d.type=='1'?' selected':'')+'>Fixed</option>'+
+    '<option value="2"'+(d.type=='2'?' selected':'')+'>Pinned</option>'+
+    '<option value="3"'+(d.type=='3'?' selected':'')+'>Roller</option>'+
+    '<option value="4"'+(d.type=='4'?' selected':'')+'>Spring</option></select></td>'+
+    '<td><input class="ss" type="number" step="any" value="'+(d.set||0)+'"></td>'+
+    '<td><input class="sk" type="number" step="any" value="'+(d.k||'')+'"></td>';
+  tr.querySelector('.del').onclick = function(){ tr.classList.toggle('sel');
+    tr.style.background = tr.classList.contains('sel') ? '#3a2a2a' : ''; };
+  el('supTable').querySelector('tbody').appendChild(tr);
+  return tr;
+}
+function loadRow(d){
+  d = d || {type:'UDL', a:'', b:'', v1:'', v2:'', dir:'Downward'};
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td class="del">&#9675;</td>'+
+    '<td><select class="lt"><option>UDL</option><option>UVL</option><option>Point</option>'+
+    '<option>Moment</option><option>Horizontal</option></select></td>'+
+    '<td><input class="la" type="number" step="any"></td>'+
+    '<td><input class="lb" type="number" step="any"></td>'+
+    '<td><input class="l1" type="number" step="any"></td>'+
+    '<td><input class="l2" type="number" step="any"></td>'+
+    '<td><select class="ld"></select></td>';
+  tr.querySelector('.lt').value = d.type;
+  tr.querySelector('.la').value = d.a;  tr.querySelector('.lb').value = d.b;
+  tr.querySelector('.l1').value = d.v1; tr.querySelector('.l2').value = d.v2;
+  function dirs(t){
+    if(t==='Moment') return ['Counterclockwise','Clockwise'];
+    if(t==='Horizontal') return ['To the right','To the left'];
+    return ['Downward','Upward'];
+  }
+  function fillDirs(){
+    var sel = tr.querySelector('.ld'); sel.innerHTML='';
+    dirs(tr.querySelector('.lt').value).forEach(function(o){
+      var op=document.createElement('option'); op.textContent=o; sel.appendChild(op);
+    });
+    sel.value = d.dir || dirs(tr.querySelector('.lt').value)[0];
+  }
+  fillDirs();
+  tr.querySelector('.lt').onchange = fillDirs;
+  function spanned(){ var t=tr.querySelector('.lt').value; return t==='UDL'||t==='UVL'; }
+  function sync(){
+    var t = tr.querySelector('.lt').value;
+    tr.querySelector('.lb').disabled = !spanned();
+    tr.querySelector('.l2').disabled = !(t==='UVL');
+  }
+  tr.querySelector('.lt').addEventListener('change', sync); sync();
+  tr.querySelector('.del').onclick = function(){ tr.classList.toggle('sel');
+    tr.style.background = tr.classList.contains('sel') ? '#3a2a2a' : ''; };
+  el('loadTable').querySelector('tbody').appendChild(tr);
+  return tr;
+}
+el('addSup').onclick  = function(){ supRow(); };
+el('addLoad').onclick = function(){ loadRow(); };
+el('delSup').onclick  = function(){
+  el('supTable').querySelectorAll('tbody tr.sel').forEach(function(r){r.remove();});
+};
+el('delLoad').onclick = function(){
+  el('loadTable').querySelectorAll('tbody tr.sel').forEach(function(r){r.remove();});
+};
+
+function readModel(){
+  var L = num(el('fL').value);
+  if(!(L>0)) throw new Error('Length L must be a positive number.');
+  var E = num(el('fE').value), I = num(el('fI').value);
+  if(!(E>0)) throw new Error('E must be a positive number (kN/m²).');
+  if(!(I>0)) throw new Error('I must be a positive number (mm⁴).');
+  var Im4 = I*1e-12;
+  var sup = [];
+  el('supTable').querySelectorAll('tbody tr').forEach(function(tr){
+    var x = num(tr.querySelector('.sx').value);
+    var t = parseInt(tr.querySelector('.st').value,10);
+    var st = num(tr.querySelector('.ss').value)||0;
+    var k  = num(tr.querySelector('.sk').value);
+    if(!(x>=0 && x<=L)) throw new Error('Support x must be within 0…L.');
+    if(t===4 && !(k>0)) throw new Error('Spring support: enter stiffness k (kN/m).');
+    sup.push([x,t,st, t===4?k:0]);
+  });
+  if(!sup.length) throw new Error('Add at least one support.');
+  sup.sort(function(a,b){return a[0]-b[0];});
+  var spanX = [0, L]; sup.forEach(function(s){ if(spanX.indexOf(s[0])<0) spanX.push(s[0]); });
+  spanX = spanX.filter(function(v,i,a){return a.indexOf(v)===i;}).sort(function(a,b){return a-b;});
+  var hinge = (el('fHinge').value.trim().match(/-?\d*\.?\d+/g)||[]).map(Number)
+              .filter(function(h){return h>0 && h<L;});
+  var P=[],M=[],W=[],H=[],loadRows=[];
+  el('loadTable').querySelectorAll('tbody tr').forEach(function(tr){
+    var t = tr.querySelector('.lt').value;
+    var a = num(tr.querySelector('.la').value);
+    var b = num(tr.querySelector('.lb').value);
+    var v1 = num(tr.querySelector('.l1').value);
+    var v2 = num(tr.querySelector('.l2').value);
+    var dir = tr.querySelector('.ld').value;
+    var sg = (dir==='Downward'||dir==='Counterclockwise'||dir==='To the right') ? 1 : -1;
+    if(v1<0){ v1=-v1; sg=-sg; }
+    if(v2<0){ v2=-v2; }
+    var flip = {'Downward':'Upward','Upward':'Downward','Counterclockwise':'Clockwise',
+                'Clockwise':'Counterclockwise','To the right':'To the left','To the left':'To the right'};
+    var dirEff = sg===1 ? dir : flip[dir];
+    loadRows.push({type:t, a:a, b:b, v1:v1, v2:v2, dir:dirEff});
+    if(t==='Point'){ if(!(a>=0&&a<=L)) throw new Error('Point load position out of beam.');
+      if(!isFinite(v1)||v1===0) throw new Error('Point load: enter a magnitude.'); P.push([a, sg*v1]); }
+    else if(t==='Moment'){ if(!(a>=0&&a<=L)) throw new Error('Moment position out of beam.');
+      if(!isFinite(v1)||v1===0) throw new Error('Moment: enter a magnitude.'); M.push([a, sg*v1]); }
+    else if(t==='Horizontal'){ if(!(a>=0&&a<=L)) throw new Error('Horizontal load position out of beam.');
+      if(!isFinite(v1)||v1===0) throw new Error('Horizontal load: enter a magnitude.'); H.push([a, sg*v1]); }
+    else {
+      if(!(a>=0&&b<=L&&b>a)) throw new Error('UDL/UVL: need 0 ≤ a < b ≤ L.');
+      if(!isFinite(v1)) throw new Error('UDL/UVL: enter V1.');
+      var w2 = (t==='UVL') ? v2 : v1;
+      if(!isFinite(w2)) throw new Error('UVL: enter V2.');
+      W.push([a,b,sg*v1,sg*w2]);
+    }
+  });
+  return {L:L, E:[E], I:[Im4], spanX:spanX, hinge:hinge, P:P, M:M, W:W, H:H, sup:sup,
+          loadRows:loadRows, name:el('fTitle').value||'Beam'};
+}
+
+/* ---------- plots (pure inline SVG, no libraries) ---------- */
+function svgFrame(w,h){ return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg">'; }
+function linePlot(title, xs, ys, color, unit, scale){
+  var W=720,H=190,pad=46,top=26,bot=34;
+  var mn=Math.min.apply(null,ys), mx=Math.max.apply(null,ys);
+  if(mx-mn<1e-12){ mx+=1; mn-=1; }
+  var x0=Math.min.apply(null,xs), x1=Math.max.apply(null,xs);
+  function X(v){return pad+(v-x0)/(x1-x0||1)*(W-pad-14);}
+  function Y(v){return top+(mx-v)/(mx-mn)*(H-top-bot);}
+  var s = svgFrame(W,H);
+  s += '<text x="12" y="16" fill="#9a9aa4" font-size="12" font-weight="600">'+title+'</text>';
+  s += '<line x1="'+pad+'" y1="'+Y(0)+'" x2="'+(W-14)+'" y2="'+Y(0)+'" stroke="#3a3a42" stroke-width="1"/>';
+  var pts = xs.map(function(v,i){return X(v).toFixed(1)+','+Y(ys[i]).toFixed(1);}).join(' ');
+  s += '<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2"/>';
+  // zero crossings ticks
+  s += '<text x="'+pad+'" y="'+(H-10)+'" fill="#9a9aa4" font-size="10">'+fmt(x0)+' m</text>';
+  s += '<text x="'+(W-60)+'" y="'+(H-10)+'" fill="#9a9aa4" font-size="10">'+fmt(x1)+' m</text>';
+  // max marker
+  var imx=0; for(var i=0;i<ys.length;i++) if(Math.abs(ys[i])>Math.abs(ys[imx])) imx=i;
+  s += '<circle cx="'+X(xs[imx])+'" cy="'+Y(ys[imx])+'" r="3.5" fill="#fff"/>';
+  s += '<text x="'+Math.min(W-120,X(xs[imx])+6)+'" y="'+Math.max(14,Y(ys[imx])-6)+'" fill="#e8e8ec" font-size="11">'+
+       fmt(ys[imx])+' '+unit+' @ x='+fmt(xs[imx])+' m</text>';
+  s += '<text x="6" y="'+(top+4)+'" fill="#9a9aa4" font-size="10">'+fmt(mx)+'</text>';
+  s += '<text x="6" y="'+(H-bot+4)+'" fill="#9a9aa4" font-size="10">'+fmt(mn)+'</text>';
+  s += '</svg>';
+  return s;
+}
+function beamSketch(B){
+  var W=720,H=170,pad=46,yb=96;
+  var x0=0,x1=B.L;
+  function X(v){return pad+(v-x0)/(x1-x0||1)*(W-pad-14);}
+  var s = svgFrame(W,H);
+  s += '<text x="12" y="16" fill="#9a9aa4" font-size="12" font-weight="600">'+
+       (el('fTitle').value||'Beam')+' | supports &amp; loads</text>';
+  s += '<line x1="'+X(0)+'" y1="'+yb+'" x2="'+X(B.L)+'" y2="'+yb+'" stroke="#5ac8e8" stroke-width="4"/>';
+  var names='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  B.sup.forEach(function(sp,i){
+    var px=X(sp[0]);
+    if(sp[1]===1){ s+='<rect x="'+(px-7)+'" y="'+(yb+4)+'" width="14" height="12" fill="none" stroke="#3ecf8e" stroke-width="2"/>'+
+        '<line x1="'+(px-11)+'" y1="'+(yb+18)+'" x2="'+(px+11)+'" y2="'+(yb+18)+'" stroke="#3ecf8e" stroke-width="2"/>'; }
+    else if(sp[1]===4){ s+='<path d="M '+px+' '+(yb+4)+' l -5 4 l 10 4 l -10 4 l 10 4 l -5 4" fill="none" stroke="#e8c15a" stroke-width="2"/>'; }
+    else { s+='<path d="M '+px+' '+(yb+4)+' l -8 14 l 16 0 Z" fill="none" stroke="#3ecf8e" stroke-width="2"/>'; }
+    if(sp[1]===2){ s+='<circle cx="'+px+'" cy="'+(yb+4)+'" r="2.5" fill="#3ecf8e"/>'; }
+    s += '<text x="'+(px-4)+'" y="'+(yb+38)+'" fill="#3ecf8e" font-size="11">'+
+         (i<26?names[i]:'S'+(i+1))+' ('+SUP_TYPES[sp[1]]+')</text>';
+    if(sp[2]) s += '<text x="'+(px-14)+'" y="'+(yb+50)+'" fill="#e8c15a" font-size="10">set '+fmt(sp[2])+' m</text>';
+  });
+  B.W.forEach(function(w){
+    var a=w[0],b=w[1],wmax=Math.max(Math.abs(w[2]),Math.abs(w[3]))||1;
+    var sg = (w[2]+w[3])>=0 ? 1 : -1;
+    var n = Math.max(3, Math.round((X(b)-X(a))/22));
+    for(var i=0;i<=n;i++){
+      var xx = a+(b-a)*i/n;
+      var wi = w[2]+(w[3]-w[2])*(xx-a)/(b-a);
+      var len = 14+18*Math.abs(wi)/wmax;
+      var y1 = sg>0 ? yb-8-len : yb+8+len;
+      var y2 = sg>0 ? yb-6 : yb+6;
+      s += '<line x1="'+X(xx)+'" y1="'+y1+'" x2="'+X(xx)+'" y2="'+y2+'" stroke="#5ac8e8" stroke-width="1.4"/>'+
+           '<path d="M '+X(xx)+' '+y2+' l -3 '+(sg>0?-5:5)+' l 6 0 Z" fill="#5ac8e8"/>';
+    }
+    s += '<text x="'+((X(a)+X(b))/2-24)+'" y="'+(sg>0? yb-34: yb+44)+'" fill="#5ac8e8" font-size="10">'+
+         fmt(w[2])+(w[2]!==w[3]?'→'+fmt(w[3]):'')+' kN/m</text>';
+  });
+  B.P.forEach(function(p){
+    var px=X(p[0]), sg=p[1]>0?1:-1, y2=sg>0?yb-6:yb+6, y1=sg>0?yb-34:yb+34;
+    s += '<line x1="'+px+'" y1="'+y1+'" x2="'+px+'" y2="'+y2+'" stroke="#e05c5c" stroke-width="2"/>'+
+         '<path d="M '+px+' '+y2+' l -4 '+(sg>0?-6:6)+' l 8 0 Z" fill="#e05c5c"/>'+
+         '<text x="'+(px+5)+'" y="'+(y1+4)+'" fill="#e05c5c" font-size="10">'+fmt(Math.abs(p[1]))+' kN</text>';
+  });
+  B.M.forEach(function(mm){
+    var px=X(mm[0]);
+    s += '<path d="M '+(px-10)+' '+(yb-16)+' a 10 10 0 1 1 10 10" fill="none" stroke="#c86ae8" stroke-width="2"/>'+
+         '<text x="'+(px+4)+'" y="'+(yb-24)+'" fill="#c86ae8" font-size="10">'+fmt(Math.abs(mm[1]))+' kN·m</text>';
+  });
+  B.hinge.forEach(function(h){
+    s += '<circle cx="'+X(h)+'" cy="'+yb+'" r="4" fill="#141417" stroke="#e8c15a" stroke-width="2"/>';
+  });
+  s += '</svg>';
+  return s;
+}
+
+function calculate(){
+  var st = el('status');
+  try{
+    var B = readModel();
+    var R = solveBeam(B);
+    if(R.unstable || R.DI<0){
+      st.className='err';
+      st.textContent='Cannot analyze this beam: unstable or partially constrained (degree of indeterminacy '+R.DI+').';
+      el('kpis').innerHTML=''; el('plots').innerHTML=''; el('reactCard').style.display='none';
+      return;
+    }
+    st.className='ok';
+    st.textContent='Done — direct stiffness solution. Degree of indeterminacy: '+R.DI+
+                   (R.DI===0?' (statically determinate)':' (indeterminate, degree '+R.DI+')')+'.';
+    // KPIs
+    el('kpis').innerHTML =
+      '<div class="kpi"><div class="t">Max shear |V|</div><div class="v">'+fmt(R.Vmax)+' kN</div><div class="w">at x = '+fmt(R.xV)+' m</div></div>'+
+      '<div class="kpi"><div class="t">Max moment |M|</div><div class="v">'+fmt(R.Mmax)+' kN·m</div><div class="w">at x = '+fmt(R.xM)+' m</div></div>'+
+      '<div class="kpi"><div class="t">Max deflection</div><div class="v">'+fmt(R.dmax*1000)+' mm</div><div class="w">at x = '+fmt(R.xd)+' m (up +)</div></div>';
+    // reactions
+    var names='ABCDEFGHIJKLMNOPQRSTUVWXYZ', tb='';
+    var hasH = B.H.length>0;
+    B.sup.forEach(function(sp,i){
+      var nm = i<26?names[i]:'S'+(i+1);
+      tb += '<tr><td>'+nm+'y</td><td>'+fmt(R.Ry[i])+' kN '+(R.Ry[i]>=0?'↑':'↓')+'</td><td>'+SUP_TYPES[sp[1]]+' at x='+fmt(sp[0])+' m</td></tr>';
+      if(sp[1]===1) tb += '<tr><td>M'+nm+'</td><td>'+fmt(R.Mr[i])+' kN·m CCW</td><td>fixed-end moment</td></tr>';
+    });
+    if(hasH){
+      B.sup.forEach(function(sp,i){
+        if(R.Rx[i]!==0) tb += '<tr><td>'+(i<26?names[i]:'S'+(i+1))+'x</td><td>'+fmt(R.Rx[i])+' kN</td><td>horizontal</td></tr>';
+      });
+    }
+    el('reactTable').querySelector('tbody').innerHTML = tb;
+    el('reactCard').style.display='';
+    // plots
+    el('plots').innerHTML =
+      beamSketch(B)+
+      linePlot('Shear Force Diagram (V) — kN', R.xp, R.Vp, '#5ac8e8','kN')+
+      linePlot('Bending Moment Diagram (M) — kN·m, sagging +', R.xp, R.Mp, '#c86ae8','kN·m')+
+      linePlot('Beam Deflection Curve — mm', R.xp, R.vp.map(function(v){return v*1000;}), '#e8c15a','mm');
+  }catch(err){
+    st.className='err'; st.textContent = err.message || String(err);
+  }
+}
+el('calc').onclick = calculate;
+
+var lastReport = '';
+var METHOD_NAMES = {tm:'Three-Moment Equation', sd:'Slope-Deflection Method', md:'Moment Distribution Method', fm:'Force Method'};
+el('viewSol').onclick = function(){
+  var st = el('status');
+  try{
+    var B = readModel();
+    var m = el('solMethod').value;
+    var R, lines;
+    if(m === 'sd'){ R = sdAnalyze(B); lines = sdPrint(B, R); }
+    else if(m === 'md'){ R = mdAnalyze(B); lines = mdPrint(B, R); }
+    else if(m === 'fm'){ R = fmAnalyze(B); lines = fmPrint(B, R); }
+    else          { R = tmAnalyze(B); lines = tmPrint(B, R); }
+    lastReport = buildSolutionTextJS(B, B.loadRows, METHOD_NAMES[m], R, lines);
+    el('solPre').textContent = lastReport;
+    el('solCard').style.display = '';
+    st.className = 'ok';
+    st.textContent = 'Step-by-step ' + METHOD_NAMES[m].toLowerCase() + ' solution ready (degree of indeterminacy ' + R.DI + ').';
+    el('solCard').scrollIntoView({behavior:'smooth', block:'start'});
+  }catch(err){
+    el('solCard').style.display = 'none';
+    st.className = 'err';
+    st.textContent = err.message || String(err);
+  }
+};
+el('solClose').onclick = function(){ el('solCard').style.display = 'none'; };
+el('solDl').onclick = function(){
+  if(!lastReport) return;
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([lastReport], {type:'text/plain'}));
+  a.download = 'ProfX-solution-three-moment.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+el('clear').onclick = function(){
+  el('fTitle').value='Beam'; el('fL').value=10; el('fE').value='200e6'; el('fI').value='500e6'; el('fHinge').value='';
+  el('supTable').querySelector('tbody').innerHTML='';
+  el('loadTable').querySelector('tbody').innerHTML='';
+  el('kpis').innerHTML=''; el('plots').innerHTML=''; el('reactCard').style.display='none';
+  el('solCard').style.display='none'; lastReport='';
+  var st=el('status'); st.className=''; st.textContent='Cleared. Enter the beam and press CALCULATE.';
+};
+
+/* demo model = the example from the desktop app screenshot */
+supRow({x:0,  type:'2', set:0});
+supRow({x:5,  type:'3', set:0});
+supRow({x:10, type:'3', set:0});
+loadRow({type:'UDL', a:0, b:10, v1:10, v2:10, dir:'Downward'});
+calculate();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4fa094e38cadb51',t:'MTc5Mjg1NTk2OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

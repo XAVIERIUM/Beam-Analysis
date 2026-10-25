@@ -67,6 +67,34 @@
   footer{padding:14px 22px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
   .del{color:var(--red);cursor:pointer;text-align:center;user-select:none}
   a{color:var(--cyan)}
+  .fm-box{background:var(--surface);border:1px solid #483b8a;border-radius:10px;padding:12px 14px;margin-top:10px}
+  .fm-box-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .fm-box-title{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--deflec)}
+  .fm-box-sub{font-size:11.5px;color:var(--muted);margin-bottom:8px}
+  .fm-mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  @media (max-width:520px){.fm-mgrid{grid-template-columns:1fr}}
+  .fm-mbtn{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+           text-align:left;color:var(--text);cursor:pointer;font:inherit;transition:border-color .15s,background .15s}
+  .fm-mbtn:hover{border-color:var(--violet)}
+  .fm-mbtn.active{background:#221c3a;border-color:var(--violet);box-shadow:0 0 0 1px var(--violet) inset}
+  .fm-mbtn .mt{display:flex;align-items:center;gap:7px;font-weight:700;font-size:12.5px;color:var(--text)}
+  .fm-mbtn .mdot{width:9px;height:9px;border-radius:50%;border:2px solid var(--muted);display:inline-block;flex-shrink:0}
+  .fm-mbtn.active .mdot{border-color:var(--deflec);background:var(--deflec)}
+  .fm-mbtn .ms{display:block;font-size:11px;color:var(--muted);margin:2px 0 0 16px}
+  .fm-optrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px;align-items:end}
+  @media (max-width:520px){.fm-optrow{grid-template-columns:1fr}}
+  .fm-pills{display:flex;gap:5px;flex-wrap:wrap}
+  .fm-pill{border:1px solid var(--line);background:var(--surface2);color:var(--muted);border-radius:999px;
+           padding:3px 9px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit}
+  .fm-pill:hover{border-color:var(--violet);color:var(--text)}
+  .fm-pill.active{background:var(--violet);border-color:var(--violet);color:#fff}
+  .fm-sumgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:8px;margin-bottom:10px}
+  .fm-sumitem{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+  .fm-sumitem .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .fm-sumitem .v{font-size:13.5px;font-weight:700;color:var(--text);margin-top:2px}
+  .fm-sumitem .s{font-size:11px;color:var(--muted);margin-top:1px}
+  .solpre{background:var(--surface);border:1px solid var(--line);border-radius:8px;
+          padding:12px;font:11.5px/1.42 Consolas,Menlo,monospace;color:var(--text);overflow:auto;white-space:pre;margin:0}
 </style>
 </head>
 <body>
@@ -80,21 +108,35 @@
     <div class="card">
       <h2>Beam</h2>
       <label>Title</label><input id="fTitle" value="Beam">
+      <label style="display:flex;align-items:center;gap:8px;margin-top:9px;margin-bottom:6px;padding:7px 10px;background:var(--surface2);border:1px solid var(--line);border-radius:7px;cursor:pointer">
+        <input type="checkbox" id="symbolicEI" style="width:auto;accent-color:var(--violet)">
+        <span style="color:var(--text);font-size:12.3px"><b>No numerical E / I value</b> <span style="color:var(--muted)">(symbolic E &amp; I &mdash; slopes/deflections in terms of EI)</span></span>
+      </label>
       <div class="row c4">
         <div><label>Length L (m)</label><input id="fL" type="number" step="any" value="10"></div>
-        <div><label>E (kN/m&sup2;)</label><input id="fE" type="number" step="any" value="200e6"></div>
-        <div><label>I (mm&#8308;)</label><input id="fI" type="number" step="any" value="500e6"></div>
+        <div><label id="lblFE">E (kN/m&sup2; or kE)</label><input id="fE" type="text" value="200e6" placeholder="e.g. 200e6 or E"></div>
+        <div><label id="lblFI">I (mm&#8308; or kI)</label><input id="fI" type="text" value="500e6" placeholder="e.g. 500e6 or I"></div>
         <div><label>Hinges x (m, list)</label><input id="fHinge" placeholder="e.g. 4 7"></div>
       </div>
-      <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer">
-        <input type="checkbox" id="perSpan" style="width:auto">
-        <span style="color:var(--text);font-size:12.5px">Vary E / I per span (non-prismatic beam)</span>
+      <div id="eiModeHint" style="font-size:11px;color:var(--muted);margin-top:5px;line-height:1.35">
+        Tip: Tick <b>No numerical E / I value</b> (or type <code>E</code>, <code>I</code>) when E &amp; I are not given numerically.
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer">
+        <input type="checkbox" id="perSpan" style="width:auto;accent-color:var(--violet)">
+        <span style="color:var(--text);font-size:12.5px"><b>Vary E / I per span</b> <span style="color:var(--muted)">(non-prismatic, e.g. Span 1 = I, Span 2 = 2I)</span></span>
       </label>
-      <div id="spanWrap" style="display:none;margin-top:8px">
+      <div id="spanWrap" style="display:none;margin-top:8px;padding:8px 10px;background:var(--surface2);border:1px solid var(--line);border-radius:7px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;line-height:1.35">
+          Enter relative multipliers (<code>I</code>, <code>2I</code>, <code>1.5I</code>, <code>I/2</code>, <code>E</code>, <code>2E</code>) or exact numerical values (<code>kN/m&sup2;</code>, <code>mm&#8308;</code>).
+        </div>
         <table id="spanTable">
-          <thead><tr><th>Span</th><th>E (kN/m&sup2;)</th><th>I (mm&#8308;)</th></tr></thead>
+          <thead><tr><th>Span</th><th id="thSpanE">E (kN/m&sup2; or kE)</th><th id="thSpanI">I (mm&#8308; or kI)</th><th>Effective EI</th></tr></thead>
           <tbody></tbody>
         </table>
+        <div style="margin-top:7px">
+          <label>Extra section-step x inside spans (m, optional list &mdash; e.g. stepped beam without support)</label>
+          <input id="fStepX" type="text" placeholder="e.g. 3  (splits span at x = 3 m into separate EI segments)">
+        </div>
       </div>
     </div>
 
@@ -133,6 +175,48 @@
       <button class="btn primary" id="viewSol" style="background:var(--violet2)">VIEW SOLUTION</button>
       <button class="btn ghost" id="clear">CLEAR ALL</button>
     </div>
+
+    <div class="fm-box" id="fmDeflBox" style="display:none">
+      <div class="fm-box-head">
+        <span class="fm-box-title">Force Method &mdash; Deflection Method</span>
+      </div>
+      <div class="fm-box-sub">
+        Choose which method will be used to compute the primary beam deformations (&Delta;<sub>i0</sub>, f<sub>ij</sub>) and beam deflections:
+      </div>
+      <div class="fm-mgrid" id="fmMethodGrid">
+        <button type="button" class="fm-mbtn active" data-dm="di">
+          <span class="mt"><span class="mdot"></span>Double Integration</span>
+          <span class="ms">EI v&prime;&prime;(x) = M(x) &amp; boundary constants</span>
+        </button>
+        <button type="button" class="fm-mbtn" data-dm="ma">
+          <span class="mt"><span class="mdot"></span>Moment-Area</span>
+          <span class="ms">M/EI diagram areas &amp; centroids</span>
+        </button>
+        <button type="button" class="fm-mbtn" data-dm="vw">
+          <span class="mt"><span class="mdot"></span>Virtual Work</span>
+          <span class="ms">Unit-load &int; (m &middot; M / EI) dx</span>
+        </button>
+        <button type="button" class="fm-mbtn" data-dm="cb">
+          <span class="mt"><span class="mdot"></span>Conjugate Beam</span>
+          <span class="ms">Elastic load M/EI, V&prime;=&theta;, M&prime;=v</span>
+        </button>
+      </div>
+      <div class="fm-optrow">
+        <div>
+          <label for="fmDeflSelect">Selected deflection method</label>
+          <select id="fmDeflSelect">
+            <option value="di">Double Integration Method</option>
+            <option value="ma">Moment-Area Method</option>
+            <option value="vw">Virtual Work Method</option>
+            <option value="cb">Conjugate Beam Method</option>
+          </select>
+        </div>
+        <div>
+          <label for="fmTargetX">Check deflection at x (m, optional)</label>
+          <input id="fmTargetX" type="number" step="any" placeholder="Auto (max deflection)">
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ============ RESULTS ============ -->
@@ -142,6 +226,23 @@
     <div class="card" id="reactCard" style="display:none">
       <h2>Reactions</h2>
       <table id="reactTable"><thead><tr><th>Reaction</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="card" id="fmResultCard" style="display:none;border-color:#483b8a">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <h2 style="margin:0;color:var(--deflec)" id="fmResultTitle">Force Method &mdash; Deflection Calculation</h2>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <div class="fm-pills" id="fmResultPills">
+            <button type="button" class="fm-pill active" data-dm="di">Double Integration</button>
+            <button type="button" class="fm-pill" data-dm="ma">Moment-Area</button>
+            <button type="button" class="fm-pill" data-dm="vw">Virtual Work</button>
+            <button type="button" class="fm-pill" data-dm="cb">Conjugate Beam</button>
+          </div>
+          <button type="button" class="btn primary sm" id="fmOpenFull">Full Solution</button>
+          <button type="button" class="btn ghost sm" id="fmDlTxt">Download .txt</button>
+        </div>
+      </div>
+      <div class="fm-sumgrid" id="fmResultSummary"></div>
+      <pre class="solpre" id="fmResultPre" style="max-height:430px"></pre>
     </div>
     <div id="plots"></div>
     <div class="card" id="solCard" style="display:none">
@@ -180,9 +281,11 @@
           pictures: the beam itself, the shear diagram, the bending moment diagram and the deflection curve,
           each with its maximum value marked.</li>
       <li><b style="color:var(--text)">Want the full working?</b> Choose a method &mdash; Three-Moment Equation,
-          Slope-Deflection, Force Method or Moment Distribution &mdash; and press <i>VIEW SOLUTION</i>. You get the
-          same step-by-step write-up as the desktop app's Solution window, and <i>Download .txt</i> saves it for
-          your notes or submission.</li>
+          Slope-Deflection, Moment Distribution or Force Method &mdash; and press <i>VIEW SOLUTION</i>. When
+          <b style="color:var(--text)">Force Method</b> is chosen, you can also pick how deflections are computed:
+          <i>Double Integration</i>, <i>Moment-Area</i>, <i>Virtual Work</i> or <i>Conjugate Beam</i>. That calculation
+          appears directly in the Results card and in the full step-by-step solution, and <i>Download .txt</i> saves it
+          for your notes or submission.</li>
       <li><b style="color:var(--text)">Start over</b> with <i>CLEAR ALL</i> whenever you like.</li>
     </ol>
   </div>
@@ -654,6 +757,54 @@ function expandEI(B){
   while(IArr.length<nsp) IArr.push(IArr[IArr.length-1]);
   return [EArr, IArr];
 }
+function fmtFactorNum(m){
+  var z = Math.abs(m) < 1e-12 ? 0 : m;
+  var r = Math.round(z);
+  if(Math.abs(z - r) < 1e-9) return String(r);
+  var s = z.toFixed(4).replace(/\.?0+$/, '');
+  return s === '-0' ? '0' : s;
+}
+function fmtSymMul(m, sym){
+  if(Math.abs(m - 1) < 1e-8) return sym;
+  return fmtFactorNum(m) + sym;
+}
+function ensureBProps(B){
+  var EIx = expandEI(B), EArr = EIx[0], IArr = EIx[1], nsp = EArr.length;
+  var sym = !!B.symbolicEI;
+  var EIref = (B.EIref && B.EIref > 0) ? B.EIref : (sym ? 1 : (EArr[0] * IArr[0]));
+  var eRef = (B.Ebase && B.Ebase > 0) ? B.Ebase : (EArr[0] || 1);
+  var iRef = (B.Ibase && B.Ibase > 0) ? B.Ibase : (IArr[0] || 1);
+  var eMul = (B.eMul && B.eMul.length === nsp) ? B.eMul.slice() : EArr.map(function(e){ return e / eRef; });
+  var iMul = (B.iMul && B.iMul.length === nsp) ? B.iMul.slice() : IArr.map(function(i){ return i / iRef; });
+  var eiMul = EArr.map(function(e, k){ return (e * IArr[k]) / EIref; });
+  var hasVaryE = eMul.some(function(v){ return Math.abs(v - eMul[0]) > 1e-7; });
+  var hasVaryI = iMul.some(function(v){ return Math.abs(v - iMul[0]) > 1e-7; });
+  var hasVaryEI = eiMul.some(function(v){ return Math.abs(v - eiMul[0]) > 1e-7; });
+  var hasNonUnit = eiMul.some(function(v){ return Math.abs(v - 1) > 1e-7; }) ||
+                   eMul.some(function(v){ return Math.abs(v - 1) > 1e-7; }) ||
+                   iMul.some(function(v){ return Math.abs(v - 1) > 1e-7; });
+  return { sym:sym, EIref:EIref, EArr:EArr, IArr:IArr, eMul:eMul, iMul:iMul, eiMul:eiMul,
+           hasVaryE:hasVaryE, hasVaryI:hasVaryI, hasVaryEI:hasVaryEI, hasNonUnit:hasNonUnit };
+}
+function segEIInfo(B, xm){
+  var M = ensureBProps(B), tol = 1e-8 * Math.max(1, B.L), k = -1;
+  for(var q=0; q<B.spanX.length-1; q++){
+    if(xm >= B.spanX[q] - tol && xm <= B.spanX[q+1] + tol){ k = q; break; }
+  }
+  if(k < 0 || k >= M.EArr.length) k = M.EArr.length - 1;
+  var r = M.eiMul[k], em = M.eMul[k], im = M.iMul[k], EI = M.EArr[k] * M.IArr[k];
+  var eS = fmtSymMul(em, 'E'), iS = fmtSymMul(im, 'I'), eiS = fmtSymMul(r, 'EI');
+  var fullDesc;
+  if(M.sym){
+    fullDesc = 'E = ' + eS + ', I = ' + iS + '  =>  EI = ' + eiS;
+  } else if(M.hasVaryE || M.hasVaryI || M.hasNonUnit){
+    fullDesc = 'E = ' + eS + ', I = ' + iS + '  =>  EI = ' + eiS + ' (' + matG(EI) + ' kNm^2)';
+  } else {
+    fullDesc = 'EI = ' + matG(EI) + ' kNm^2';
+  }
+  return { k:k, EI:EI, r:r, em:em, im:im, eS:eS, iS:iS, eiS:eiS, sym:M.sym, EIref:M.EIref,
+           hasVary:(M.hasVaryE || M.hasVaryI || M.hasNonUnit), fullDesc:fullDesc };
+}
 function tmAnalyze(B){
   var L=B.L, sup=B.sup, tol=1e-7*Math.max(1,L);
   var EIx = expandEI(B), EArr = EIx[0], IArr = EIx[1];
@@ -666,6 +817,19 @@ function tmAnalyze(B){
   var dl=sup.map(function(s){return s[2]||0;});
   typ.forEach(function(t,i){ if(t===4) throw new Error('Spring supports are not available in the three-moment method. Use the slope-deflection or force method.'); });
   if(B.hinge && B.hinge.length) throw new Error('Internal hinges are not available in the three-moment method. Use the slope-deflection or force method.');
+  if(EArr.length > 1){
+    (B.spanX||[]).forEach(function(sx){
+      if(sx > tol && sx < L - tol && !sup.some(function(sp){ return Math.abs(sp[0] - sx) < tol; })){
+        var kL=-1, kR=-1;
+        for(var qi=0;qi<B.spanX.length-1;qi++){
+          if(Math.abs(B.spanX[qi+1]-sx)<tol) kL=qi;
+          if(Math.abs(B.spanX[qi]-sx)<tol) kR=qi;
+        }
+        if(kL>=0 && kR>=0 && Math.abs(EArr[kL]*IArr[kL] - EArr[kR]*IArr[kR]) > 1e-9*Math.max(EArr[kL]*IArr[kL],1e-12))
+          throw new Error('Three-Moment Equation requires uniform EI within each span between supports. Use Force Method or Slope-Deflection for stepped sections inside a span.');
+      }
+    });
+  }
   typ.forEach(function(t,i){ if(t===1 && xs[i]>tol && xs[i]<L-tol)
     throw new Error('A fixed support must be at an end of the beam (the three-moment equation is for continuous beams).'); });
   if(nS===1 && typ[0]!==1) throw new Error('The beam is unstable (mechanism). Add another support.');
@@ -819,13 +983,14 @@ function tmPrint(B,R){
     line('      Joint '+jn(i+1).padEnd(4)+' x = '+x.toFixed(2).padStart(6)+' m    '+d);
   });
   line();
+  var MpropTM = ensureBProps(B);
+  if(MpropTM.sym) line('      Flexural rigidity mode : Symbolic / Relative (no numerical E, I values; reference = EI)');
   for(var s=0;s<jx.length-1;s++){
-    var xm=(jx[s]+jx[s+1])/2, k2=-1;
-    for(var q=0;q<B.spanX.length-1;q++) if(xm>=B.spanX[q]&&xm<=B.spanX[q+1]){ k2=q; break; }
-    if(k2<0) k2=EArr.length-1;
+    var xm=(jx[s]+jx[s+1])/2;
+    var riTM = segEIInfo(B, xm);
     var d2='';
     if(jx[s+1]<=xs[0]+tolx || jx[s]>=xs[nS-1]-tolx) d2='   (overhang)';
-    line('      Span  '+(jn(s+1)+jn(s+2)).padEnd(4)+' L = '+(jx[s+1]-jx[s]).toFixed(2).padStart(6)+' m    EI = '+matG(EArr[k2]*IArr[k2])+' kNm^2'+d2);
+    line('      Span  '+(jn(s+1)+jn(s+2)).padEnd(4)+' L = '+(jx[s+1]-jx[s]).toFixed(2).padStart(6)+' m    '+riTM.fullDesc+d2);
   }
   st++; stepHead(st,'REDUNDANTS');
   line('      Reaction components            : r = '+R.rTot);
@@ -863,23 +1028,28 @@ function tmPrint(B,R){
     line(); line('      Each equation is divided by L/EI of its left span so that the first coefficient is 1.');
     unk.forEach(function(j,eqi){
       var cols=[]; for(var c2=0;c2<nS;c2++) if(Math.abs(S.Aq[j][c2])>1e-12) cols.push(c2);
+      function tmSpanEILbl(spIdx){
+        var xmS = (xs[spIdx] + xs[spIdx+1]) / 2;
+        return segEIInfo(B, xmS).fullDesc;
+      }
       if(S.kind[j]===1){
         line(); line('      Joint '+sl[j]+'   (supports '+sl[j-1]+', '+sl[j]+', '+sl[j+1]+')'); line();
-        line('         Span '+sl[j-1]+sl[j]+' : L = '+S.lsp[j-1].toFixed(2)+' m,  EI = '+matG(S.EIsp[j-1])+' kNm^2');
-        line('         Span '+sl[j]+sl[j+1]+' : L = '+S.lsp[j].toFixed(2)+' m,  EI = '+matG(S.EIsp[j])+' kNm^2');
+        line('         Span '+sl[j-1]+sl[j]+' : L = '+S.lsp[j-1].toFixed(2)+' m,  '+tmSpanEILbl(j-1));
+        line('         Span '+sl[j]+sl[j+1]+' : L = '+S.lsp[j].toFixed(2)+' m,  '+tmSpanEILbl(j));
+        line("         Relative flexibility ratio (L'/EI') / (L/EI) = "+fmtN((S.lsp[j]/S.EIsp[j])/(S.lsp[j-1]/S.EIsp[j-1])));
         line('         Settlements : D_'+sl[j-1]+' = '+S.dl[j-1]+' m,  D_'+sl[j]+' = '+S.dl[j]+' m,  D_'+sl[j+1]+' = '+S.dl[j+1]+' m');
         line('         Load term, span '+sl[j-1]+sl[j]+'   : '+zr(S.ldL[j]).toFixed(4).replace(/^/,'+').replace('+-','-'));
         line('         Load term, span '+sl[j]+sl[j+1]+'   : '+zr(S.ldR[j]).toFixed(4).replace(/^/,'+').replace('+-','-'));
         line('         Settlement term        : '+zr(S.stm[j]).toFixed(4).replace(/^/,'+').replace('+-','-')); line();
       }else if(S.kind[j]===2){
         line(); line('      Fixed end '+sl[j]+'   (slope = 0, span '+sl[j]+sl[j+1]+')'); line();
-        line('         Span '+sl[j]+sl[j+1]+' : L = '+S.lsp[0].toFixed(2)+' m,  EI = '+matG(S.EIsp[0])+' kNm^2');
+        line('         Span '+sl[j]+sl[j+1]+' : L = '+S.lsp[0].toFixed(2)+' m,  '+tmSpanEILbl(0));
         line('         Settlements : D_'+sl[j]+' = '+S.dl[j]+' m,  D_'+sl[j+1]+' = '+S.dl[j+1]+' m');
         line('         Load term, span '+sl[j]+sl[j+1]+'   : '+zr(S.ldR[j]).toFixed(4).replace(/^/,'+').replace('+-','-'));
         line('         Settlement term        : '+zr(S.stm[j]).toFixed(4).replace(/^/,'+').replace('+-','-')); line();
       }else{
         line(); line('      Fixed end '+sl[j]+'   (slope = 0, span '+sl[j-1]+sl[j]+')'); line();
-        line('         Span '+sl[j-1]+sl[j]+' : L = '+S.lsp[nSpan-1].toFixed(2)+' m,  EI = '+matG(S.EIsp[nSpan-1])+' kNm^2');
+        line('         Span '+sl[j-1]+sl[j]+' : L = '+S.lsp[nSpan-1].toFixed(2)+' m,  '+tmSpanEILbl(nSpan-1));
         line('         Settlements : D_'+sl[j-1]+' = '+S.dl[j-1]+' m,  D_'+sl[j]+' = '+S.dl[j]+' m');
         line('         Load term, span '+sl[j-1]+sl[j]+'   : '+zr(S.ldL[j]).toFixed(4).replace(/^/,'+').replace('+-','-'));
         line('         Settlement term        : '+zr(S.stm[j]).toFixed(4).replace(/^/,'+').replace('+-','-')); line();
@@ -983,8 +1153,8 @@ function sdNum(v){
   if(Math.abs(v)>=1e7 || Math.abs(v)<1e-3) return v.toExponential(4);
   return v.toFixed(4);
 }
-function sdVstr(v){ return Math.abs(v)<1e-15 ? '0' : v.toExponential(6); }
-function sdKval(name,v){ return name.slice(0,5)==='delta' ? matG(v*1000)+' mm' : matG(v); }
+function sdVstr(v){ return Math.abs(v)<1e-12 ? '0' : v.toExponential(6); }
+function sdKval(name,v,isSym){ return (isSym && Math.abs(v)<1e-12) ? '0' : (name.slice(0,5)==='delta' ? matG(v*1000)+' mm' : matG(v)); }
 function sdSumStr(v){ return v.map(function(x){ return x<0 ? '('+x.toFixed(4)+')' : x.toFixed(4); }).join(' + '); }
 function sdLinStr(c, nm, c0){
   var s='', big=0;
@@ -1102,7 +1272,7 @@ function sdAnalyze(B){
   (B.hinge||[]).forEach(function(h){ if(h<=tol||h>=L-tol) throw new Error('Hinges must be inside the beam.'); });
   (B.W||[]).forEach(function(w){ if(w[1]<=w[0]) throw new Error('Distributed load: end must be greater than start.'); });
   var jset={};
-  [0,L].concat(sup.map(function(s){return s[0];}), B.hinge||[]).forEach(function(v){jset[Math.round(v*1e9)/1e9]=1;});
+  [0,L].concat(sup.map(function(s){return s[0];}), B.hinge||[], B.spanX||[]).forEach(function(v){jset[Math.round(v*1e9)/1e9]=1;});
   var jx=Object.keys(jset).map(Number).sort(function(a,b){return a-b;}).filter(function(v){return v>=0&&v<=L;});
   var nj=jx.length, nS=nj-1;
   function jOf(x){ for(var j=0;j<nj;j++) if(Math.abs(jx[j]-x)<tol) return j; return -1; }
@@ -1303,23 +1473,26 @@ function sdPrint(B,R){
     var parts=[];
     if(si>=0) parts.push(tn[B.sup[si][1]]);
     if(TR.isHinge[j]){ if(!parts.length) parts.push('Hinge'); else parts.push('hinge'); }
-    if(!parts.length) parts.push('Free end');
+    if(!parts.length) parts.push((j===0||j===nj-1) ? 'Free end' : 'Continuous section joint');
     var desc=parts.join(' + ');
     var dl=[TR.vd[j], TR.tl[j]];
     if(TR.isHinge[j]) dl.push(TR.tr[j]);
     var kn='', un='';
     dl.forEach(function(d){
-      if(isK[d-1]) kn+=nm[d-1]+' = '+sdKval(nm[d-1],val[d-1])+', ';
+      if(isK[d-1]) kn+=nm[d-1]+' = '+sdKval(nm[d-1],val[d-1],!!B.symbolicEI)+', ';
       else un+=nm[d-1]+', ';
     });
     line('      Joint '+jn(j+1)+'  (x = '+jx[j].toFixed(2)+' m)  '+desc);
     line('         known   : '+kn);
     line('         unknown : '+un);
   }
+  var MpropSD = ensureBProps(B);
+  if(MpropSD.sym) line('      Flexural rigidity mode : Symbolic / Relative (unknowns represent EI*theta and EI*delta)');
   for(var s=0;s<nS;s++){
     var q=TR.SP[s];
+    var riSD = segEIInfo(B, (jx[s]+jx[s+1])/2);
     line('      Member '+jn(s+1)+jn(s+2)+' : '+jn(s+1)+' (x = '+jx[s].toFixed(2)+' m) to '+jn(s+2)+
-         ' (x = '+jx[s+1].toFixed(2)+' m),  L = '+q.l.toFixed(2)+' m,  EI = '+q.EI.toExponential(4)+' kNm^2');
+         ' (x = '+jx[s+1].toFixed(2)+' m),  L = '+q.l.toFixed(2)+' m,  '+riSD.fullDesc);
   }
   line('      Unknown displacements = '+TR.fr.length+',   equations available = '+TR.fr.length); line();
   line('   STEP 2 - FIXED-END MOMENTS (FEM, kNm)');
@@ -1338,12 +1511,15 @@ function sdPrint(B,R){
     line('         '+'TOTAL'.padEnd(48)+' FEM_'+na+nb+' = '+q.fab.toFixed(4).padStart(10)+'   FEM_'+nb+na+' = '+q.fba.toFixed(4).padStart(10));
   }
   line(); line('   STEP 3 - SLOPE-DEFLECTION EQUATIONS');
-  line('      (known values are substituted;  rotations in rad, deflections in m)');
+  line(MpropSD.sym
+       ? '      (symbolic EI mode: equations written in terms of scaled unknowns EI*theta and EI*delta)'
+       : '      (known values are substituted;  rotations in rad, deflections in m)');
   for(s=0;s<nS;s++){
     q=TR.SP[s]; var d=q.d; na=jn(s+1); nb=jn(s+2); var k=2*q.EI/q.l;
-    line('      Member '+na+nb+'   (2EI/L = '+sdNum(k)+' kNm)');
-    line('         M_'+na+nb+' = '+sdNum(k)+' [ 2('+symv(d[2])+') + ('+symv(d[4])+') - 3(('+symv(d[1])+') - ('+symv(d[3])+'))/'+q.l.toFixed(2)+' ] + ('+sdNum(q.fab)+')');
-    line('         M_'+nb+na+' = '+sdNum(k)+' [ ('+symv(d[2])+') + 2('+symv(d[4])+') - 3(('+symv(d[1])+') - ('+symv(d[3])+'))/'+q.l.toFixed(2)+' ] + ('+sdNum(q.fba)+')');
+    var riSD3 = segEIInfo(B, (jx[s]+jx[s+1])/2);
+    line('      Member '+na+nb+'   ('+riSD3.eiS+',  2EI/L = '+sdNum(k)+(MpropSD.sym ? ' * EI' : ' kNm')+')');
+    line('         M_'+na+nb+' = '+sdNum(k)+' [ 2('+symv(d[1])+') + ('+symv(d[3])+') - 3(('+symv(d[0])+') - ('+symv(d[2])+'))/'+q.l.toFixed(2)+' ] + ('+sdNum(q.fab)+')');
+    line('         M_'+nb+na+' = '+sdNum(k)+' [ ('+symv(d[1])+') + 2('+symv(d[3])+') - 3(('+symv(d[0])+') - ('+symv(d[2])+'))/'+q.l.toFixed(2)+' ] + ('+sdNum(q.fba)+')');
     line('         simplified:');
     line('            M_'+na+nb+' = '+memStr(q,'ab'));
     line('            M_'+nb+na+' = '+memStr(q,'ba'));
@@ -1385,8 +1561,15 @@ function sdPrint(B,R){
   else{
     line('      The '+TR.fr.length+' equation(s) are solved simultaneously:');
     TR.fr.forEach(function(r2){
-      if(nm[r2-1].slice(0,5)==='delta') line('         '+nm[r2-1].padEnd(14)+' = '+(X[r2-1]*1000).toFixed(6).padStart(12)+' mm   ('+X[r2-1].toExponential(6)+' m)');
-      else line('         '+nm[r2-1].padEnd(14)+' = '+X[r2-1].toExponential(6).padStart(14)+' rad');
+      if(MpropSD.sym){
+        if(nm[r2-1].slice(0,5)==='delta')
+          line('         EI * '+nm[r2-1].padEnd(11)+' = '+zr(X[r2-1]).toFixed(6).padStart(12)+' kNm^3   =>   '+nm[r2-1]+' = '+zr(X[r2-1]).toFixed(6)+' / EI');
+        else
+          line('         EI * '+nm[r2-1].padEnd(11)+' = '+zr(X[r2-1]).toFixed(6).padStart(12)+' kNm^2   =>   '+nm[r2-1]+' = '+zr(X[r2-1]).toFixed(6)+' / EI');
+      } else {
+        if(nm[r2-1].slice(0,5)==='delta') line('         '+nm[r2-1].padEnd(14)+' = '+(X[r2-1]*1000).toFixed(6).padStart(12)+' mm   ('+X[r2-1].toExponential(6)+' m)');
+        else line('         '+nm[r2-1].padEnd(14)+' = '+X[r2-1].toExponential(6).padStart(14)+' rad');
+      }
     });
     var res=0;
     TR.fr.forEach(function(r3){
@@ -1503,6 +1686,20 @@ function mdAnalyze(B){
   var L=B.L, sup=B.sup, nS=sup.length, tol=1e-7*Math.max(1,L);
   sup.forEach(function(sp){ if(sp[1]===4) throw new Error('Spring supports are not available in the moment distribution method. Use the slope-deflection or force method.'); });
   if((B.hinge||[]).length) throw new Error('Internal hinges are not available in the moment distribution method. Use the slope-deflection or force method.');
+  var EIxMD = expandEI(B);
+  if(EIxMD[0].length > 1){
+    (B.spanX||[]).forEach(function(sx){
+      if(sx > tol && sx < B.L - tol && !sup.some(function(sp){ return Math.abs(sp[0] - sx) < tol; })){
+        var kL=-1, kR=-1;
+        for(var qi=0;qi<B.spanX.length-1;qi++){
+          if(Math.abs(B.spanX[qi+1]-sx)<tol) kL=qi;
+          if(Math.abs(B.spanX[qi]-sx)<tol) kR=qi;
+        }
+        if(kL>=0 && kR>=0 && Math.abs(EIxMD[0][kL]*EIxMD[1][kL] - EIxMD[0][kR]*EIxMD[1][kR]) > 1e-9*Math.max(EIxMD[0][kL]*EIxMD[1][kL],1e-12))
+          throw new Error('Moment Distribution requires uniform EI within each span between supports. Use Force Method or Slope-Deflection for stepped sections inside a span.');
+      }
+    });
+  }
   var jset0={};
   [0,B.L].concat(sup.map(function(sp){return sp[0];})).forEach(function(v){jset0[Math.round(v*1e9)/1e9]=1;});
   var jx=Object.keys(jset0).map(Number).sort(function(a,b){return a-b;}).filter(function(v){return v>=-1e-9&&v<=B.L+1e-9;});
@@ -1643,6 +1840,14 @@ function mdPrint(B,R){
   var T=[];
   function line(s){ T.push(s===undefined?'':s); }
   line(); line('   FINAL ANSWER  (moment distribution, '+md.cycles+' cycle(s))'); line();
+  line('   Span flexural rigidities and relative stiffnesses (K = EI / L)');
+  for(var s0=0;s0<nSeg;s0++){
+    var l0 = jx[s0+1] - jx[s0], riMD = segEIInfo(B, (jx[s0]+jx[s0+1])/2);
+    var kRel = riMD.r / l0;
+    line('      Span '+jn(s0+1)+jn(s0+2)+' (L = '+l0.toFixed(2)+' m) :  '+riMD.fullDesc+
+         (md.ov[s0] ? '   [overhang, K = 0]' : ('   =>   K = ' + fmtN(kRel) + ' EI')));
+  }
+  line();
   line('   Fixed-end moments and distribution factors');
   for(var s=0;s<nSeg;s++){
     if(md.ov[s]) line('      Span '+jn(s+1)+jn(s+2)+' : overhang - end moment by statics');
@@ -1829,7 +2034,7 @@ function fmAnalyze(B){
   var nF=fixIdx.length;
   var nR=nS+nF, nH=(B.hinge||[]).length, nEq=2+nH;
   var jset={};
-  [0,L].concat(sup.map(function(s){return s[0];}), B.hinge||[]).forEach(function(v){jset[Math.round(v*1e9)/1e9]=1;});
+  [0,L].concat(sup.map(function(s){return s[0];}), B.hinge||[], B.spanX||[]).forEach(function(v){jset[Math.round(v*1e9)/1e9]=1;});
   var jx=Object.keys(jset).map(Number).sort(function(a,b){return a-b;}).filter(function(v){return v>=0&&v<=L;});
   var nj=jx.length;
   function jOf(x){ for(var j=0;j<nj;j++) if(Math.abs(jx[j]-x)<tol) return j+1; return -1; }
@@ -1994,8 +2199,726 @@ function fmAnalyze(B){
                Fsp:Fsp, Dsp:Dsp, dS:dS, dP:dP, d:d, kp:kp, EIseg:DG.EIseg, lseg:DG.lseg}};
 }
 
-/* ---------- printed step-by-step working (mirrors printSolution) ---------- */
-function fmPrint(B,R){
+/* ============ FORCE METHOD DEFLECTION SUB-METHODS ENGINE (DI, MA, VW, CB) ============ */
+var FM_DEFL_METHODS = {
+  di: { id:'di', slug:'double-integration', short:'Double Integration', name:'Double Integration Method' },
+  ma: { id:'ma', slug:'moment-area',        short:'Moment-Area',        name:'Moment-Area Method' },
+  vw: { id:'vw', slug:'virtual-work',       short:'Virtual Work',       name:'Virtual Work Method' },
+  cb: { id:'cb', slug:'conjugate-beam',     short:'Conjugate Beam',     name:'Conjugate Beam Method' }
+};
+
+function fmtX(x){ return Math.abs(x - Math.round(x*100)/100) < 1e-4 ? x.toFixed(2) : x.toFixed(4); }
+function zrC(v){ return Math.abs(v) < 1e-8 ? 0 : v; }
+function fmCoefStr(v){
+  if(!isFinite(v) || Math.abs(v) < 1e-13) return '0';
+  var a = Math.abs(v);
+  if(a >= 1e6 || a < 1e-2) return matG(v, 5);
+  var t = v.toFixed(4).replace(/\.?0+$/,'');
+  return (t==='' || t==='-' || t==='-0') ? '0' : t;
+}
+
+function fmPolyStr(coeffs, xv, hRef){
+  var h = Math.max(1, hRef || 1), scale = 0;
+  for(var r=0; r<coeffs.length; r++) scale = Math.max(scale, Math.abs(coeffs[r]) * Math.pow(h, r));
+  if(scale < 1e-12) return '0';
+  var out = '';
+  for(r=0; r<coeffs.length; r++){
+    var c = coeffs[r];
+    if(Math.abs(c) * Math.pow(h, r) <= 1e-9 * scale) continue;
+    var mag = fmCoefStr(Math.abs(c));
+    if(mag === '0') continue;
+    var term;
+    if(r === 0) term = mag;
+    else if(r === 1) term = (mag === '1' ? '' : mag + ' ') + xv;
+    else term = (mag === '1' ? '' : mag + ' ') + xv + '^' + r;
+    if(out === '') out = (c < 0 ? '- ' + term : term);
+    else out += (c < 0 ? ' - ' : ' + ') + term;
+  }
+  return out || '0';
+}
+
+function fmExactPieces(B, ry, mr, withLoads, extraPts){
+  var L = B.L, tol = 1e-8 * Math.max(1, L);
+  var EIx = expandEI(B), EArr = EIx[0], IArr = EIx[1];
+  var raw = [0, L].concat(
+    B.sup.map(function(s){return s[0];}),
+    B.hinge || [],
+    B.spanX || [],
+    extraPts || []
+  );
+  if(withLoads){
+    (B.P||[]).forEach(function(p){ raw.push(p[0]); });
+    (B.M||[]).forEach(function(m){ raw.push(m[0]); });
+    (B.W||[]).forEach(function(w){ raw.push(w[0]); raw.push(w[1]); });
+  }
+  raw = raw.filter(function(v){ return isFinite(v) && v >= -tol && v <= L + tol; })
+           .map(function(v){ return Math.min(L, Math.max(0, v)); })
+           .sort(function(a,b){ return a - b; });
+  var bk = [];
+  raw.forEach(function(v){ if(!bk.length || v - bk[bk.length-1] > tol) bk.push(v); });
+  if(bk.length < 2) bk = [0, L];
+  else { bk[0] = 0; bk[bk.length-1] = L; }
+
+  var pieces = [];
+  for(var s = 0; s < bk.length - 1; s++){
+    var a = bk[s], b = bk[s+1], h = b - a;
+    if(h <= tol) continue;
+    var xm = 0.5*(a + b), kSp = -1;
+    for(var q = 0; q < B.spanX.length - 1; q++){
+      if(xm >= B.spanX[q] - tol && xm <= B.spanX[q+1] + tol){ kSp = q; break; }
+    }
+    if(kSp < 0 || kSp >= EArr.length) kSp = EArr.length - 1;
+    var EI = EArr[kSp] * IArr[kSp];
+
+    var V0 = 0, M0 = 0, c2 = 0, c3 = 0, fi = 0;
+    B.sup.forEach(function(sp, k){
+      var sx = sp[0];
+      if(sx <= a + tol){
+        V0 += ry[k];
+        M0 += ry[k] * (a - sx);
+        if(sp[1] === 1) M0 -= mr[fi];
+      }
+      if(sp[1] === 1) fi++;
+    });
+    if(withLoads){
+      (B.P||[]).forEach(function(p){
+        if(p[0] <= a + tol){ V0 -= p[1]; M0 -= p[1] * (a - p[0]); }
+      });
+      (B.M||[]).forEach(function(pm){
+        if(pm[0] <= a + tol){ M0 -= pm[1]; }
+      });
+      (B.W||[]).forEach(function(w){
+        var s1 = w[0], s2 = w[1], w1 = w[2], mw = (w[3] - w1) / (s2 - s1);
+        if(s2 <= a + tol){
+          var lw = s2 - s1;
+          var Fw = w1*lw + 0.5*mw*lw*lw;
+          V0 -= Fw;
+          M0 -= ((a - s1)*Fw - (0.5*w1*lw*lw + (1/3)*mw*lw*lw*lw));
+        } else if(s1 <= a + tol && s2 >= b - tol){
+          var u0 = Math.max(0, a - s1);
+          var F0 = w1*u0 + 0.5*mw*u0*u0;
+          V0 -= F0;
+          M0 -= (u0*F0 - (0.5*w1*u0*u0 + (1/3)*mw*u0*u0*u0));
+          var qa = w1 + mw*u0;
+          c2 -= 0.5 * qa;
+          c3 -= (1/6) * mw;
+        }
+      });
+    }
+    pieces.push({a:a, b:b, h:h, EI:EI, kSp:kSp, c:[M0, V0, c2, c3]});
+  }
+  return {bk:bk, pieces:pieces};
+}
+
+function fmLeastSquares(Ac, bc, nu){
+  if(nu === 0) return [];
+  var N = [], rhs = new Array(nu).fill(0);
+  for(var i=0;i<nu;i++) N.push(new Array(nu).fill(0));
+  for(var r=0;r<Ac.length;r++){
+    var row = Ac[r], br = bc[r];
+    for(var i2=0;i2<nu;i2++){
+      if(row[i2] === 0) continue;
+      rhs[i2] += row[i2] * br;
+      for(var j2=0;j2<nu;j2++) N[i2][j2] += row[i2] * row[j2];
+    }
+  }
+  return gaussSolve(N, rhs);
+}
+
+function fmGetRestraints(B, isPrimary, S, RyFinal){
+  var vR = [], thR = [], sup = B.sup, nS = sup.length;
+  var fixMap = {};
+  if(S && S.fixIdx) S.fixIdx.forEach(function(fi, idx){ fixMap[fi] = idx; });
+  else {
+    var fcount = 0;
+    sup.forEach(function(sp, idx){ if(sp[1]===1) fixMap[idx] = fcount++; });
+  }
+  for(var k=0;k<nS;k++){
+    var xk = sup[k][0], t = sup[k][1];
+    if(isPrimary){
+      if(S.ret.indexOf(k) >= 0) vR.push({x:xk, v:0, supIdx:k, type:t});
+      if(t === 1 && S.ret.indexOf(nS + fixMap[k]) >= 0) thR.push({x:xk, th:0, supIdx:k});
+    } else {
+      var vt = (t === 4) ? (-RyFinal[k] / sup[k][3]) : (-(sup[k][2] || 0));
+      vR.push({x:xk, v:vt, supIdx:k, type:t});
+      if(t === 1) thR.push({x:xk, th:0, supIdx:k});
+    }
+  }
+  return {vR:vR, thR:thR, hinges:(B.hinge||[]).slice().sort(function(a,b){return a-b;})};
+}
+
+function fmSolveDI(B, piecesObj, rest){
+  var pcs = piecesObj.pieces, P = pcs.length, tol = 1e-7*Math.max(1, B.L);
+  var nu = 2*P, Ac = [], bc = [], condLog = [];
+  function pThetaEnd(p){
+    var c = p.c, h = p.h;
+    return (c[0]*h + c[1]*h*h/2 + c[2]*Math.pow(h,3)/3 + c[3]*Math.pow(h,4)/4) / p.EI;
+  }
+  function pDeflEnd(p){
+    var c = p.c, h = p.h;
+    return (c[0]*h*h/2 + c[1]*Math.pow(h,3)/6 + c[2]*Math.pow(h,4)/12 + c[3]*Math.pow(h,5)/20) / p.EI;
+  }
+  for(var p=0; p<P-1; p++){
+    var xb = pcs[p].b;
+    var isH = rest.hinges.some(function(h){ return Math.abs(h - xb) < tol; });
+    var isIntFix = rest.thR.some(function(tr){ return Math.abs(tr.x - xb) < tol; });
+    var rv = new Array(nu).fill(0);
+    rv[2*(p+1)] = 1; rv[2*p] = -1; rv[2*p+1] = -pcs[p].h;
+    Ac.push(rv); bc.push(pDeflEnd(pcs[p]));
+    if(!isH && !isIntFix){
+      var rt = new Array(nu).fill(0);
+      rt[2*(p+1)+1] = 1; rt[2*p+1] = -1;
+      Ac.push(rt); bc.push(pThetaEnd(pcs[p]));
+      condLog.push('Continuity at x = ' + xb.toFixed(2) + ' m : v_' + (p+1) + '(' + xb.toFixed(2) + ') = v_' + (p+2) + '(' + xb.toFixed(2) + '),  theta_' + (p+1) + '(' + xb.toFixed(2) + ') = theta_' + (p+2) + '(' + xb.toFixed(2) + ')');
+    } else if(isH){
+      condLog.push('Internal hinge at x = ' + xb.toFixed(2) + ' m : v_' + (p+1) + '(' + xb.toFixed(2) + ') = v_' + (p+2) + '(' + xb.toFixed(2) + ')  (slope discontinuous)');
+    }
+  }
+  rest.vR.forEach(function(vr){
+    var idx = pcs.findIndex(function(p){ return Math.abs(p.a - vr.x) < tol; });
+    var row = new Array(nu).fill(0);
+    if(idx >= 0){ row[2*idx] = 1; Ac.push(row); bc.push(vr.v); }
+    else {
+      var idxE = pcs.findIndex(function(p){ return Math.abs(p.b - vr.x) < tol; });
+      row[2*idxE] = 1; row[2*idxE+1] = pcs[idxE].h;
+      Ac.push(row); bc.push(vr.v - pDeflEnd(pcs[idxE]));
+    }
+    condLog.push('Support BC at x = ' + vr.x.toFixed(2) + ' m : v(' + vr.x.toFixed(2) + ') = ' + (vr.v === 0 ? '0' : fmtN(vr.v) + ' m'));
+  });
+  rest.thR.forEach(function(tr){
+    var idxL = pcs.findIndex(function(p){ return Math.abs(p.b - tr.x) < tol; });
+    var idxR = pcs.findIndex(function(p){ return Math.abs(p.a - tr.x) < tol; });
+    if(idxR >= 0){ var r1 = new Array(nu).fill(0); r1[2*idxR+1] = 1; Ac.push(r1); bc.push(tr.th); }
+    if(idxL >= 0){ var r2 = new Array(nu).fill(0); r2[2*idxL+1] = 1; Ac.push(r2); bc.push(tr.th - pThetaEnd(pcs[idxL])); }
+    condLog.push('Fixed slope BC at x = ' + tr.x.toFixed(2) + ' m : theta(' + tr.x.toFixed(2) + ') = 0');
+  });
+  var u = fmLeastSquares(Ac, bc, nu);
+  function evalAt(x, side){
+    var pIdx = -1;
+    if(side === 'R'){
+      for(var i=P-1;i>=0;i--) if(x >= pcs[i].a - tol && x <= pcs[i].b + tol){ pIdx = i; break; }
+    } else {
+      for(var i2=0;i2<P;i2++) if(x >= pcs[i2].a - tol && x <= pcs[i2].b + tol){ pIdx = i2; break; }
+    }
+    if(pIdx < 0) pIdx = x <= 0 ? 0 : P - 1;
+    var p = pcs[pIdx], xi = Math.max(0, Math.min(p.h, x - p.a)), c = p.c;
+    var P1 = (c[0]*xi + c[1]*xi*xi/2 + c[2]*Math.pow(xi,3)/3 + c[3]*Math.pow(xi,4)/4) / p.EI;
+    var P2 = (c[0]*xi*xi/2 + c[1]*Math.pow(xi,3)/6 + c[2]*Math.pow(xi,4)/12 + c[3]*Math.pow(xi,5)/20) / p.EI;
+    return { v: u[2*pIdx] + u[2*pIdx+1]*xi + P2, th: u[2*pIdx+1] + P1, pIdx: pIdx, xi: xi, P1: P1, P2: P2 };
+  }
+  return { u:u, condLog:condLog, evalAt:evalAt };
+}
+
+function fmSolveMA(B, piecesObj, rest){
+  var pcs = piecesObj.pieces, tol = 1e-7*Math.max(1, B.L);
+  var shapes = [];
+  var shNames = ['Rectangle (deg 0)', 'Triangle (deg 1)', 'Parabolic spandrel (deg 2)', 'Cubic spandrel (deg 3)'];
+  pcs.forEach(function(p, idx){
+    for(var n=0; n<4; n++){
+      var cn = p.c[n];
+      if(Math.abs(cn) * Math.pow(p.h, n+1) <= 1e-12) continue;
+      var area = cn * Math.pow(p.h, n+1) / ((n+1) * p.EI);
+      var xbar = p.a + ((n+1)/(n+2)) * p.h;
+      shapes.push({pIdx:idx, a:p.a, b:p.b, h:p.h, deg:n, name:shNames[n], coeff:cn, EI:p.EI, area:area, xbar:xbar});
+    }
+  });
+  var cuts = [0].concat(rest.hinges, [B.L]);
+  rest.thR.forEach(function(tr){ if(tr.x > tol && tr.x < B.L - tol) cuts.push(tr.x); });
+  cuts = cuts.sort(function(a,b){return a-b;}).filter(function(v,i,arr){ return i===0 || v - arr[i-1] > tol; });
+  var nSub = cuts.length - 1;
+
+  function maThetaBetween(xA, xB){
+    if(Math.abs(xB - xA) <= tol) return 0;
+    var lo = Math.min(xA, xB), hi = Math.max(xA, xB), sgn = xB >= xA ? 1 : -1, sum = 0;
+    shapes.forEach(function(sh){ if(sh.a >= lo - tol && sh.b <= hi + tol) sum += sh.area; });
+    return sgn * sum;
+  }
+  function maTDev(xP, xA){
+    if(Math.abs(xP - xA) <= tol) return 0;
+    var lo = Math.min(xA, xP), hi = Math.max(xA, xP), sum = 0;
+    shapes.forEach(function(sh){ if(sh.a >= lo - tol && sh.b <= hi + tol) sum += sh.area * Math.abs(xP - sh.xbar); });
+    return sum;
+  }
+
+  var nu = 2*nSub, Ac = [], bc = [];
+  for(var m=0; m<nSub-1; m++){
+    var xCut = cuts[m+1], Lsub = xCut - cuts[m];
+    var rv = new Array(nu).fill(0);
+    rv[2*(m+1)] = 1; rv[2*m] = -1; rv[2*m+1] = -Lsub;
+    Ac.push(rv); bc.push(maTDev(xCut, cuts[m]));
+  }
+  rest.vR.forEach(function(vr){
+    for(var m2=0; m2<nSub; m2++){
+      if(vr.x >= cuts[m2] - tol && vr.x <= cuts[m2+1] + tol){
+        var row = new Array(nu).fill(0);
+        row[2*m2] = 1; row[2*m2+1] = vr.x - cuts[m2];
+        Ac.push(row); bc.push(vr.v - maTDev(vr.x, cuts[m2]));
+        break;
+      }
+    }
+  });
+  rest.thR.forEach(function(tr){
+    for(var m3=0; m3<nSub; m3++){
+      if(tr.x >= cuts[m3] - tol && tr.x <= cuts[m3+1] + tol){
+        var row = new Array(nu).fill(0);
+        row[2*m3+1] = 1;
+        Ac.push(row); bc.push(tr.th - maThetaBetween(cuts[m3], tr.x));
+      }
+    }
+  });
+  var u = fmLeastSquares(Ac, bc, nu);
+
+  var refPts = [];
+  for(m=0; m<nSub; m++){
+    var fx = rest.thR.find(function(tr){ return tr.x >= cuts[m]-tol && tr.x <= cuts[m+1]+tol; });
+    var vsIn = rest.vR.filter(function(vr){ return vr.x >= cuts[m]-tol && vr.x <= cuts[m+1]+tol; });
+    var xR = fx ? fx.x : (vsIn.length ? vsIn[0].x : cuts[m]);
+    var vRval = u[2*m] + u[2*m+1]*(xR - cuts[m]) + maTDev(xR, cuts[m]);
+    var thRval = u[2*m+1] + maThetaBetween(cuts[m], xR);
+    refPts.push({x:xR, v:vRval, th:thRval, vsIn:vsIn, hasFix:!!fx});
+  }
+
+  function evalAt(x, side){
+    var mIdx = 0;
+    if(side === 'R'){
+      for(var i=nSub-1; i>=0; i--) if(x >= cuts[i] - tol && x <= cuts[i+1] + tol){ mIdx = i; break; }
+    } else {
+      for(var i2=0; i2<nSub; i2++) if(x >= cuts[i2] - tol && x <= cuts[i2+1] + tol){ mIdx = i2; break; }
+    }
+    var rf = refPts[mIdx];
+    var dTh = maThetaBetween(rf.x, x);
+    var tPA = maTDev(x, rf.x);
+    return {
+      v: rf.v + rf.th*(x - rf.x) + tPA,
+      th: rf.th + dTh,
+      mIdx: mIdx, ref: rf, dTh: dTh, tPA: tPA
+    };
+  }
+  return { shapes:shapes, cuts:cuts, u:u, refPts:refPts, evalAt:evalAt, maTDev:maTDev, maThetaBetween:maThetaBetween };
+}
+
+function fmPolyDotInt(cA, cB, h, EI){
+  var prod = new Array(cA.length + cB.length - 1).fill(0);
+  for(var i=0;i<cA.length;i++) for(var j=0;j<cB.length;j++) prod[i+j] += cA[i]*cB[j];
+  var s = 0;
+  for(var r=0;r<prod.length;r++) s += prod[r] * Math.pow(h, r+1) / (r + 1);
+  return s / EI;
+}
+
+function fmSolveVWPoint(B, S, MrealArgs, xTarget, restFinal, side){
+  var L = B.L, tol = 1e-7*Math.max(1, L), nS = S.nS, nR = S.rn.length;
+  var Ar = S.A.map(function(row){ return S.ret.map(function(cc){ return row[cc]; }); });
+
+  var bv = new Array(S.nEq).fill(0);
+  bv[0] = -1;
+  bv[1] = -1 * xTarget;
+  (B.hinge||[]).forEach(function(xh, h){ bv[2+h] = (xTarget < xh - tol) ? -1*(xh - xTarget) : 0; });
+  var rvSol = gaussSolve(Ar.map(function(r){return r.slice();}), bv);
+  var Rv = new Array(nR).fill(0);
+  S.ret.forEach(function(cc, idx){ Rv[cc] = rvSol[idx]; });
+
+  var xMom = side === 'R' ? Math.min(L, xTarget + 1e-10) : Math.max(0, xTarget - 1e-10);
+  var bt = new Array(S.nEq).fill(0);
+  bt[0] = 0;
+  bt[1] = -1;
+  (B.hinge||[]).forEach(function(xh, h){ bt[2+h] = (xMom < xh - 1e-11) ? 1 : 0; });
+  var rtSol = gaussSolve(Ar.map(function(r){return r.slice();}), bt);
+  var Rt = new Array(nR).fill(0);
+  S.ret.forEach(function(cc, idx){ Rt[cc] = rtSol[idx]; });
+
+  var Bv = {L:B.L, spanX:B.spanX, E:B.E, I:B.I, hinge:B.hinge, sup:B.sup, P:[[xTarget, -1]], M:[], W:[], H:[]};
+  var Bt = {L:B.L, spanX:B.spanX, E:B.E, I:B.I, hinge:B.hinge, sup:B.sup, P:[], M:[], W:[], H:[]};
+  var pReal = fmExactPieces(B, MrealArgs.ry, MrealArgs.mr, MrealArgs.withLoads, [xTarget]);
+  var bk = pReal.bk;
+  var pv = fmExactPieces(Bv, Rv.slice(0, nS), Rv.slice(nS), true, bk);
+  var pt = fmExactPieces(Bt, Rt.slice(0, nS), Rt.slice(nS), false, bk);
+  pt.pieces.forEach(function(pc){
+    var isRight = (side === 'R') ? (pc.a >= xTarget - tol && xTarget < L - tol) : (pc.a >= xTarget - tol);
+    if(side === 'L' && Math.abs(xTarget) < tol) isRight = true;
+    if(side === 'R' && Math.abs(xTarget - L) < tol) isRight = false;
+    if(side === 'L' && pc.b <= xTarget + tol) isRight = false;
+    if(side === 'L' && Math.abs(xTarget - L) < tol) isRight = false;
+    if(isRight) pc.c[0] -= 1;
+  });
+
+  var segIntV = [], segIntTh = [], intV = 0, intTh = 0;
+  for(var i=0; i<pReal.pieces.length; i++){
+    var pr = pReal.pieces[i];
+    var iv = fmPolyDotInt(pv.pieces[i].c, pr.c, pr.h, pr.EI);
+    var ith = fmPolyDotInt(pt.pieces[i].c, pr.c, pr.h, pr.EI);
+    segIntV.push(iv); segIntTh.push(ith);
+    intV += iv; intTh += ith;
+  }
+  var supWorkV = 0, supWorkTh = 0;
+  restFinal.vR.forEach(function(vr){
+    if(S.ret.indexOf(vr.supIdx) >= 0){
+      supWorkV  += Rv[vr.supIdx] * vr.v;
+      supWorkTh += Rt[vr.supIdx] * vr.v;
+    }
+  });
+  restFinal.thR.forEach(function(tr){
+    var fIdx = S.fixIdx.indexOf(tr.supIdx);
+    if(fIdx >= 0 && S.ret.indexOf(nS + fIdx) >= 0){
+      supWorkV  += Rv[nS + fIdx] * tr.th;
+      supWorkTh += Rt[nS + fIdx] * tr.th;
+    }
+  });
+  return {
+    v: intV - supWorkV, th: intTh - supWorkTh,
+    intV: intV, intTh: intTh, supWorkV: supWorkV, supWorkTh: supWorkTh,
+    Rv: Rv, Rt: Rt, pReal: pReal, pv: pv, pt: pt, segIntV: segIntV, segIntTh: segIntTh
+  };
+}
+
+function fmSolveCB(B, piecesObj, rest){
+  var pcs = piecesObj.pieces, L = B.L, tol = 1e-7*Math.max(1, L);
+  var loads = pcs.map(function(p){
+    var c = p.c, h = p.h;
+    var F = (c[0]*h + c[1]*h*h/2 + c[2]*Math.pow(h,3)/3 + c[3]*Math.pow(h,4)/4) / p.EI;
+    var Q = (c[0]*h*h/2 + c[1]*Math.pow(h,3)/3 + c[2]*Math.pow(h,4)/4 + c[3]*Math.pow(h,5)/5) / p.EI;
+    return {a:p.a, b:p.b, h:h, EI:p.EI, F:F, Q:Q, xbar: Math.abs(F)>1e-12 ? p.a + Q/F : p.a + h/2};
+  });
+
+  function elasticV(x){
+    var s = 0;
+    loads.forEach(function(ld){ if(ld.b <= x + tol) s += ld.F; });
+    return s;
+  }
+  function elasticM(x){
+    var s = 0;
+    loads.forEach(function(ld){ if(ld.b <= x + tol) s += ld.F*(x - ld.a) - ld.Q; });
+    return s;
+  }
+
+  var hasV0 = rest.vR.find(function(r){ return Math.abs(r.x) < tol; });
+  var hasTh0 = rest.thR.find(function(r){ return Math.abs(r.x) < tol; });
+  var hasVL = rest.vR.find(function(r){ return Math.abs(r.x - L) < tol; });
+  var hasThL = rest.thR.find(function(r){ return Math.abs(r.x - L) < tol; });
+  var intFix = rest.thR.filter(function(r){ return r.x > tol && r.x < L - tol; });
+
+  var mapRows = [];
+  if(hasTh0 && hasV0) mapRows.push({x:0, real:'Fixed support (v='+fmCoefStr(hasV0.v)+', theta=0)', conj:'Free end (V_bar=0, M_bar='+fmCoefStr(hasV0.v)+')'});
+  else if(hasV0)      mapRows.push({x:0, real:'Pin / Roller support (v='+fmCoefStr(hasV0.v)+')', conj:'Pin / Roller support (R_bar_0 unknown, M_bar='+fmCoefStr(hasV0.v)+')'});
+  else                mapRows.push({x:0, real:'Free end (v, theta free)', conj:'Fixed support (R_bar_0, M_bar_0 unknown)'});
+
+  var intPts = [];
+  rest.vR.forEach(function(vr){
+    if(vr.x > tol && vr.x < L - tol){
+      var isF = intFix.some(function(rf){ return Math.abs(rf.x - vr.x) < tol; });
+      intPts.push({x:vr.x, real: isF ? 'Interior fixed support' : 'Interior support (v='+fmCoefStr(vr.v)+')',
+                   conj: isF ? 'Complete release / two free ends' : 'Internal hinge (M_bar='+fmCoefStr(vr.v)+')'});
+    }
+  });
+  rest.hinges.forEach(function(xh){
+    intPts.push({x:xh, real:'Internal hinge (M=0, slope jump)', conj:'Interior roller/pin support (R_bar unknown)'});
+  });
+  intPts.sort(function(a,b){return a.x - b.x;});
+  mapRows = mapRows.concat(intPts);
+
+  if(hasThL && hasVL) mapRows.push({x:L, real:'Fixed support (v='+fmCoefStr(hasVL.v)+', theta=0)', conj:'Free end (V_bar=0, M_bar='+fmCoefStr(hasVL.v)+')'});
+  else if(hasVL)      mapRows.push({x:L, real:'Pin / Roller support (v='+fmCoefStr(hasVL.v)+')', conj:'Pin / Roller support (R_bar_L unknown, M_bar='+fmCoefStr(hasVL.v)+')'});
+  else                mapRows.push({x:L, real:'Free end (v, theta free)', conj:'Fixed support (R_bar_L, M_bar_L unknown)'});
+
+  var unks = [];
+  var M0known = 0, V0known = 0;
+  if(hasTh0 && hasV0){ V0known = hasTh0.th; M0known = hasV0.v; }
+  else if(hasV0){ M0known = hasV0.v; unks.push({kind:'R0', x:0, name:'R_bar(0.00)'}); }
+  else { unks.push({kind:'R0', x:0, name:'R_bar(0.00)'}); unks.push({kind:'M0', x:0, name:'M_bar(0.00)'}); }
+
+  rest.hinges.forEach(function(xh){ unks.push({kind:'Rh', x:xh, name:'R_bar(' + xh.toFixed(2) + ')'}); });
+  intFix.forEach(function(rf){
+    unks.push({kind:'Rf', x:rf.x, name:'dV_bar(' + rf.x.toFixed(2) + ')'});
+    unks.push({kind:'Mf', x:rf.x, name:'dM_bar(' + rf.x.toFixed(2) + ')'});
+  });
+
+  if(hasThL && hasVL){ /* conjugate free end at L */ }
+  else if(hasVL){ unks.push({kind:'RL', x:L, name:'R_bar(' + L.toFixed(2) + ')'}); }
+  else { unks.push({kind:'RL', x:L, name:'R_bar(' + L.toFixed(2) + ')'}); unks.push({kind:'ML', x:L, name:'M_bar(' + L.toFixed(2) + ')'}); }
+
+  var nu = unks.length, Ac = [], bc = [], eqNames = [];
+  function rowV(x, includeMode){
+    var r = new Array(nu).fill(0), c0 = V0known + elasticV(x);
+    unks.forEach(function(u, i){
+      if(u.kind === 'R0') r[i] = 1;
+      else if(u.kind === 'Rh' || u.kind === 'Rf'){
+        if(u.x < x - tol || (includeMode === true && Math.abs(u.x - x) < tol) || includeMode === 'END') r[i] = 1;
+      } else if(u.kind === 'RL' && includeMode === 'END') r[i] = 1;
+    });
+    return {r:r, c0:c0};
+  }
+  function rowM(x, includeRightJump){
+    var r = new Array(nu).fill(0), c0 = M0known + V0known*x + elasticM(x);
+    unks.forEach(function(u, i){
+      if(u.kind === 'M0') r[i] = 1;
+      else if(u.kind === 'R0') r[i] = x;
+      else if((u.kind === 'Rh' || u.kind === 'Rf') && u.x < x - tol) r[i] = (x - u.x);
+      else if(u.kind === 'Mf' && (u.x < x - tol || (includeRightJump && Math.abs(u.x - x) < tol))) r[i] = 1;
+    });
+    return {r:r, c0:c0};
+  }
+
+  var eqFy = rowV(L, 'END');
+  Ac.push(eqFy.r); bc.push(-eqFy.c0); eqNames.push('Sum Fy(conj) = 0');
+
+  var eqML = rowM(L, false);
+  var mlIdx = unks.findIndex(function(u){ return u.kind === 'ML'; });
+  if(mlIdx >= 0){
+    var rM = eqML.r.slice(); rM[mlIdx] = -1;
+    Ac.push(rM); bc.push(-eqML.c0); eqNames.push('Sum M(x=' + L.toFixed(2) + ') = 0');
+  } else if(hasVL){
+    Ac.push(eqML.r); bc.push(hasVL.v - eqML.c0); eqNames.push('M_bar(' + L.toFixed(2) + ') = ' + fmCoefStr(hasVL.v));
+  }
+
+  rest.vR.forEach(function(vr){
+    if(vr.x > tol && vr.x < L - tol){
+      var isF = intFix.some(function(rf){ return Math.abs(rf.x - vr.x) < tol; });
+      if(!isF){
+        var eqH = rowM(vr.x, false);
+        Ac.push(eqH.r); bc.push(vr.v - eqH.c0); eqNames.push('Conjugate hinge M_bar(' + vr.x.toFixed(2) + ') = ' + fmCoefStr(vr.v));
+      } else {
+        var eqMLf = rowM(vr.x, false), eqMRf = rowM(vr.x, true);
+        Ac.push(eqMLf.r); bc.push(vr.v - eqMLf.c0); eqNames.push('M_bar(' + vr.x.toFixed(2) + '-) = ' + fmCoefStr(vr.v));
+        Ac.push(eqMRf.r); bc.push(vr.v - eqMRf.c0); eqNames.push('M_bar(' + vr.x.toFixed(2) + '+) = ' + fmCoefStr(vr.v));
+      }
+    }
+  });
+  intFix.forEach(function(rf){
+    var eqVL = rowV(rf.x, false), eqVR = rowV(rf.x, true);
+    Ac.push(eqVL.r); bc.push(rf.th - eqVL.c0); eqNames.push('V_bar(' + rf.x.toFixed(2) + '-) = 0');
+    Ac.push(eqVR.r); bc.push(rf.th - eqVR.c0); eqNames.push('V_bar(' + rf.x.toFixed(2) + '+) = 0');
+  });
+
+  var sol = fmLeastSquares(Ac, bc, nu);
+  function evalAt(x, side){
+    var mv = rowM(x, side === 'R'), vv = rowV(x, side === 'R');
+    var vVal = mv.c0, thVal = vv.c0, rxV = V0known, rxM = M0known + V0known*x;
+    for(var i=0;i<nu;i++){
+      vVal += mv.r[i]*sol[i]; thVal += vv.r[i]*sol[i];
+      rxV += vv.r[i]*sol[i]; rxM += mv.r[i]*sol[i];
+    }
+    return { v:vVal, th:thVal, elV:elasticV(x), elM:elasticM(x), rxV:rxV, rxM:rxM };
+  }
+  return { loads:loads, mapRows:mapRows, unks:unks, eqNames:eqNames, sol:sol, evalAt:evalAt };
+}
+
+function fmPrintPieceMoments(line, piecesObj, sym, B){
+  var M = B ? ensureBProps(B) : null;
+  var showEI = M && (M.sym || M.hasVaryE || M.hasVaryI || M.hasNonUnit);
+  piecesObj.pieces.forEach(function(p, idx){
+    var xv = p.a === 0 ? 'x' : "x'";
+    var loc = p.a === 0 ? '' : "   (x' = x - " + p.a.toFixed(2) + ")";
+    var eiTag = showEI ? ('  [' + segEIInfo(B, (p.a+p.b)/2).eiS + ']') : '';
+    line('         Seg ' + (idx+1) + ' [' + p.a.toFixed(2) + ' to ' + p.b.toFixed(2) + ' m]' + eiTag + ' :  ' +
+         sym + '(' + xv + ') = ' + fmPolyStr(p.c, xv, p.h) + ' kNm' + loc);
+  });
+}
+
+function fmFormatMethodWorking(methodId, B, piecesObj, rest, sc, un, targets, tag){
+  var T = [];
+  function line(s){ T.push(s === undefined ? '' : s); }
+  var isUnif = (un === ' / EI');
+  var lhsTh = isUnif ? 'EI * theta'+tag : 'theta'+tag;
+  var lhsV  = isUnif ? 'EI * v'+tag     : 'v'+tag;
+  var lhsV2 = isUnif ? 'EI * d2v'+tag+'/dx2' : 'd2v'+tag+'/dx2';
+
+  var MpropW = ensureBProps(B);
+  if(methodId === 'di'){
+    var di = fmSolveDI(B, piecesObj, rest);
+    line('      Method : DOUBLE INTEGRATION METHOD   [ E_k I_k * d2v'+tag+'/dx2 = M'+tag+'(x)  =>  ' + lhsV2 + ' = M'+tag+'(x) / (E_k I_k / EI) ]');
+    line();
+    line('      1) Differential equation and successive integrations per segment:');
+    piecesObj.pieces.forEach(function(p, idx){
+      var xv = p.a === 0 ? 'x' : "x'";
+      var loc = p.a === 0 ? '(0 <= x <= ' + p.b.toFixed(2) + ' m)' : "(x' = x - " + p.a.toFixed(2) + ",  0 <= x' <= " + p.h.toFixed(2) + " m)";
+      var ri = segEIInfo(B, (p.a + p.b) / 2);
+      var fac = sc / p.EI;
+      var c0 = p.c.map(function(v){ return v * fac; });
+      var c1 = [0, c0[0], c0[1]/2, c0[2]/3, c0[3]/4];
+      var c2 = [0, 0, c0[0]/2, c0[1]/6, c0[2]/12, c0[3]/20];
+      var eiHdr = (MpropW.sym || ri.hasVary) ? ('  [' + ri.eS + ', ' + ri.iS + ' -> ' + ri.eiS + ']') : '';
+      line('         Segment ' + (idx+1) + '  [' + p.a.toFixed(2) + ' to ' + p.b.toFixed(2) + ' m]  ' + loc + eiHdr + ' :');
+      if(Math.abs(ri.r - 1) > 1e-7){
+        line('            ' + ri.eiS + ' * d2v' + tag + '/dx2 = ' + fmPolyStr(p.c, xv, p.h));
+        line('            => ' + lhsV2 + ' = ' + fmPolyStr(c0, xv, p.h) + '   (dividing by ' + fmtFactorNum(ri.r) + ')');
+      } else {
+        line('            ' + lhsV2 + ' = ' + fmPolyStr(c0, xv, p.h));
+      }
+      line('            ' + lhsTh + '(' + xv + ') = ' + fmPolyStr(c1, xv, p.h) + ' + C1_' + (idx+1));
+      line('            ' + lhsV  + '(' + xv + ') = ' + fmPolyStr(c2, xv, p.h) + ' + C1_' + (idx+1) + '*' + xv + ' + C2_' + (idx+1));
+    });
+    line();
+    line('      2) Boundary and continuity conditions:');
+    di.condLog.forEach(function(cl){ line('         - ' + cl); });
+    line();
+    line('      3) Solved constants of integration:');
+    piecesObj.pieces.forEach(function(p, idx){
+      var C1 = zr(di.u[2*idx+1] * sc), C2 = zr(di.u[2*idx] * sc);
+      line('         Segment ' + (idx+1) + ' [' + p.a.toFixed(2) + ' to ' + p.b.toFixed(2) + ' m] :   C1_' + (idx+1) + ' = ' + fmtN(zrC(C1)) +
+           '      C2_' + (idx+1) + ' = ' + fmtN(zrC(C2)));
+    });
+    line();
+    line('      4) Evaluation at required point(s):');
+    targets.forEach(function(tg){
+      var ev = di.evalAt(tg.x, tg.side);
+      var C1 = di.u[2*ev.pIdx+1]*sc, C2 = di.u[2*ev.pIdx]*sc;
+      if(tg.kind === 'th' || tg.kind === 'both'){
+        var thS = zr(ev.th * sc);
+        line('         At x = ' + fmtX(tg.x) + ' m (Seg ' + (ev.pIdx+1) + ', x\' = ' + fmtX(ev.xi) + ' m) :');
+        line('            ' + lhsTh + ' = ' + fmtN(zrC(ev.P1*sc)) + ' + (' + fmtN(zrC(C1)) + ') = ' + fmtN(thS));
+        line('            => ' + (tg.thLabel || ('theta'+tag+'(' + tg.x.toFixed(2) + ')')) + ' = ' + fmtN(thS) + un +
+             (tg.showPhys ? '   [' + fmtN(zr(ev.th)) + ' rad]' : ''));
+      }
+      if(tg.kind === 'v' || tg.kind === 'both'){
+        var vS = zr(ev.v * sc);
+        if(tg.kind !== 'both') line('         At x = ' + fmtX(tg.x) + ' m (Seg ' + (ev.pIdx+1) + ', x\' = ' + fmtX(ev.xi) + ' m) :');
+        line('            ' + lhsV + ' = ' + fmtN(zrC(ev.P2*sc)) + ' + (' + fmtN(zrC(C1)) + ')(' + fmtX(ev.xi) + ') + (' + fmtN(zrC(C2)) + ') = ' + fmtN(vS));
+        line('            => ' + (tg.vLabel || ('v'+tag+'(' + tg.x.toFixed(2) + ')')) + ' = ' + fmtN(vS) + un +
+             (tg.showPhys ? '   [' + fmtN(zr(ev.v)) + ' m = ' + zr(ev.v*1000).toFixed(4) + ' mm]' : ''));
+      }
+    });
+  } else if(methodId === 'ma'){
+    var ma = fmSolveMA(B, piecesObj, rest);
+    line('      Method : MOMENT-AREA METHOD   (Mohr\'s Area-Moment Theorems)');
+    line('         Theorem I  : theta_{B/A} = theta_B - theta_A = Sum( Area of M/EI diagram between A and B )');
+    line('         Theorem II : t_{B/A}     = v_B - [ v_A + theta_A*(x_B - x_A) ] = Sum( Area_k * |x_B - x_bar_k| )');
+    line();
+    line('      1) Elementary geometric areas and centroids of the M' + tag + '/EI diagram:');
+    if(!ma.shapes.length){
+      line('         (M' + tag + '/EI = 0 along the entire beam; all areas are zero)');
+    } else {
+      line('         ' + 'Part'.padEnd(6) + 'Interval (m)'.padEnd(16) + 'Span EI'.padEnd(10) + 'Shape'.padEnd(28) + ('Area' + (isUnif?' (*EI)':'')).padEnd(18) + 'Centroid x_bar (m)');
+      ma.shapes.forEach(function(sh, idx){
+        var riSh = segEIInfo(B, (sh.a + sh.b) / 2);
+        line('         ' + String(idx+1).padEnd(6) + (sh.a.toFixed(2)+' to '+sh.b.toFixed(2)).padEnd(16) +
+             riSh.eiS.padEnd(10) + sh.name.padEnd(28) + (fmtN(zrC(sh.area*sc)) + un).padEnd(18) + sh.xbar.toFixed(4));
+      });
+    }
+    line();
+    line('      2) Reference tangent slope(s) from support boundary conditions:');
+    ma.refPts.forEach(function(rf, mIdx){
+      var segTxt = ma.cuts.length > 2 ? ' (Sub-beam ' + (mIdx+1) + ': ' + ma.cuts[mIdx].toFixed(2) + ' to ' + ma.cuts[mIdx+1].toFixed(2) + ' m)' : '';
+      if(rf.hasFix){
+        line('         Reference tangent at fixed support x_A = ' + rf.x.toFixed(2) + ' m' + segTxt + ' :  v_A = ' + fmtN(zrC(rf.v*sc)) + un + ',  theta_A = 0');
+      } else if(rf.vsIn.length >= 2){
+        var sA = rf.vsIn[0], sB = rf.vsIn[1], LAB = sB.x - sA.x;
+        var tBA = ma.maTDev(sB.x, sA.x);
+        line('         Reference tangent drawn at support x_A = ' + sA.x.toFixed(2) + ' m to support x_B = ' + sB.x.toFixed(2) + ' m (L_AB = ' + LAB.toFixed(2) + ' m)' + segTxt + ' :');
+        line('            t_{B/A} = Sum( Area_k * |' + sB.x.toFixed(2) + ' - x_bar_k| ) = ' + fmtN(zrC(tBA*sc)) + un);
+        line('            theta_A = [ (v_B - v_A) - t_{B/A} ] / L_AB = [ (' + fmtN(zrC((sB.v - sA.v)*sc)) + ') - (' + fmtN(zrC(tBA*sc)) + ') ] / ' + LAB.toFixed(2) + ' = ' + fmtN(zrC(rf.th*sc)) + un);
+      } else {
+        line('         Reference point x_A = ' + rf.x.toFixed(2) + ' m' + segTxt + ' :  v_A = ' + fmtN(zrC(rf.v*sc)) + un + ',  theta_A = ' + fmtN(zrC(rf.th*sc)) + un);
+      }
+    });
+    line();
+    line('      3) Moment-Area evaluation at required point(s):');
+    targets.forEach(function(tg){
+      var ev = ma.evalAt(tg.x, tg.side);
+      var rf = ev.ref;
+      line('         Target P at x_P = ' + fmtX(tg.x) + ' m   (measured from reference tangent at x_A = ' + rf.x.toFixed(2) + ' m) :');
+      if(tg.kind === 'th' || tg.kind === 'both'){
+        var thS = zr(ev.th * sc);
+        line('            Theorem I  : theta_{P/A} = ' + fmtN(zrC(ev.dTh*sc)) + un);
+        line('            => ' + (tg.thLabel || ('theta'+tag+'(' + tg.x.toFixed(2) + ')')) + ' = theta_A + theta_{P/A} = (' + fmtN(zrC(rf.th*sc)) + ') + (' + fmtN(zrC(ev.dTh*sc)) + ') = ' + fmtN(thS) + un +
+             (tg.showPhys ? '   [' + fmtN(zr(ev.th)) + ' rad]' : ''));
+      }
+      if(tg.kind === 'v' || tg.kind === 'both'){
+        var vS = zr(ev.v * sc);
+        line('            Theorem II : t_{P/A} = Sum( Area_k * |' + tg.x.toFixed(2) + ' - x_bar_k| ) = ' + fmtN(zrC(ev.tPA*sc)) + un);
+        line('            => ' + (tg.vLabel || ('v'+tag+'(' + tg.x.toFixed(2) + ')')) + ' = v_A + theta_A*(x_P - x_A) + t_{P/A}');
+        line('               = (' + fmtN(zrC(rf.v*sc)) + ') + (' + fmtN(zrC(rf.th*sc)) + ')(' + (tg.x - rf.x).toFixed(2) + ') + (' + fmtN(zrC(ev.tPA*sc)) + ') = ' + fmtN(vS) + un +
+             (tg.showPhys ? '   [' + fmtN(zr(ev.v)) + ' m = ' + zr(ev.v*1000).toFixed(4) + ' mm]' : ''));
+      }
+    });
+  } else if(methodId === 'cb'){
+    var cb = fmSolveCB(B, piecesObj, rest);
+    line('      Method : CONJUGATE BEAM METHOD');
+    line('         Elastic load : q_bar(x) = M' + tag + '(x) / EI   (upward + for sagging M > 0)');
+    line('         Theorem I    : Real slope      theta(x) = Conjugate shear  V_bar(x)');
+    line('         Theorem II   : Real deflection v(x)     = Conjugate moment M_bar(x)');
+    line();
+    line('      1) Real-to-Conjugate beam support mapping:');
+    cb.mapRows.forEach(function(mr){
+      line('         x = ' + mr.x.toFixed(2).padStart(6) + ' m :  Real: ' + mr.real.padEnd(36) + ' ->  Conjugate: ' + mr.conj);
+    });
+    line();
+    line('      2) Elastic load resultants F_bar = Integral(M' + tag + '/EI_span) dx per segment:');
+    line('         ' + 'Seg'.padEnd(6) + 'Interval (m)'.padEnd(16) + 'Span EI'.padEnd(10) + ('Elastic Load F_bar').padEnd(22) + 'Action Point / Moment');
+    cb.loads.forEach(function(ld, idx){
+      var riLd = segEIInfo(B, (ld.a + ld.b) / 2);
+      var fz = zrC(ld.F*sc), qz = zrC(ld.Q*sc), locTxt;
+      if(Math.abs(fz) < 1e-8){
+        locTxt = Math.abs(qz) < 1e-8 ? '-' : ('pure couple -Q_bar = ' + fmtN(-qz) + un);
+      } else if(ld.xbar >= ld.a - 1e-6 && ld.xbar <= ld.b + 1e-6){
+        locTxt = 'x_bar = ' + ld.xbar.toFixed(4) + ' m';
+      } else {
+        locTxt = 'x_eff = ' + ld.xbar.toFixed(4) + ' m  (M changes sign)';
+      }
+      line('         ' + String(idx+1).padEnd(6) + (ld.a.toFixed(2)+' to '+ld.b.toFixed(2)).padEnd(16) +
+           riLd.eiS.padEnd(10) + (fmtN(fz) + un).padEnd(22) + locTxt);
+    });
+    line();
+    line('      3) Conjugate beam equilibrium (' + cb.eqNames.join('; ') + ') -> Conjugate reactions:');
+    if(!cb.unks.length){
+      line('         (Fixed left end -> free conjugate left end; no unknown conjugate reactions needed at x = 0)');
+    } else {
+      cb.unks.forEach(function(u, idx){
+        line('         ' + u.name.padEnd(16) + ' = ' + fmtN(zr(cb.sol[idx]*sc)) + un);
+      });
+    }
+    line();
+    line('      4) Conjugate section cuts at required point(s):');
+    targets.forEach(function(tg){
+      var ev = cb.evalAt(tg.x, tg.side);
+      line('         Section at x = ' + fmtX(tg.x) + ' m :');
+      if(tg.kind === 'th' || tg.kind === 'both'){
+        var thS = zr(ev.th * sc);
+        line('            V_bar(' + fmtX(tg.x) + ') = (conj. reactions left) + Integral_0^x (M/EI) dx = (' +
+             fmtN(zr(ev.rxV*sc)) + ') + (' + fmtN(zr(ev.elV*sc)) + ') = ' + fmtN(thS) + un);
+        line('            => ' + (tg.thLabel || ('theta'+tag+'(' + tg.x.toFixed(2) + ')')) + ' = ' + fmtN(thS) + un +
+             (tg.showPhys ? '   [' + fmtN(zr(ev.th)) + ' rad]' : ''));
+      }
+      if(tg.kind === 'v' || tg.kind === 'both'){
+        var vS = zr(ev.v * sc);
+        line('            M_bar(' + fmtX(tg.x) + ') = (moment of conj. reactions left) + Integral_0^x (M/EI)*(x - t) dt = (' +
+             fmtN(zr(ev.rxM*sc)) + ') + (' + fmtN(zr(ev.elM*sc)) + ') = ' + fmtN(vS) + un);
+        line('            => ' + (tg.vLabel || ('v'+tag+'(' + tg.x.toFixed(2) + ')')) + ' = ' + fmtN(vS) + un +
+             (tg.showPhys ? '   [' + fmtN(zr(ev.v)) + ' m = ' + zr(ev.v*1000).toFixed(4) + ' mm]' : ''));
+      }
+    });
+  }
+  return T;
+}
+
+function fmExactMaxDefl(B, pFin, diFin){
+  var bestX = 0, bestV = 0;
+  function chk(x){
+    var v = diFin.evalAt(x).v;
+    if(Math.abs(v) > Math.abs(bestV) * (1 + 1e-9) + 1e-15){ bestV = v; bestX = x; }
+  }
+  pFin.pieces.forEach(function(p){
+    var N = 40;
+    var prevX = p.a, prevTh = diFin.evalAt(p.a, 'R').th;
+    chk(p.a);
+    for(var k=1; k<=N; k++){
+      var curX = p.a + p.h * k / N;
+      var curTh = diFin.evalAt(curX, k===N ? 'L' : undefined).th;
+      chk(curX);
+      if(prevTh * curTh <= 0 && Math.abs(prevTh - curTh) > 1e-15){
+        var rx = bisect(function(t){ return diFin.evalAt(t).th; }, prevX, curX);
+        chk(rx);
+      }
+      prevX = curX; prevTh = curTh;
+    }
+  });
+  return [bestV, bestX];
+}
+/* ---------- printed step-by-step working (Force Method + 4 Deflection Methods) ---------- */
+function fmPrint(B, R, fmOpts){
+  fmOpts = fmOpts || {};
+  var dm = FM_DEFL_METHODS[fmOpts.deflMethod] ? fmOpts.deflMethod : 'di';
+  var dmInfo = FM_DEFL_METHODS[dm];
+  var targetX = (fmOpts.targetX !== undefined && fmOpts.targetX !== null && isFinite(fmOpts.targetX)) ? fmOpts.targetX : null;
+
   var S=R.sol, jx=S.jx, nj=jx.length, nSeg=nj-1, sup=B.sup;
   var nS=S.nS, rn=S.rn, red=S.red, ret=S.ret, nRed=red.length, nR=rn.length;
   var tn={1:'fixed',2:'pinned',3:'roller',4:'spring'};
@@ -2012,9 +2935,8 @@ function fmPrint(B,R){
   if(lab.some(function(l2){return l2.length>1;})) sepc=',';
   function dN(i){ return 'Delta_'+lab[i]+'0'; }
   function fN(i,j){ return 'f_'+lab[i]+sepc+lab[j]; }
-  var EIs=S.EIseg, sc, un;
-  var mx=Math.max.apply(null,EIs), mn=Math.min.apply(null,EIs);
-  if(mx-mn<=1e-9*mx){ sc=EIs[0]; un=' / EI'; } else { sc=1; un=''; }
+  var MpropFM = ensureBProps(B), isSymFM = MpropFM.sym;
+  var sc = MpropFM.EIref, un = ' / EI';
   var D0s=S.D0.map(function(v){return v*sc;});
   var Fbs=S.Fb.map(function(r){return r.map(function(v){return v*sc;});});
   var Ffs=S.Ff.map(function(r){return r.map(function(v){return v*sc;});});
@@ -2026,9 +2948,12 @@ function fmPrint(B,R){
     var ln=new Array(79).join('-');
     line(); line('   '+ln); line('   STEP '+st+' : '+ttl); line('   '+ln); line();
   }
-  line(); line('   '+dbl); line('   FULL SOLUTION - FORCE METHOD   (method of consistent deformations)'); line('   '+dbl);
+  line(); line('   '+dbl);
+  line('   FULL SOLUTION - FORCE METHOD   (method of consistent deformations)');
+  line('   Deflection Calculation Method : '+dmInfo.name.toUpperCase());
+  line('   '+dbl);
   line('   Signs : reactions up +, reaction moments counter-clockwise +, bending moment sagging +');
-  line('           loads downward +, deflection up +');
+  line('           loads downward +, slope counter-clockwise +, deflection up +');
   line('   Units : kN, m, kNm');
   var st=1;
   stepHead(st,'JOINTS AND SPANS');
@@ -2043,8 +2968,16 @@ function fmPrint(B,R){
     line('      Joint '+jn(j+1).padEnd(4)+' x = '+jx[j].toFixed(2).padStart(6)+' m    '+d);
   }
   line();
-  for(var s=0;s<nSeg;s++)
-    line('      Span  '+jn(s+1)+jn(s+2).padEnd(2)+' L = '+S.lseg[s].toFixed(2).padStart(6)+' m    EI = '+matG(S.EIseg[s])+' kNm^2');
+  if(isSymFM){
+    line('      Flexural rigidity : Symbolic / Relative mode (no numerical E, I given; reference = EI)');
+  } else {
+    line('      Reference flexural rigidity : EI = '+matG(MpropFM.EIref)+' kNm^2');
+  }
+  for(var s=0;s<nSeg;s++){
+    var riFM1 = segEIInfo(B, (jx[s]+jx[s+1])/2);
+    line('      Span  '+jn(s+1)+jn(s+2).padEnd(2)+' L = '+S.lseg[s].toFixed(2).padStart(6)+' m    '+riFM1.fullDesc);
+  }
+
   st++; stepHead(st,'DEGREE OF INDETERMINACY');
   var ht = R.nh>0 ? ', '+R.nh+' hinge condition(s)' : '';
   line('      Unknown reaction components : '+nR+'   ('+rn.join(', ')+')');
@@ -2052,8 +2985,21 @@ function fmPrint(B,R){
   line('      Degree of indeterminacy     : i = '+nR+' - '+S.nEq+' = '+nRed);
   if(nRed===0){
     line(); line('      The beam is statically determinate: the reactions follow from equilibrium alone,');
-    line('      so no compatibility equation is needed.');
+    line('      so no compatibility equation is needed. Deflections will be solved directly');
+    line('      using the '+dmInfo.name+'.');
   }
+
+  var restPrim = fmGetRestraints(B, true, S, null);
+  var redPts = red.map(function(rd){ return rd<nS ? sup[rd][0] : sup[S.fixIdx[rd-nS]][0]; });
+  var p0 = nRed>0 ? fmExactPieces(B, S.R0.slice(0,nS), S.R0.slice(nS), true, redPts) : null;
+  var mUnitPieces = [];
+  if(nRed>0){
+    for(var ju=0; ju<nRed; ju++){
+      var ruCol = S.Ru.map(function(row){return row[ju];});
+      mUnitPieces.push(fmExactPieces(B, ruCol.slice(0,nS), ruCol.slice(nS), false, p0.bk));
+    }
+  }
+
   if(nRed>0){
     st++; stepHead(st,'PRIMARY BEAM   (redundants removed)');
     line('      The redundants are removed to obtain a statically determinate, stable primary beam:'); line();
@@ -2080,12 +3026,15 @@ function fmPrint(B,R){
       }
       line('         Joint '+jl[k3].padEnd(4)+' x = '+sup[k3][0].toFixed(2).padStart(6)+' m    '+tx);
     });
+
     st++; stepHead(st,'PRIMARY BEAM UNDER THE EXTERNAL LOADS   (all X = 0)');
     line('      Reactions of the primary beam:'); line();
     ret.slice().sort(function(a3,b3){return a3-b3;}).forEach(function(k4){
       line('         '+rn[k4].padEnd(6)+' = '+rxnStr(S.R0[k4], k4+1<=nS?k4+1:nS+1, nS));
     });
-    line(); line('      Bending moment M0 of the primary beam:'); line();
+    line(); line('      Piecewise bending moment equations M0(x) of the primary beam:'); line();
+    fmPrintPieceMoments(line, p0, 'M0', B);
+    line(); line('      Bending moment M0 at key points:'); line();
     line('         '+'x (m)'.padEnd(8)+' '+'joint'.padEnd(6)+' M0 (kNm)');
     kp.forEach(function(x){
       var t=1e-9*Math.max(1,B.L);
@@ -2093,6 +3042,7 @@ function fmPrint(B,R){
       var m2=fieldVM([x+t],S.R0.slice(0,nS),S.R0.slice(nS),B,true)[1][0];
       line('         '+x.toFixed(2).padEnd(8)+' '+ptLabel(jx,x,tolx).padEnd(6)+' '+lrStr(m1,m2));
     });
+
     st++; stepHead(st,'PRIMARY BEAM UNDER THE UNIT REDUNDANTS   (loads removed)');
     line('      Reactions of the primary beam when one redundant X_j = 1 is applied:'); line();
     for(var j2=0;j2<nRed;j2++){
@@ -2100,7 +3050,12 @@ function fmPrint(B,R){
       ret.slice().sort(function(a4,b4){return a4-b4;}).forEach(function(k5){ ln2+='   '+rn[k5]+' = '+S.Ru[k5][j2].toFixed(4).padStart(8); });
       line('         X'+(j2+1)+' = 1 ('+rn[red[j2]]+') :'+ln2);
     }
-    line(); line('      Bending moment m_j of the primary beam per unit redundant:'); line();
+    line(); line('      Piecewise unit-redundant moment equations m_j(x):');
+    for(j2=0;j2<nRed;j2++){
+      line(); line('      For X'+(j2+1)+' = 1 ('+rn[red[j2]]+'):');
+      fmPrintPieceMoments(line, mUnitPieces[j2], 'm_'+lab[j2], B);
+    }
+    line(); line('      Bending moment m_j at key points:'); line();
     var hd='         '+'x (m)'.padEnd(8)+' '+'joint'.padEnd(6);
     for(j2=0;j2<nRed;j2++) hd+=' '+('m_'+lab[j2]).padEnd(22);
     line(hd);
@@ -2115,6 +3070,7 @@ function fmPrint(B,R){
       }
       line(ln3);
     });
+
     st++; stepHead(st,'COMPATIBILITY EQUATIONS');
     line('      The displacement of the primary beam at every removed restraint must equal the');
     line('      real support displacement (zero for a support that does not move):'); line();
@@ -2127,27 +3083,108 @@ function fmPrint(B,R){
     line(); line('      where  Delta_i0 = displacement at i due to the external loads (primary beam)');
     line('             f_ij     = displacement at i due to a unit value of X_j (primary beam)');
     if(sR.some(function(v){return v!==0;})) line('             s_i      = support settlement / spring term (given below)');
-    st++; stepHead(st,'DEFLECTIONS OF THE PRIMARY BEAM UNDER THE LOADS');
-    line('      Delta_i0 = Integral( m_i * M0 / EI ) dx      (positive in the direction of X_i)'); line();
-    for(i=0;i<nRed;i++) line('         '+dN(i).padEnd(10)+' = '+fmtN(D0s[i])+un);
+
+    /* ====== STEP 7: PRIMARY BEAM DEFLECTIONS Delta_i0 BY SELECTED METHOD ====== */
+    st++; stepHead(st,'DEFLECTIONS OF THE PRIMARY BEAM UNDER LOADS  ['+dmInfo.name.toUpperCase()+']');
+    if(dm === 'vw'){
+      line('      Method : VIRTUAL WORK (UNIT-LOAD) METHOD');
+      line('         Delta_i0 = Integral_0^L [ m_i(x) * M0(x) / EI ] dx      (positive in the direction of X_i)');
+      for(i=0;i<nRed;i++){
+        line();
+        line('      Calculation of ' + dN(i) + '   (at joint ' + jl[red[i]] + ', x = ' + redPts[i].toFixed(2) + ' m) :');
+        p0.pieces.forEach(function(pc, pIdx){
+          var cm = mUnitPieces[i].pieces[pIdx].c;
+          var xv = pc.a === 0 ? 'x' : "x'";
+          var riPc = segEIInfo(B, (pc.a+pc.b)/2);
+          var eiDen = Math.abs(riPc.r - 1) > 1e-7 ? ('/(' + riPc.eiS + ')') : '/EI';
+          var segVal = fmPolyDotInt(cm, pc.c, pc.h, pc.EI) * sc;
+          line('         Seg ' + (pIdx+1) + ' [' + pc.a.toFixed(2) + ' to ' + pc.b.toFixed(2) + ' m] [' + riPc.eiS + '] :  ' +
+               'Int_0^' + pc.h.toFixed(2) + ' (' + fmPolyStr(cm, xv, pc.h) + ')(' + fmPolyStr(pc.c, xv, pc.h) + ')' +
+               eiDen + ' d' + xv + ' = ' + fmtN(zr(segVal)) + un);
+        });
+        var physD0 = isSymFM ? '' : ('   [' + fmtN(zr(S.D0[i])) + (red[i]<nS ? ' m = '+zr(S.D0[i]*1000).toFixed(4)+' mm]' : ' rad]'));
+        line('         => ' + dN(i) + ' = ' + fmtN(zr(D0s[i])) + un + physD0);
+      }
+    } else {
+      var tgs0 = red.map(function(rd, idx){
+        var isMom = rd >= nS;
+        var xR = isMom ? sup[S.fixIdx[rd-nS]][0] : sup[rd][0];
+        return {
+          x: xR,
+          side: (isMom && xR > B.L*0.5) ? 'L' : 'R',
+          kind: isMom ? 'th' : 'v',
+          thLabel: dN(idx),
+          vLabel: dN(idx),
+          showPhys: !isSymFM
+        };
+      });
+      fmFormatMethodWorking(dm, B, p0, restPrim, sc, un, tgs0, '0').forEach(function(l){ line(l); });
+    }
+    line();
+    line('      Summary of primary beam load deflections:');
+    for(i=0;i<nRed;i++) line('         '+dN(i).padEnd(12)+' = '+fmtN(zr(D0s[i]))+un);
     if(sR.some(function(v){return v!==0;})){
       line(); line('      Support displacement terms  s_i = -Sum( R_i * settlement ) - Sum( R_i * R0 / k ):'); line();
-      for(i=0;i<nRed;i++) line('         '+('s_'+lab[i]).padEnd(10)+' = '+fmtN(sR[i])+un);
+      for(i=0;i<nRed;i++) line('         '+('s_'+lab[i]).padEnd(12)+' = '+fmtN(zr(sR[i]))+un);
     }
-    st++; stepHead(st,'FLEXIBILITY COEFFICIENTS');
-    line('      f_ij = Integral( m_i * m_j / EI ) dx'); line();
-    for(i=0;i<nRed;i++) for(j2=0;j2<=i;j2++) line('         '+fN(i,j2).padEnd(10)+' = '+fmtN(Fbs[i][j2])+un);
+
+    /* ====== STEP 8: FLEXIBILITY COEFFICIENTS f_ij BY SELECTED METHOD ====== */
+    st++; stepHead(st,'FLEXIBILITY COEFFICIENTS  ['+dmInfo.name.toUpperCase()+']');
+    if(dm === 'vw'){
+      line('      Method : VIRTUAL WORK (UNIT-LOAD) METHOD');
+      line('         f_ij = Integral_0^L [ m_i(x) * m_j(x) / EI ] dx');
+      for(i=0;i<nRed;i++){
+        for(j2=0;j2<=i;j2++){
+          line();
+          line('      Calculation of ' + fN(i,j2) + ' :');
+          p0.pieces.forEach(function(pc, pIdx){
+            var ci = mUnitPieces[i].pieces[pIdx].c, cj = mUnitPieces[j2].pieces[pIdx].c;
+            var xv = pc.a === 0 ? 'x' : "x'";
+            var riPc = segEIInfo(B, (pc.a+pc.b)/2);
+            var eiDen = Math.abs(riPc.r - 1) > 1e-7 ? ('/(' + riPc.eiS + ')') : '/EI';
+            var segVal = fmPolyDotInt(ci, cj, pc.h, pc.EI) * sc;
+            line('         Seg ' + (pIdx+1) + ' [' + pc.a.toFixed(2) + ' to ' + pc.b.toFixed(2) + ' m] [' + riPc.eiS + '] :  ' +
+                 'Int_0^' + pc.h.toFixed(2) + ' (' + fmPolyStr(ci, xv, pc.h) + ')(' + fmPolyStr(cj, xv, pc.h) + ')' +
+                 eiDen + ' d' + xv + ' = ' + fmtN(zr(segVal)) + un);
+          });
+          line('         => ' + fN(i,j2) + ' = ' + fmtN(zr(Fbs[i][j2])) + un);
+        }
+      }
+    } else {
+      for(j2=0;j2<nRed;j2++){
+        line('      --- Unit Redundant Case X'+(j2+1)+' = 1 ('+rn[red[j2]]+' = 1) ---');
+        var tgsU = [];
+        for(i=j2;i<nRed;i++){
+          var rdI = red[i], isMomI = rdI >= nS;
+          var xRI = isMomI ? sup[S.fixIdx[rdI-nS]][0] : sup[rdI][0];
+          tgsU.push({
+            x: xRI,
+            side: (isMomI && xRI > B.L*0.5) ? 'L' : 'R',
+            kind: isMomI ? 'th' : 'v',
+            thLabel: fN(i,j2),
+            vLabel: fN(i,j2),
+            showPhys: false
+          });
+        }
+        fmFormatMethodWorking(dm, B, mUnitPieces[j2], restPrim, sc, un, tgsU, '_'+(j2+1)).forEach(function(l){ line(l); });
+        if(j2 < nRed - 1) line();
+      }
+    }
+    line();
+    line('      Summary of primary beam flexibility coefficients:');
+    for(i=0;i<nRed;i++) for(j2=0;j2<=i;j2++) line('         '+fN(i,j2).padEnd(12)+' = '+fmtN(zr(Fbs[i][j2]))+un);
     if(nRed>1){
-      line(); line("      By applying Maxwell's law,  f_ij = f_ji :"); line();
+      line(); line("      By Maxwell's law of reciprocal deflections,  f_ij = f_ji :"); line();
       for(i=0;i<nRed-1;i++) for(j2=i+1;j2<nRed;j2++)
-        line('         '+fN(i,j2).padEnd(10)+' = '+fN(j2,i).padEnd(10)+' = '+fmtN(Fbs[i][j2])+un);
+        line('         '+fN(i,j2).padEnd(12)+' = '+fN(j2,i).padEnd(12)+' = '+fmtN(zr(Fbs[i][j2]))+un);
     }
     if(sup.some(function(sp){return sp[1]===4;})){
       line(); line('      Springs add their own flexibility:  f_ij(total) = f_ij + Sum( R_i * R_j / k )'); line();
       sup.forEach(function(sp,i6){ if(sp[1]===4) line('         spring at joint '+jl[i6]+' : k = '+matG(sp[3])+' kN/m,  1/k = '+fmtN(1/sp[3])); });
       line(); line('      Total flexibility coefficients:'); line();
-      for(i=0;i<nRed;i++) for(j2=0;j2<=i;j2++) line('         '+fN(i,j2).padEnd(10)+' = '+fmtN(Ffs[i][j2])+un);
+      for(i=0;i<nRed;i++) for(j2=0;j2<=i;j2++) line('         '+fN(i,j2).padEnd(12)+' = '+fmtN(zr(Ffs[i][j2]))+un);
     }
+
     st++; stepHead(st,'MAGNITUDES OF THE REDUNDANTS');
     line('      Substituting the deflections and flexibility coefficients into the compatibility');
     line('      equations:'); line();
@@ -2159,6 +3196,7 @@ function fmPrint(B,R){
     else { line(); line('      Solving Eqs. (1a) to ('+nRed+'a) simultaneously :'); line(); }
     for(j2=0;j2<nRed;j2++) line('         X'+(j2+1)+' = '+rn[red[j2]].padEnd(6)+' = '+rxnStr(S.X[j2], red[j2]<nS?red[j2]+1:nS+1, nS));
   }
+
   st++;
   if(nRed>0) stepHead(st,'REACTIONS   (equilibrium of the indeterminate beam)');
   else stepHead(st,'REACTIONS   (equilibrium of the beam)');
@@ -2198,8 +3236,9 @@ function fmPrint(B,R){
     line('         '+jl[k7].padEnd(6)+' '+sup[k7][0].toFixed(2).padEnd(8)+' '+tn[sup[k7][1]].padEnd(9)+' '+zr(R.Ry[k7]).toFixed(4).padEnd(12)+' '+mS.padEnd(14)+' '+xS);
   });
   sup.forEach(function(sp,i9){
-    if(sp[1]===4) line(); line('      Spring at joint '+jl[i9]+' : v = -Ry/k = -('+R.Ry[i9].toFixed(4)+')/('+matG(sp[3])+') = '+matG(-R.Ry[i9]/sp[3])+' m');
+    if(sp[1]===4){ line(); line('      Spring at joint '+jl[i9]+' : v = -Ry/k = -('+R.Ry[i9].toFixed(4)+')/('+matG(sp[3])+') = '+matG(-R.Ry[i9]/sp[3])+' m'); }
   });
+
   st++; stepHead(st,'SHEAR AND BENDING MOMENT');
   line('      Values are computed from the final reactions.  Two values separated by | are the');
   line('      values just left and just right of the point (a jump = point load or moment).'); line();
@@ -2210,9 +3249,149 @@ function fmPrint(B,R){
     var q2=fieldVM([x+t],S.Rf.slice(0,nS),S.Rf.slice(nS),B,true);
     line('         '+x.toFixed(2).padEnd(8)+' '+ptLabel(jx,x,tolx).padEnd(6)+' '+lrStr(q1[0][0],q2[0][0]).padEnd(26)+' '+lrStr(q1[1][0],q2[1][0]));
   });
+
+  /* ====== FINAL BEAM SLOPE & DEFLECTION STEP BY SELECTED METHOD ====== */
+  st++; stepHead(st,'BEAM SLOPE & DEFLECTION CALCULATION  ['+dmInfo.name.toUpperCase()+']');
+  var restFin = fmGetRestraints(B, false, S, R.Ry);
+  var mrFin = S.fixIdx.map(function(fi){ return R.Mr[fi]; });
+  var pFin0 = fmExactPieces(B, R.Ry, mrFin, true, []);
+  var diFin0 = fmSolveDI(B, pFin0, restFin);
+  var mdEx = fmExactMaxDefl(B, pFin0, diFin0);
+  var xMax = mdEx[1];
+  var extraEval = [xMax];
+  var hasTarget = (targetX !== null && targetX >= -tolx && targetX <= B.L + tolx);
+  if(hasTarget){
+    targetX = Math.max(0, Math.min(B.L, targetX));
+    extraEval.push(targetX);
+  }
+  var pFin = fmExactPieces(B, R.Ry, mrFin, true, extraEval);
+  var diFin = fmSolveDI(B, pFin, restFin);
+
+  line('      Final piecewise bending moment equations M(x) of the solved beam:'); line();
+  fmPrintPieceMoments(line, pFin0, 'M', B);
+  line();
+
+  var evalPts = [{
+    x: xMax,
+    side: 'L',
+    kind: 'both',
+    thLabel: 'theta(x_max = ' + xMax.toFixed(4) + ')',
+    vLabel:  'v_max(x = ' + xMax.toFixed(4) + ')',
+    showPhys: !isSymFM
+  }];
+  if(hasTarget && Math.abs(targetX - xMax) > 1e-4){
+    var isHingeTarget = (B.hinge||[]).some(function(xh){ return Math.abs(xh - targetX) < tolx; });
+    if(isHingeTarget){
+      evalPts.push({ x: targetX, side:'L', kind:'both', thLabel:'theta(' + targetX.toFixed(2) + '-)', vLabel:'v(' + targetX.toFixed(2) + ')', showPhys:!isSymFM });
+      evalPts.push({ x: targetX, side:'R', kind:'th',   thLabel:'theta(' + targetX.toFixed(2) + '+)', vLabel:'v(' + targetX.toFixed(2) + ')', showPhys:!isSymFM });
+    } else {
+      evalPts.push({
+        x: targetX, side:'L', kind:'both',
+        thLabel:'theta(' + targetX.toFixed(2) + ')',
+        vLabel: 'v(' + targetX.toFixed(2) + ')',
+        showPhys: !isSymFM
+      });
+    }
+  }
+
+  if(dm === 'vw'){
+    line('      Method : VIRTUAL WORK (UNIT-LOAD) METHOD   (using statically determinate primary/base beam)');
+    line('         1 * v(x*)     + Sum( R_v * v_sup )     = Integral_0^L [ m_v(x) * M(x) / EI ] dx');
+    line('         1 * theta(x*) + Sum( R_theta * v_sup ) = Integral_0^L [ m_theta(x) * M(x) / EI ] dx');
+    evalPts.forEach(function(ep){
+      var vw = fmSolveVWPoint(B, S, {ry:R.Ry, mr:mrFin, withLoads:true}, ep.x, restFin, ep.side);
+      line();
+      line('      --- Virtual Work evaluation at x* = ' + ep.x.toFixed(4) + ' m ---');
+      if(ep.kind === 'v' || ep.kind === 'both'){
+        line('      a) Deflection v(' + ep.x.toFixed(4) + ') : apply unit upward virtual load P* = 1 kN at x* = ' + ep.x.toFixed(4) + ' m');
+        vw.pReal.pieces.forEach(function(pc, idx){
+          var cv = vw.pv.pieces[idx].c;
+          var xv = pc.a === 0 ? 'x' : "x'";
+          var riPc = segEIInfo(B, (pc.a+pc.b)/2);
+          var eiDen = Math.abs(riPc.r - 1) > 1e-7 ? ('(' + riPc.eiS + ')') : 'EI';
+          var ivS = zr(vw.segIntV[idx] * sc);
+          if(Math.abs(cv[0]) + Math.abs(cv[1]) > 1e-12){
+            line('         Seg ' + (idx+1) + ' [' + pc.a.toFixed(2) + ' to ' + pc.b.toFixed(2) + ' m] [' + riPc.eiS + '] :  m_v(' + xv + ') = ' +
+                 fmPolyStr(cv, xv, pc.h) + '   =>  Int(m_v*M/' + eiDen + ') = ' + fmtN(ivS) + un);
+          }
+        });
+        if(Math.abs(vw.supWorkV) > 1e-14)
+          line('         Retained support displacement work = ' + fmtN(zr(vw.supWorkV*sc)) + un);
+        line('         => ' + ep.vLabel + ' = ' + fmtN(zr(vw.v*sc)) + un +
+             (isSymFM ? '' : ('   [' + fmtN(zr(vw.v)) + ' m = ' + zr(vw.v*1000).toFixed(4) + ' mm]')));
+      }
+      if(ep.kind === 'th' || ep.kind === 'both'){
+        line('      b) Slope ' + ep.thLabel + ' : apply unit CCW virtual couple M* = 1 kNm at x* = ' + ep.x.toFixed(4) + ' m');
+        vw.pReal.pieces.forEach(function(pc, idx){
+          var ct = vw.pt.pieces[idx].c;
+          var xv = pc.a === 0 ? 'x' : "x'";
+          var riPc = segEIInfo(B, (pc.a+pc.b)/2);
+          var eiDen = Math.abs(riPc.r - 1) > 1e-7 ? ('(' + riPc.eiS + ')') : 'EI';
+          var ithS = zr(vw.segIntTh[idx] * sc);
+          if(Math.abs(ct[0]) + Math.abs(ct[1]) > 1e-12){
+            line('         Seg ' + (idx+1) + ' [' + pc.a.toFixed(2) + ' to ' + pc.b.toFixed(2) + ' m] [' + riPc.eiS + '] :  m_theta(' + xv + ') = ' +
+                 fmPolyStr(ct, xv, pc.h) + '   =>  Int(m_theta*M/' + eiDen + ') = ' + fmtN(ithS) + un);
+          }
+        });
+        if(Math.abs(vw.supWorkTh) > 1e-14)
+          line('         Retained support displacement work = ' + fmtN(zr(vw.supWorkTh*sc)) + un);
+        line('         => ' + ep.thLabel + ' = ' + fmtN(zr(vw.th*sc)) + un +
+             (isSymFM ? '' : ('   [' + fmtN(zr(vw.th)) + ' rad]')));
+      }
+    });
+  } else {
+    fmFormatMethodWorking(dm, B, dm === 'di' ? pFin0 : pFin, restFin, sc, un, evalPts, '').forEach(function(l){ line(l); });
+  }
+
+  line();
+  line('      Summary of beam slope and deflection at key points (' + dmInfo.name + '):');
+  line();
+  if(isSymFM){
+    line('         ' + 'x (m)'.padEnd(9) + 'Joint'.padEnd(7) + 'Slope theta (kNm^2/EI)'.padEnd(28) + 'Deflection v (kNm^3/EI)');
+  } else {
+    line('         ' + 'x (m)'.padEnd(9) + 'Joint'.padEnd(7) + 'Slope theta (rad)'.padEnd(24) + 'Deflection v (mm)');
+  }
+  var kptsAll = kp.concat([xMax]).concat(hasTarget ? [targetX] : [])
+    .sort(function(a,b){return a-b;})
+    .filter(function(v,i,arr){ return i===0 || v - arr[i-1] > 1e-5; });
+  kptsAll.forEach(function(x){
+    var isH = (B.hinge||[]).some(function(xh){ return Math.abs(xh - x) < tolx; });
+    var eL = diFin.evalAt(x, 'L'), eR = diFin.evalAt(x, 'R');
+    var tagPt = Math.abs(x - xMax) < 1e-4 ? '  <-- max |v|' : (hasTarget && Math.abs(x - targetX) < 1e-4 ? '  <-- target x' : '');
+    if(isSymFM){
+      var thSym = isH ? (fmtN(zr(eL.th*sc)) + '/EI | ' + fmtN(zr(eR.th*sc)) + '/EI') : (fmtN(zr(eL.th*sc)) + ' / EI');
+      var vSym  = fmtN(zr(eL.v*sc)) + ' / EI';
+      line('         ' + x.toFixed(4).padEnd(9) + ptLabel(jx,x,tolx).padEnd(7) + thSym.padEnd(28) + vSym + tagPt);
+    } else {
+      var thTxt = isH ? (fmtN(zr(eL.th)) + ' | ' + fmtN(zr(eR.th))) : fmtN(zr(eL.th));
+      line('         ' + x.toFixed(4).padEnd(9) + ptLabel(jx,x,tolx).padEnd(7) + thTxt.padEnd(24) + zr(eL.v*1000).toFixed(4) + tagPt);
+    }
+  });
+
   line(); line('   '+dbl);
   return T;
 }
+
+function fmExtractDeflectionView(fullLines){
+  var out = [], capture = false;
+  for(var i=0; i<fullLines.length; i++){
+    var ln = fullLines[i];
+    if(ln.indexOf('DEFLECTIONS OF THE PRIMARY BEAM UNDER LOADS') >= 0 ||
+       ln.indexOf('FLEXIBILITY COEFFICIENTS  [') >= 0 ||
+       ln.indexOf('MAGNITUDES OF THE REDUNDANTS') >= 0 ||
+       ln.indexOf('BEAM SLOPE & DEFLECTION CALCULATION') >= 0){
+      capture = true;
+      if(i>=1 && fullLines[i-1].indexOf('---')>=0 && (!out.length || out[out.length-1].indexOf('---')<0)) out.push(fullLines[i-1]);
+    } else if(ln.indexOf('REACTIONS   (equilibrium') >= 0 ||
+              ln.indexOf('SHEAR AND BENDING MOMENT') >= 0){
+      if(capture && out.length && out[out.length-1].indexOf('---')>=0) out.pop();
+      capture = false;
+    }
+    if(capture) out.push(ln);
+  }
+  return out.join('\n').replace(/^(\s*\n)+/,'').replace(/\s+$/,'');
+}
+
 /*FM-END*/
 
 /* ---------- full report wrapper (mirrors buildSolutionText) ---------- */
@@ -2224,17 +3403,32 @@ function buildSolutionTextJS(B, loads, method, R, capturedLines){
   T.push('   Beam    : '+(B.name||'Beam'));
   T.push('   Method  : '+method);
   T.push('   Date    : '+new Date().toISOString().slice(0,16).replace('T',' '));
-  T.push('   Units   : kN, m, kNm   (E in kN/m^2, I in mm^4)');
+  var MpropRep = ensureBProps(B);
+  T.push(MpropRep.sym
+         ? '   Units   : kN, m, kNm   (Symbolic E & I — slopes in kNm^2/EI, deflections in kNm^3/EI)'
+         : '   Units   : kN, m, kNm   (E in kN/m^2, I in mm^4)');
   T.push('');
   T.push(thin); T.push('   1.  INPUT DATA'); T.push(thin);
   T.push('   Beam length L = '+matG(B.L)+' m');
-  var uniqI={}; B.I.forEach(function(v){uniqI[v.toFixed(12)]=1;});
-  T.push(Object.keys(uniqI).length>1 ? '   Moment of inertia: VARYING from span to span'
-                                     : '   Moment of inertia: UNIFORM (same I for every span)');
+  T.push('   Rigidity mode : '+(MpropRep.sym ? 'SYMBOLIC / RELATIVE (no numerical E, I values given)'
+                                             : 'NUMERICAL (reference EI = '+matG(MpropRep.EIref,10)+' kNm^2)'));
+  T.push(MpropRep.hasVaryE ? '   Elastic modulus E : VARYING from span to span'
+                           : '   Elastic modulus E : UNIFORM (same E for every span)');
+  T.push(MpropRep.hasVaryI ? '   Moment of inertia I : VARYING from span to span'
+                           : '   Moment of inertia I : UNIFORM (same I for every span)');
   T.push(''); T.push('   Spans:');
-  for(var k=0;k<B.E.length;k++){
-    T.push('      Span '+(k+1)+' : x = '+matG(B.spanX[k])+' to '+matG(B.spanX[k+1])+' m   L = '+matG(B.spanX[k+1]-B.spanX[k])+
-           ' m   E = '+matG(B.E[k],10)+'   I = '+matG(B.I[k]*1e12,10)+'   EI = '+matG(B.E[k]*B.I[k],10)+' kNm^2');
+  for(var k=0;k<MpropRep.EArr.length;k++){
+    var xmR = (B.spanX[k] + B.spanX[k+1]) / 2, riR = segEIInfo(B, xmR);
+    if(MpropRep.sym){
+      T.push('      Span '+(k+1)+' : x = '+matG(B.spanX[k])+' to '+matG(B.spanX[k+1])+' m   L = '+matG(B.spanX[k+1]-B.spanX[k])+
+             ' m   E = '+riR.eS+'   I = '+riR.iS+'   EI = '+riR.eiS);
+    } else if(MpropRep.hasVaryE || MpropRep.hasVaryI || MpropRep.hasNonUnit){
+      T.push('      Span '+(k+1)+' : x = '+matG(B.spanX[k])+' to '+matG(B.spanX[k+1])+' m   L = '+matG(B.spanX[k+1]-B.spanX[k])+
+             ' m   E = '+riR.eS+' ('+matG(MpropRep.EArr[k],10)+')   I = '+riR.iS+' ('+matG(MpropRep.IArr[k]*1e12,10)+' mm^4)   EI = '+riR.eiS+' ('+matG(MpropRep.EArr[k]*MpropRep.IArr[k],10)+' kNm^2)');
+    } else {
+      T.push('      Span '+(k+1)+' : x = '+matG(B.spanX[k])+' to '+matG(B.spanX[k+1])+' m   L = '+matG(B.spanX[k+1]-B.spanX[k])+
+             ' m   E = '+matG(MpropRep.EArr[k],10)+'   I = '+matG(MpropRep.IArr[k]*1e12,10)+'   EI = '+matG(MpropRep.EArr[k]*MpropRep.IArr[k],10)+' kNm^2');
+    }
   }
   T.push(''); T.push('   Supports:');
   B.sup.forEach(function(sp,i){
@@ -2268,15 +3462,21 @@ function buildSolutionTextJS(B, loads, method, R, capturedLines){
   T.push(''); T.push('   Maximum values:');
   T.push('      Shear      : '+zr(R.Vmax).toFixed(2).padStart(10)+' kN     at x = '+R.xV.toFixed(2)+' m');
   T.push('      Moment     : '+zr(R.Mmax).toFixed(2).padStart(10)+' kN-m   at x = '+R.xM.toFixed(2)+' m');
-  T.push('      Deflection : '+zr(R.dmax*1000).toFixed(2).padStart(10)+' mm     at x = '+R.xd.toFixed(2)+' m');
+  if(MpropRep.sym){
+    T.push('      Deflection : '+zr(R.dmax).toFixed(4).padStart(10)+' / EI   (kNm^3/EI) at x = '+R.xd.toFixed(2)+' m');
+  } else {
+    T.push('      Deflection : '+zr(R.dmax*1000).toFixed(2).padStart(10)+' mm     at x = '+R.xd.toFixed(2)+' m   ('+fmtN(zr(R.dmax*MpropRep.EIref))+' / EI)');
+  }
   T.push(''); T.push('   Values along the beam (read from the diagram data):');
-  T.push('      '+'x (m)'.padEnd(9)+' '+'V (kN)'.padEnd(13)+' '+'M (kN-m)'.padEnd(15)+' Deflection (mm)');
+  T.push('      '+'x (m)'.padEnd(9)+' '+'V (kN)'.padEnd(13)+' '+'M (kN-m)'.padEnd(15)+(MpropRep.sym ? ' Deflection (kNm^3/EI)' : ' Deflection (mm)'));
   var xset={};
   for(var q=0;q<=10;q++) xset[Math.round(B.L*q/10*1e6)/1e6]=1;
   B.sup.forEach(function(sp){xset[Math.round(sp[0]*1e6)/1e6]=1;});
+  (B.spanX||[]).forEach(function(sx){xset[Math.round(sx*1e6)/1e6]=1;});
   Object.keys(xset).map(Number).sort(function(a,b){return a-b;}).forEach(function(x){
     var i2=0; for(var i3=1;i3<R.xp.length;i3++) if(Math.abs(R.xp[i3]-x)<Math.abs(R.xp[i2]-x)) i2=i3;
-    T.push('      '+x.toFixed(2).padEnd(9)+' '+zr(R.Vp[i2]).toFixed(2).padEnd(13)+' '+zr(R.Mp[i2]).toFixed(2).padEnd(15)+' '+zr(R.vp[i2]*1000).toFixed(3));
+    var defCol = MpropRep.sym ? (zr(R.vp[i2]).toFixed(4)+' / EI') : zr(R.vp[i2]*1000).toFixed(3);
+    T.push('      '+x.toFixed(2).padEnd(9)+' '+zr(R.Vp[i2]).toFixed(2).padEnd(13)+' '+zr(R.Mp[i2]).toFixed(2).padEnd(15)+' '+defCol);
   });
   T.push(''); T.push(bar); T.push('   END OF SOLUTION'); T.push(bar);
   return T.join('\n');
@@ -2362,22 +3562,82 @@ function loadRow(d){
   el('loadTable').querySelector('tbody').appendChild(tr);
   return tr;
 }
-el('addSup').onclick  = function(){ supRow(); };
+el('addSup').onclick  = function(){ supRow(); refreshSpanTable(); };
 el('addLoad').onclick = function(){ loadRow(); };
 el('delSup').onclick  = function(){
   el('supTable').querySelectorAll('tbody tr.sel').forEach(function(r){r.remove();});
+  refreshSpanTable();
 };
 el('delLoad').onclick = function(){
   el('loadTable').querySelectorAll('tbody tr.sel').forEach(function(r){r.remove();});
 };
 
+function parseFlexToken(raw, sym, baseNum, symMode){
+  var s = String(raw === undefined || raw === null ? '' : raw).trim();
+  if(s === ''){
+    if(symMode || !(baseNum > 0)) return { isSym:true, mul:1, val:1 };
+    return { isSym:false, mul:1, val:baseNum };
+  }
+  // 1) Pure scientific/decimal number (e.g. "200e6", "500e6", "2", "1.5")
+  if(/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(s)){
+    var v = parseFloat(s);
+    if(!(v > 0)) throw new Error(sym + ' must be greater than zero (got "' + s + '").');
+    if(symMode) return { isSym:true, mul:v, val:v };
+    return { isSym:false, mul:(baseNum > 0 ? v / baseNum : 1), val:v };
+  }
+  // 2) Pure positive fraction (e.g. "1/2", "3/2") -> relative multiplier
+  var mf = s.match(/^[+]?(\d+\.?\d*|\.\d+)\s*\/\s*[+]?(\d+\.?\d*|\.\d+)$/);
+  if(mf){
+    var vf = parseFloat(mf[1]) / parseFloat(mf[2]);
+    if(!(vf > 0)) throw new Error('Invalid fraction for ' + sym + ': "' + s + '".');
+    if(symMode || !(baseNum > 0)) return { isSym:true, mul:vf, val:vf };
+    return { isSym:false, mul:vf, val:vf * baseNum };
+  }
+  // 3) Symbolic/relative factor (e.g. "I", "2I", "1.5I", "I/2", "3I/4", "3/2 I", "E", "2E", "2*I", "2x")
+  var mr1 = s.match(/^([+]?(?:\d+\.?\d*|\.\d+))?\s*\*?\s*(?:EI|E|I|x)\s*(?:\/\s*([+]?(?:\d+\.?\d*|\.\d+)))?$/i);
+  if(mr1){
+    var n1 = mr1[1] ? parseFloat(mr1[1]) : 1;
+    var d1 = mr1[2] ? parseFloat(mr1[2]) : 1;
+    var mul1 = n1 / d1;
+    if(!(mul1 > 0)) throw new Error('Relative factor for ' + sym + ' must be positive (got "' + s + '").');
+    if(symMode || !(baseNum > 0)) return { isSym:true, mul:mul1, val:mul1 };
+    return { isSym:false, mul:mul1, val:mul1 * baseNum };
+  }
+  var mr2 = s.match(/^([+]?(?:\d+\.?\d*|\.\d+))\s*\/\s*([+]?(?:\d+\.?\d*|\.\d+))\s*\*?\s*(?:EI|E|I|x)$/i);
+  if(mr2){
+    var mul2 = parseFloat(mr2[1]) / parseFloat(mr2[2]);
+    if(!(mul2 > 0)) throw new Error('Relative factor for ' + sym + ' must be positive (got "' + s + '").');
+    if(symMode || !(baseNum > 0)) return { isSym:true, mul:mul2, val:mul2 };
+    return { isSym:false, mul:mul2, val:mul2 * baseNum };
+  }
+  throw new Error('Invalid ' + sym + ' input "' + s + '". Use a positive number (e.g. 200e6) or factor (e.g. ' + sym + ', 2' + sym + ', 1.5' + sym + ', ' + sym + '/2).');
+}
+
+function getSpanBreakpoints(L){
+  var xs = [0, L];
+  var tol = 1e-7 * Math.max(1, L);
+  function addPt(v){
+    if(!isFinite(v) || v <= tol || v >= L - tol) return;
+    if(!xs.some(function(u){ return Math.abs(u - v) < tol; })) xs.push(v);
+  }
+  el('supTable').querySelectorAll('tbody tr').forEach(function(tr){
+    addPt(num(tr.querySelector('.sx').value));
+  });
+  if(el('perSpan') && el('perSpan').checked && el('fStepX')){
+    (el('fStepX').value.trim().match(/-?\d*\.?\d+/g)||[]).map(Number).forEach(addPt);
+  }
+  xs.sort(function(a,b){return a-b;});
+  return xs;
+}
+
 function readModel(){
   var L = num(el('fL').value);
   if(!(L>0)) throw new Error('Length L must be a positive number.');
-  var E = num(el('fE').value), I = num(el('fI').value);
-  if(!(E>0)) throw new Error('E must be a positive number (kN/m²).');
-  if(!(I>0)) throw new Error('I must be a positive number (mm⁴).');
-  var Im4 = I*1e-12;
+  var symToggle = !!(el('symbolicEI') && el('symbolicEI').checked);
+  var topE = parseFlexToken(el('fE').value, 'E', null, symToggle);
+  var topI = parseFlexToken(el('fI').value, 'I', null, symToggle);
+  var isSymBeam = symToggle || topE.isSym || topI.isSym;
+
   var sup = [];
   el('supTable').querySelectorAll('tbody tr').forEach(function(tr){
     var x = num(tr.querySelector('.sx').value);
@@ -2386,23 +3646,51 @@ function readModel(){
     var k  = num(tr.querySelector('.sk').value);
     if(!(x>=0 && x<=L)) throw new Error('Support x must be within 0…L.');
     if(t===4 && !(k>0)) throw new Error('Spring support: enter stiffness k (kN/m).');
+    if(isSymBeam && Math.abs(st) > 0)
+      throw new Error('Support settlements require numerical E (kN/m²) and I (mm⁴) values because reactions depend on actual stiffness EI.');
+    if(isSymBeam && t === 4)
+      throw new Error('Spring supports require numerical E (kN/m²) and I (mm⁴) values because spring-beam interaction depends on actual stiffness EI.');
     sup.push([x,t,st, t===4?k:0]);
   });
   if(!sup.length) throw new Error('Add at least one support.');
   sup.sort(function(a,b){return a[0]-b[0];});
-  var spanX = [0, L]; sup.forEach(function(s){ if(spanX.indexOf(s[0])<0) spanX.push(s[0]); });
-  spanX = spanX.filter(function(v,i,a){return a.indexOf(v)===i;}).sort(function(a,b){return a-b;});
-  var Elist = [E], Ilist = [Im4];
-  if(el('perSpan').checked){
-    Elist = []; Ilist = [];
-    el('spanTable').querySelectorAll('tbody tr').forEach(function(tr){
-      var eV = num(tr.querySelector('.se').value), iV = num(tr.querySelector('.si').value);
-      if(!(eV>0)) throw new Error('Span E must be a positive number (kN/m²).');
-      if(!(iV>0)) throw new Error('Span I must be a positive number (mm⁴).');
-      Elist.push(eV); Ilist.push(iV*1e-12);
-    });
-    var want = Math.max(1, spanX.length-1);
-    if(Elist.length !== want){ refreshSpanTable(); throw new Error('Span table refreshed ('+want+' spans) — press CALCULATE again.'); }
+
+  var spanX = getSpanBreakpoints(L);
+  var Elist = [], Ilist = [], eMul = [], iMul = [], EIref, Ebase, Ibase;
+
+  if(isSymBeam){
+    var eBaseMul = topE.isSym ? topE.mul : 1;
+    var iBaseMul = topI.isSym ? topI.mul : 1;
+    EIref = 1; Ebase = 1; Ibase = 1;
+    if(el('perSpan').checked){
+      el('spanTable').querySelectorAll('tbody tr').forEach(function(tr){
+        var pe = parseFlexToken(tr.querySelector('.se').value, 'E', null, true);
+        var pi = parseFlexToken(tr.querySelector('.si').value, 'I', null, true);
+        Elist.push(pe.mul); Ilist.push(pi.mul);
+        eMul.push(pe.mul);  iMul.push(pi.mul);
+      });
+      var wantS = Math.max(1, spanX.length-1);
+      if(Elist.length !== wantS){ refreshSpanTable(); throw new Error('Span table refreshed ('+wantS+' spans) — press CALCULATE again.'); }
+    } else {
+      Elist = [eBaseMul]; Ilist = [iBaseMul];
+      eMul  = [eBaseMul]; iMul  = [iBaseMul];
+    }
+  } else {
+    var E0 = topE.val, I0_mm4 = topI.val, Im4 = I0_mm4 * 1e-12;
+    EIref = E0 * Im4; Ebase = E0; Ibase = Im4;
+    if(el('perSpan').checked){
+      el('spanTable').querySelectorAll('tbody tr').forEach(function(tr){
+        var pe = parseFlexToken(tr.querySelector('.se').value, 'E', E0, false);
+        var pi = parseFlexToken(tr.querySelector('.si').value, 'I', I0_mm4, false);
+        Elist.push(pe.val); Ilist.push(pi.val * 1e-12);
+        eMul.push(pe.mul);  iMul.push(pi.mul);
+      });
+      var wantN = Math.max(1, spanX.length-1);
+      if(Elist.length !== wantN){ refreshSpanTable(); throw new Error('Span table refreshed ('+wantN+' spans) — press CALCULATE again.'); }
+    } else {
+      Elist = [E0]; Ilist = [Im4];
+      eMul  = [1];  iMul  = [1];
+    }
   }
   var hinge = (el('fHinge').value.trim().match(/-?\d*\.?\d+/g)||[]).map(Number)
               .filter(function(h){return h>0 && h<L;});
@@ -2436,7 +3724,8 @@ function readModel(){
     }
   });
   return {L:L, E:Elist, I:Ilist, spanX:spanX, hinge:hinge, P:P, M:M, W:W, H:H, sup:sup,
-          loadRows:loadRows, name:el('fTitle').value||'Beam'};
+          loadRows:loadRows, name:el('fTitle').value||'Beam',
+          symbolicEI:isSymBeam, EIref:EIref, Ebase:Ebase, Ibase:Ibase, eMul:eMul, iMul:iMul};
 }
 
 /* ---------- plots (pure inline SVG, no libraries) ---------- */
@@ -2471,9 +3760,26 @@ function beamSketch(B){
   var x0=0,x1=B.L;
   function X(v){return pad+(v-x0)/(x1-x0||1)*(W-pad-14);}
   var s = svgFrame(W,H);
+  var Msk = ensureBProps(B);
+  var modeSub = Msk.sym ? ' | Symbolic EI' : ((Msk.hasVaryE||Msk.hasVaryI||Msk.hasNonUnit) ? ' | Varying EI' : '');
   s += '<text x="12" y="16" fill="#9a9aa4" font-size="12" font-weight="600">'+
-       (el('fTitle').value||'Beam')+' | supports &amp; loads</text>';
-  s += '<line x1="'+X(0)+'" y1="'+yb+'" x2="'+X(B.L)+'" y2="'+yb+'" stroke="#f2f2f2" stroke-width="4"/>';
+       (el('fTitle').value||'Beam')+' | supports &amp; loads'+modeSub+'</text>';
+  if(Msk.sym || Msk.hasVaryE || Msk.hasVaryI || Msk.hasNonUnit){
+    var maxMul = Math.max.apply(null, Msk.eiMul.concat([1]));
+    var minMul = Math.min.apply(null, Msk.eiMul.concat([1]));
+    for(var ks=0; ks<B.spanX.length-1; ks++){
+      var xa=B.spanX[ks], xb=B.spanX[ks+1], riSk=segEIInfo(B, (xa+xb)/2);
+      var sw = (maxMul > minMul*1.01) ? (3.2 + 3.0*(riSk.r - minMul)/(maxMul - minMul)) : 4;
+      s += '<line x1="'+X(xa)+'" y1="'+yb+'" x2="'+X(xb)+'" y2="'+yb+'" stroke="#f2f2f2" stroke-width="'+sw.toFixed(1)+'"/>';
+      if(ks > 0) s += '<line x1="'+X(xa)+'" y1="'+(yb-7)+'" x2="'+X(xa)+'" y2="'+(yb+7)+'" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="2,2"/>';
+      var lblSk = (Msk.hasVaryE && Msk.hasVaryI) ? (riSk.eS+', '+riSk.iS+' ('+riSk.eiS+')')
+                : (Msk.hasVaryE ? (riSk.eS+', '+riSk.iS) : (Msk.hasVaryI ? riSk.iS+' ('+riSk.eiS+')' : riSk.eiS));
+      var mxPx = (X(xa) + X(xb)) / 2;
+      s += '<text x="'+mxPx.toFixed(1)+'" y="'+(yb+16)+'" text-anchor="middle" fill="#c084fc" font-size="10.5" font-weight="600">'+lblSk+'</text>';
+    }
+  } else {
+    s += '<line x1="'+X(0)+'" y1="'+yb+'" x2="'+X(B.L)+'" y2="'+yb+'" stroke="#f2f2f2" stroke-width="4"/>';
+  }
   var names='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   B.sup.forEach(function(sp,i){
     var px=X(sp[0]);
@@ -2520,36 +3826,113 @@ function beamSketch(B){
   return s;
 }
 
+var _savedNumE = '200e6', _savedNumI = '500e6';
+
+function updateSpanPreviews(){
+  var symToggle = !!(el('symbolicEI') && el('symbolicEI').checked);
+  var topE, topI;
+  try { topE = parseFlexToken(el('fE').value, 'E', null, symToggle); } catch(e){ topE = {isSym:true, mul:1, val:1}; }
+  try { topI = parseFlexToken(el('fI').value, 'I', null, symToggle); } catch(e){ topI = {isSym:true, mul:1, val:1}; }
+  var isSym = symToggle || topE.isSym || topI.isSym;
+
+  if(el('lblFE')) el('lblFE').innerHTML = isSym ? 'Reference E (symbolic)' : 'E (kN/m&sup2; or kE)';
+  if(el('lblFI')) el('lblFI').innerHTML = isSym ? 'Reference I (symbolic)' : 'I (mm&#8308; or kI)';
+  if(el('thSpanE')) el('thSpanE').innerHTML = isSym ? 'E factor (e.g. E, 2E)' : 'E (kN/m&sup2; or kE)';
+  if(el('thSpanI')) el('thSpanI').innerHTML = isSym ? 'I factor (e.g. I, 2I)' : 'I (mm&#8308; or kI)';
+  if(el('eiModeHint')){
+    el('eiModeHint').innerHTML = isSym
+      ? '<span style="color:var(--deflec);font-weight:600">Symbolic EI active:</span> Reactions &amp; moments in <b>kN, kN&middot;m</b>; slopes &amp; deflections in terms of <b>EI</b>.'
+      : 'Tip: Tick <b>No numerical E / I value</b> (or type <code>E</code>, <code>I</code>) when E &amp; I are not given numerically.';
+  }
+
+  var tb = el('spanTable') ? el('spanTable').querySelector('tbody') : null;
+  if(!tb) return;
+  tb.querySelectorAll('tr').forEach(function(tr){
+    var cell = tr.querySelector('.sei');
+    if(!cell) return;
+    try {
+      var pe = isSym ? parseFlexToken(tr.querySelector('.se').value, 'E', null, true)
+                     : parseFlexToken(tr.querySelector('.se').value, 'E', topE.val, false);
+      var pi = isSym ? parseFlexToken(tr.querySelector('.si').value, 'I', null, true)
+                     : parseFlexToken(tr.querySelector('.si').value, 'I', topI.val, false);
+      var r = pe.mul * pi.mul;
+      var eiLbl = fmtSymMul(r, 'EI');
+      if(isSym){
+        cell.textContent = eiLbl;
+        cell.style.color = 'var(--deflec)';
+      } else {
+        var eiNum = pe.val * (pi.val * 1e-12);
+        cell.textContent = eiLbl + ' (' + matG(eiNum, 4) + ')';
+        cell.style.color = 'var(--deflec)';
+      }
+    } catch(err){
+      cell.textContent = 'invalid';
+      cell.style.color = 'var(--red)';
+    }
+  });
+}
+
 function refreshSpanTable(){
   var L = num(el('fL').value);
   if(!(L>0)) return;
-  var xs = [0, L];
-  el('supTable').querySelectorAll('tbody tr').forEach(function(tr){
-    var v = num(tr.querySelector('.sx').value);
-    if(isFinite(v) && v>0 && v<L && xs.indexOf(v)<0) xs.push(v);
-  });
-  xs.sort(function(a,b){return a-b;});
+  var xs = getSpanBreakpoints(L);
   var n = Math.max(1, xs.length-1);
   var tb = el('spanTable').querySelector('tbody');
   var old = [];
   tb.querySelectorAll('tr').forEach(function(tr){
     old.push([tr.querySelector('.se').value, tr.querySelector('.si').value]);
   });
+  var symToggle = !!(el('symbolicEI') && el('symbolicEI').checked);
+  var defE = symToggle ? 'E' : (el('fE').value.trim() || 'E');
+  var defI = symToggle ? 'I' : (el('fI').value.trim() || 'I');
   tb.innerHTML = '';
   for(var k=0;k<n;k++){
     var tr = document.createElement('tr');
-    tr.innerHTML = '<td>Span '+(k+1)+'&nbsp; ('+xs[k]+'–'+xs[k+1]+' m)</td>'+
-      '<td><input class="se" type="number" step="any" value="'+(old[k]?old[k][0]:el('fE').value)+'"></td>'+
-      '<td><input class="si" type="number" step="any" value="'+(old[k]?old[k][1]:el('fI').value)+'"></td>';
+    var vE = old[k] ? old[k][0] : defE;
+    var vI = old[k] ? old[k][1] : defI;
+    tr.innerHTML = '<td style="white-space:nowrap">Span '+(k+1)+'&nbsp; ('+fmtFactorNum(xs[k])+'–'+fmtFactorNum(xs[k+1])+' m)</td>'+
+      '<td><input class="se" type="text" value="'+vE+'" placeholder="e.g. E, 2E"></td>'+
+      '<td><input class="si" type="text" value="'+vI+'" placeholder="e.g. I, 2I"></td>'+
+      '<td class="sei" style="font-weight:700;font-size:11.5px;white-space:nowrap"></td>';
     tb.appendChild(tr);
   }
+  updateSpanPreviews();
 }
+
+el('symbolicEI').onchange = function(){
+  var on = el('symbolicEI').checked;
+  var curE = el('fE').value.trim(), curI = el('fI').value.trim();
+  if(on){
+    if(/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(curE)) _savedNumE = curE;
+    if(/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(curI)) _savedNumI = curI;
+    if(curE === '' || curE === _savedNumE) el('fE').value = 'E';
+    if(curI === '' || curI === _savedNumI) el('fI').value = 'I';
+    el('spanTable').querySelectorAll('tbody tr').forEach(function(tr){
+      var se = tr.querySelector('.se'), si = tr.querySelector('.si');
+      if(se && se.value.trim() === _savedNumE) se.value = 'E';
+      if(si && si.value.trim() === _savedNumI) si.value = 'I';
+    });
+  } else {
+    if(/^1?\s*E$/i.test(curE) || curE === '') el('fE').value = _savedNumE;
+    if(/^1?\s*I$/i.test(curI) || curI === '') el('fI').value = _savedNumI;
+    el('spanTable').querySelectorAll('tbody tr').forEach(function(tr){
+      var se = tr.querySelector('.se'), si = tr.querySelector('.si');
+      if(se && (/^1?\s*E$/i.test(se.value.trim()) || se.value.trim() === '')) se.value = _savedNumE;
+      if(si && (/^1?\s*I$/i.test(si.value.trim()) || si.value.trim() === '')) si.value = _savedNumI;
+    });
+  }
+  updateSpanPreviews();
+};
 el('perSpan').onchange = function(){
   el('spanWrap').style.display = el('perSpan').checked ? '' : 'none';
   refreshSpanTable();
 };
 el('supTable').addEventListener('input', refreshSpanTable);
 el('fL').addEventListener('input', refreshSpanTable);
+if(el('fStepX')) el('fStepX').addEventListener('input', refreshSpanTable);
+el('fE').addEventListener('input', updateSpanPreviews);
+el('fI').addEventListener('input', updateSpanPreviews);
+el('spanTable').addEventListener('input', updateSpanPreviews);
 refreshSpanTable();
 
 function calculate(){
@@ -2567,10 +3950,14 @@ function calculate(){
     st.textContent='Done — direct stiffness solution. Degree of indeterminacy: '+R.DI+
                    (R.DI===0?' (statically determinate)':' (indeterminate, degree '+R.DI+')')+'.';
     // KPIs
+    var Mcalc = ensureBProps(B);
+    var defKpiHtml = Mcalc.sym
+      ? '<div class="kpi"><div class="t">Max deflection (EI&middot;v)</div><div class="v">'+fmt(R.dmax, 3)+' / EI</div><div class="w">kN&middot;m&sup3;/EI at x = '+fmt(R.xd)+' m (up +)</div></div>'
+      : '<div class="kpi"><div class="t">Max deflection</div><div class="v">'+fmt(R.dmax*1000)+' mm</div><div class="w">at x = '+fmt(R.xd)+' m (up +)'+((Mcalc.hasVaryE||Mcalc.hasVaryI||Mcalc.hasNonUnit)?' &middot; '+fmt(R.dmax*Mcalc.EIref,2)+'/EI':'')+'</div></div>';
     el('kpis').innerHTML =
       '<div class="kpi"><div class="t">Max shear |V|</div><div class="v">'+fmt(R.Vmax)+' kN</div><div class="w">at x = '+fmt(R.xV)+' m</div></div>'+
       '<div class="kpi"><div class="t">Max moment |M|</div><div class="v">'+fmt(R.Mmax)+' kN·m</div><div class="w">at x = '+fmt(R.xM)+' m</div></div>'+
-      '<div class="kpi"><div class="t">Max deflection</div><div class="v">'+fmt(R.dmax*1000)+' mm</div><div class="w">at x = '+fmt(R.xd)+' m (up +)</div></div>';
+      defKpiHtml;
     // reactions
     var names='ABCDEFGHIJKLMNOPQRSTUVWXYZ', tb='';
     var hasH = B.H.length>0;
@@ -2591,7 +3978,15 @@ function calculate(){
       beamSketch(B)+
       linePlot('Shear Force Diagram (V) — kN', R.xp, R.Vp, '#3b82f6','kN')+
       linePlot('Bending Moment Diagram (M) — kN·m, sagging +', R.xp, R.Mp, '#a855f7','kN·m')+
-      linePlot('Beam Deflection Curve — mm', R.xp, R.vp.map(function(v){return v*1000;}), '#fbcc15','mm');
+      (Mcalc.sym
+        ? linePlot('Relative Deflection Curve (EI·v) — kN·m³ / EI', R.xp, R.vp, '#fbcc15','/ EI')
+        : linePlot('Beam Deflection Curve — mm', R.xp, R.vp.map(function(v){return v*1000;}), '#fbcc15','mm'));
+    if(el('solMethod').value === 'fm'){
+      refreshForceMethodViews(false);
+      var dmName = FM_DEFL_METHODS[getFmOptions().deflMethod].name;
+      st.textContent = 'Done — Force Method (' + dmName + ') & direct stiffness solution. Degree of indeterminacy: ' + R.DI +
+                       (R.DI===0?' (statically determinate)':' (indeterminate, degree '+R.DI+')') + '.';
+    }
   }catch(err){
     st.className='err'; st.textContent = err.message || String(err);
   }
@@ -2599,44 +3994,195 @@ function calculate(){
 el('calc').onclick = calculate;
 
 var lastReport = '';
+var lastReportSlug = 'three-moment';
 var METHOD_NAMES = {tm:'Three-Moment Equation', sd:'Slope-Deflection Method', md:'Moment Distribution Method', fm:'Force Method'};
-el('viewSol').onclick = function(){
+var METHOD_SLUGS = {tm:'three-moment', sd:'slope-deflection', md:'moment-distribution', fm:'force-method'};
+
+function getFmOptions(){
+  var dm = el('fmDeflSelect').value || 'di';
+  var rawX = el('fmTargetX').value.trim();
+  var tx = rawX === '' ? null : parseFloat(rawX);
+  if(tx !== null && !isFinite(tx)) tx = null;
+  return { deflMethod: dm, targetX: tx };
+}
+
+function setFmDeflMethod(dm, shouldRefresh){
+  if(!FM_DEFL_METHODS[dm]) dm = 'di';
+  el('fmDeflSelect').value = dm;
+  document.querySelectorAll('#fmMethodGrid .fm-mbtn').forEach(function(btn){
+    btn.classList.toggle('active', btn.getAttribute('data-dm') === dm);
+  });
+  document.querySelectorAll('#fmResultPills .fm-pill').forEach(function(btn){
+    btn.classList.toggle('active', btn.getAttribute('data-dm') === dm);
+  });
+  if(shouldRefresh !== false) refreshForceMethodViews(false);
+}
+
+document.querySelectorAll('#fmMethodGrid .fm-mbtn').forEach(function(btn){
+  btn.onclick = function(){ setFmDeflMethod(btn.getAttribute('data-dm'), true); };
+});
+document.querySelectorAll('#fmResultPills .fm-pill').forEach(function(btn){
+  btn.onclick = function(){ setFmDeflMethod(btn.getAttribute('data-dm'), true); };
+});
+el('fmDeflSelect').onchange = function(){ setFmDeflMethod(el('fmDeflSelect').value, true); };
+el('fmTargetX').addEventListener('input', function(){
+  if(el('solMethod').value === 'fm') refreshForceMethodViews(false);
+});
+
+function syncMethodVisibility(){
+  var isFm = el('solMethod').value === 'fm';
+  el('fmDeflBox').style.display = isFm ? '' : 'none';
+  if(isFm){
+    refreshForceMethodViews(false);
+  } else {
+    el('fmResultCard').style.display = 'none';
+    if(el('solCard').style.display !== 'none') generateFullSolution(false);
+  }
+}
+el('solMethod').addEventListener('change', syncMethodVisibility);
+
+function refreshForceMethodViews(showErrors){
+  if(el('solMethod').value !== 'fm'){
+    el('fmResultCard').style.display = 'none';
+    return;
+  }
+  try{
+    var B = readModel();
+    var opts = getFmOptions();
+    var dmInfo = FM_DEFL_METHODS[opts.deflMethod];
+    var R = fmAnalyze(B);
+    var lines = fmPrint(B, R, opts);
+    var methodTitle = 'Force Method (' + dmInfo.name + ')';
+    lastReport = buildSolutionTextJS(B, B.loadRows, methodTitle, R, lines);
+    lastReportSlug = 'force-method-' + dmInfo.slug;
+
+    el('fmResultTitle').textContent = 'Force Method — Deflection by ' + dmInfo.name;
+    var restFin = fmGetRestraints(B, false, R.sol, R.Ry);
+    var mrFin = R.sol.fixIdx.map(function(fi){ return R.Mr[fi]; });
+    var pFin0 = fmExactPieces(B, R.Ry, mrFin, true, []);
+    var diFin0 = fmSolveDI(B, pFin0, restFin);
+    var mdEx = fmExactMaxDefl(B, pFin0, diFin0);
+    var vMax = mdEx[0], xMax = mdEx[1];
+
+    var redSummary = R.nRed === 0 ? 'None (Determinate, i = 0)'
+      : R.sol.red.map(function(rd, idx){
+          var isM = rd >= R.sol.nS;
+          return 'X' + (idx+1) + ' (' + R.sol.rn[rd] + ') = ' + fmt(R.sol.X[idx]) + (isM ? ' kN·m' : ' kN');
+        }).join(', ');
+
+    var checkX = (opts.targetX !== null && opts.targetX >= 0 && opts.targetX <= B.L) ? opts.targetX : xMax;
+    var pChk = fmExactPieces(B, R.Ry, mrFin, true, [checkX]);
+    var evChk = fmSolveDI(B, pChk, restFin).evalAt(checkX, 'L');
+    var chkLabel = (opts.targetX !== null && opts.targetX >= 0 && opts.targetX <= B.L)
+      ? 'At target x = ' + fmt(checkX) + ' m'
+      : 'Slope at x_max = ' + fmt(xMax) + ' m';
+
+    var MfmCard = ensureBProps(B), isSymCard = MfmCard.sym, scCard = MfmCard.EIref;
+    var eiModeTag = isSymCard ? ' &middot; Symbolic EI' : ((MfmCard.hasVaryE||MfmCard.hasVaryI||MfmCard.hasNonUnit) ? ' &middot; Varying EI' : '');
+    if(isSymCard){
+      el('fmResultSummary').innerHTML =
+        '<div class="fm-sumitem"><div class="k">Deflection Method</div><div class="v">' + dmInfo.short + '</div><div class="s">' + dmInfo.name + eiModeTag + '</div></div>' +
+        '<div class="fm-sumitem"><div class="k">Redundants (i = ' + R.DI + ')</div><div class="v">' + redSummary + '</div><div class="s">Consistent deformations</div></div>' +
+        '<div class="fm-sumitem"><div class="k">Max Deflection (EI&middot;v)</div><div class="v">' + fmtN(zr(vMax*scCard)) + ' / EI</div><div class="s">kN&middot;m&sup3;/EI at x = ' + fmt(xMax, 4) + ' m</div></div>' +
+        '<div class="fm-sumitem"><div class="k">' + chkLabel + '</div><div class="v">v = ' + fmtN(zr(evChk.v*scCard)) + ' / EI</div><div class="s">&theta; = ' + fmtN(zr(evChk.th*scCard)) + ' / EI (kN&middot;m&sup2;/EI)</div></div>';
+    } else {
+      el('fmResultSummary').innerHTML =
+        '<div class="fm-sumitem"><div class="k">Deflection Method</div><div class="v">' + dmInfo.short + '</div><div class="s">' + dmInfo.name + eiModeTag + '</div></div>' +
+        '<div class="fm-sumitem"><div class="k">Redundants (i = ' + R.DI + ')</div><div class="v">' + redSummary + '</div><div class="s">Consistent deformations</div></div>' +
+        '<div class="fm-sumitem"><div class="k">Max Deflection</div><div class="v">' + fmt(vMax*1000, 4) + ' mm</div><div class="s">' + fmtN(zr(vMax*scCard)) + ' / EI &middot; at x = ' + fmt(xMax, 4) + ' m</div></div>' +
+        '<div class="fm-sumitem"><div class="k">' + chkLabel + '</div><div class="v">v = ' + fmt(evChk.v*1000, 4) + ' mm</div><div class="s">&theta; = ' + matG(zr(evChk.th), 5) + ' rad (' + fmtN(zr(evChk.th*scCard)) + '/EI)</div></div>';
+    }
+
+    el('fmResultPre').textContent = fmExtractDeflectionView(lines);
+    el('fmResultCard').style.display = '';
+
+    if(el('solCard').style.display !== 'none'){
+      el('solPre').textContent = lastReport;
+    }
+  }catch(err){
+    el('fmResultCard').style.display = 'none';
+    if(showErrors){
+      var st = el('status');
+      st.className = 'err';
+      st.textContent = err.message || String(err);
+    }
+  }
+}
+
+function generateFullSolution(scrollToCard){
   var st = el('status');
   try{
     var B = readModel();
     var m = el('solMethod').value;
-    var R, lines;
-    if(m === 'sd'){ R = sdAnalyze(B); lines = sdPrint(B, R); }
-    else if(m === 'md'){ R = mdAnalyze(B); lines = mdPrint(B, R); }
-    else if(m === 'fm'){ R = fmAnalyze(B); lines = fmPrint(B, R); }
-    else          { R = tmAnalyze(B); lines = tmPrint(B, R); }
-    lastReport = buildSolutionTextJS(B, B.loadRows, METHOD_NAMES[m], R, lines);
+    var R, lines, mTitle = METHOD_NAMES[m];
+    if(m === 'sd'){ R = sdAnalyze(B); lines = sdPrint(B, R); lastReportSlug = METHOD_SLUGS[m]; }
+    else if(m === 'md'){ R = mdAnalyze(B); lines = mdPrint(B, R); lastReportSlug = METHOD_SLUGS[m]; }
+    else if(m === 'fm'){
+      var opts = getFmOptions();
+      var dmInfo = FM_DEFL_METHODS[opts.deflMethod];
+      R = fmAnalyze(B);
+      lines = fmPrint(B, R, opts);
+      mTitle = 'Force Method (' + dmInfo.name + ')';
+      lastReportSlug = 'force-method-' + dmInfo.slug;
+      refreshForceMethodViews(false);
+    }
+    else { R = tmAnalyze(B); lines = tmPrint(B, R); lastReportSlug = METHOD_SLUGS[m]; }
+    lastReport = buildSolutionTextJS(B, B.loadRows, mTitle, R, lines);
     el('solPre').textContent = lastReport;
     el('solCard').style.display = '';
     st.className = 'ok';
-    st.textContent = 'Step-by-step ' + METHOD_NAMES[m].toLowerCase() + ' solution ready (degree of indeterminacy ' + R.DI + ').';
-    el('solCard').scrollIntoView({behavior:'smooth', block:'start'});
+    st.textContent = 'Step-by-step ' + mTitle + ' solution ready (degree of indeterminacy ' + R.DI + ').';
+    if(scrollToCard) el('solCard').scrollIntoView({behavior:'smooth', block:'start'});
   }catch(err){
     el('solCard').style.display = 'none';
     st.className = 'err';
     st.textContent = err.message || String(err);
   }
-};
-el('solClose').onclick = function(){ el('solCard').style.display = 'none'; };
-el('solDl').onclick = function(){
+}
+
+function downloadCurrentSolution(){
+  if(!lastReport || el('solMethod').value === 'fm'){
+    try{
+      var B = readModel();
+      var m = el('solMethod').value;
+      if(m === 'fm'){
+        var opts = getFmOptions();
+        var dmInfo = FM_DEFL_METHODS[opts.deflMethod];
+        var R = fmAnalyze(B);
+        var lines = fmPrint(B, R, opts);
+        lastReport = buildSolutionTextJS(B, B.loadRows, 'Force Method (' + dmInfo.name + ')', R, lines);
+        lastReportSlug = 'force-method-' + dmInfo.slug;
+      } else if(!lastReport){
+        generateFullSolution(false);
+      }
+    }catch(e){}
+  }
   if(!lastReport) return;
   var a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([lastReport], {type:'text/plain'}));
-  a.download = 'ProfX-solution-three-moment.txt';
+  a.href = URL.createObjectURL(new Blob([lastReport], {type:'text/plain;charset=utf-8'}));
+  a.download = 'ProfX-solution-' + lastReportSlug + '.txt';
   a.click();
   URL.revokeObjectURL(a.href);
-};
+}
+
+el('viewSol').onclick = function(){ generateFullSolution(true); };
+el('fmOpenFull').onclick = function(){ generateFullSolution(true); };
+el('solClose').onclick = function(){ el('solCard').style.display = 'none'; };
+el('solDl').onclick = downloadCurrentSolution;
+el('fmDlTxt').onclick = downloadCurrentSolution;
 
 el('clear').onclick = function(){
   el('fTitle').value='Beam'; el('fL').value=10; el('fE').value='200e6'; el('fI').value='500e6'; el('fHinge').value='';
+  if(el('symbolicEI')) el('symbolicEI').checked = false;
+  if(el('perSpan')) el('perSpan').checked = false;
+  if(el('spanWrap')) el('spanWrap').style.display = 'none';
+  if(el('fStepX')) el('fStepX').value = '';
+  el('fmTargetX').value='';
   el('supTable').querySelector('tbody').innerHTML='';
   el('loadTable').querySelector('tbody').innerHTML='';
+  refreshSpanTable();
   el('kpis').innerHTML=''; el('plots').innerHTML=''; el('reactCard').style.display='none';
+  el('fmResultCard').style.display='none';
   el('solCard').style.display='none'; lastReport='';
   var st=el('status'); st.className=''; st.textContent='Cleared. Enter the beam and press CALCULATE.';
 };
@@ -2646,7 +4192,8 @@ supRow({x:0,  type:'2', set:0});
 supRow({x:5,  type:'3', set:0});
 supRow({x:10, type:'3', set:0});
 loadRow({type:'UDL', a:0, b:10, v1:10, v2:10, dir:'Downward'});
+refreshSpanTable();
 calculate();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4fb299f3891ce4d',t:'MTc5Mjg2Nzc3OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4fec893abebfb4f',t:'MTc5MjkwNTc0Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

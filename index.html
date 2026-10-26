@@ -240,7 +240,75 @@
   }
   .profx-wm-bar strong{color:#fbcc15; font-weight:800}
 
+  
+  /* ============ INLINE SOLUTION FIGURES (FBD, CANTILEVER M/EI, CONJUGATE BEAM, REF TANGENT) ============ */
+  .sol-fig{
+    margin:10px 0 12px 0; border:1px solid #312e54; border-radius:9px;
+    background:#0c1424; overflow:hidden; box-shadow:0 3px 12px rgba(0,0,0,0.32);
+  }
+  .sol-fig-cap{
+    padding:6px 12px; background:linear-gradient(90deg,rgba(79,70,229,0.22),rgba(14,165,233,0.12));
+    border-bottom:1px solid #293250; color:#e0e7ff; font-size:12px; font-weight:700; letter-spacing:.015em;
+  }
+  .sol-fig-svg{ padding:8px 10px; overflow-x:auto; }
+  .sol-fig-svg svg{ display:block; width:100%; max-width:860px; height:auto; margin:0 auto; font-family:"Segoe UI",system-ui,sans-serif; }
+  .sol-fig svg .sfg-bg{ fill:#0b1322; }
+  .sol-fig svg .sfg-panel{ fill:#101b30; stroke:#233554; stroke-width:1; }
+  .sol-fig svg .sfg-axis{ stroke:#64748b; stroke-width:1.3; }
+  .sol-fig svg .sfg-grid{ stroke:#334155; stroke-width:1; stroke-dasharray:4 3; }
+  .sol-fig svg .sfg-beam{ stroke:#e2e8f0; stroke-linecap:round; }
+  .sol-fig svg .sfg-beam-fill{ fill:#334155; stroke:#cbd5e1; stroke-width:1.4; }
+  .sol-fig svg .sfg-sup{ fill:#1e293b; stroke:#94a3b8; stroke-width:1.5; }
+  .sol-fig svg .sfg-hinge{ fill:#0b1322; stroke:#fbbf24; stroke-width:2; }
+  .sol-fig svg .sfg-fixwall{ stroke:#c084fc; stroke-width:2.5; }
+  .sol-fig svg .sfg-fixhatch{ stroke:#a855f7; stroke-width:1.3; }
+  .sol-fig svg .sfg-load{ stroke:#fb7185; fill:#fb7185; }
+  .sol-fig svg .sfg-load-area{ fill:rgba(251,113,133,0.16); stroke:#fb7185; stroke-width:1.3; }
+  .sol-fig svg .sfg-rxn{ stroke:#34d399; fill:#34d399; }
+  .sol-fig svg .sfg-pos{ fill:rgba(56,189,248,0.22); stroke:#38bdf8; stroke-width:1.8; }
+  .sol-fig svg .sfg-neg{ fill:rgba(251,113,133,0.20); stroke:#fb7185; stroke-width:1.8; }
+  .sol-fig svg .sfg-curve{ fill:none; stroke:#facc15; stroke-width:2.2; }
+  .sol-fig svg .sfg-tan{ fill:none; stroke:#a78bfa; stroke-width:1.7; stroke-dasharray:6 4; }
+  .sol-fig svg .sfg-ratio{ fill:rgba(167,139,250,0.14); stroke:#a78bfa; stroke-width:1.2; stroke-dasharray:3 2; }
+  .sol-fig svg .sfg-txt{ fill:#f1f5f9; font-size:11px; font-weight:600; }
+  .sol-fig svg .sfg-sub{ fill:#94a3b8; font-size:10px; }
+  .sol-fig svg .sfg-tag-pos{ fill:#7dd3fc; font-size:10.5px; font-weight:700; }
+  .sol-fig svg .sfg-tag-neg{ fill:#fda4af; font-size:10.5px; font-weight:700; }
+  .sol-fig svg .sfg-tag-rxn{ fill:#6ee7b7; font-size:10.5px; font-weight:700; }
+  .sol-fig svg .sfg-tag-load{ fill:#fda4af; font-size:10.5px; font-weight:700; }
+  .sol-fig svg .sfg-tag-fix{ fill:#e9d5ff; font-size:10.5px; font-weight:700; }
+  .sol-fig svg .sfg-tag-ei{ fill:#fde047; font-size:10px; font-weight:700; }
+
   @media print{
+    .sol-fig{background:#fff !important;border:1px solid #94a3b8 !important;box-shadow:none !important;break-inside:avoid-page}
+    .sol-fig-cap{background:#eef2ff !important;color:#1e1b4b !important;border-bottom:1px solid #cbd5e1 !important}
+    .sol-fig svg .sfg-bg{fill:#ffffff !important}
+    .sol-fig svg .sfg-panel{fill:#f8fafc !important;stroke:#cbd5e1 !important}
+    .sol-fig svg .sfg-axis{stroke:#475569 !important}
+    .sol-fig svg .sfg-grid{stroke:#cbd5e1 !important}
+    .sol-fig svg .sfg-beam{stroke:#0f172a !important}
+    .sol-fig svg .sfg-beam-fill{fill:#cbd5e1 !important;stroke:#0f172a !important}
+    .sol-fig svg .sfg-sup{fill:#e2e8f0 !important;stroke:#334155 !important}
+    .sol-fig svg .sfg-hinge{fill:#ffffff !important;stroke:#b45309 !important}
+    .sol-fig svg .sfg-fixwall{stroke:#6d28d9 !important}
+    .sol-fig svg .sfg-fixhatch{stroke:#7c3aed !important}
+    .sol-fig svg .sfg-load{stroke:#be123c !important;fill:#be123c !important}
+    .sol-fig svg .sfg-load-area{fill:rgba(225,29,72,0.10) !important;stroke:#be123c !important}
+    .sol-fig svg .sfg-rxn{stroke:#047857 !important;fill:#047857 !important}
+    .sol-fig svg .sfg-pos{fill:rgba(2,132,199,0.14) !important;stroke:#0284c7 !important}
+    .sol-fig svg .sfg-neg{fill:rgba(225,29,72,0.12) !important;stroke:#e11d48 !important}
+    .sol-fig svg .sfg-curve{stroke:#b45309 !important}
+    .sol-fig svg .sfg-tan{stroke:#6d28d9 !important}
+    .sol-fig svg .sfg-ratio{fill:rgba(109,40,217,0.08) !important;stroke:#6d28d9 !important}
+    .sol-fig svg .sfg-txt{fill:#0f172a !important}
+    .sol-fig svg .sfg-sub{fill:#475569 !important}
+    .sol-fig svg .sfg-tag-pos{fill:#0369a1 !important}
+    .sol-fig svg .sfg-tag-neg{fill:#be123c !important}
+    .sol-fig svg .sfg-tag-rxn{fill:#065f46 !important}
+    .sol-fig svg .sfg-tag-load{fill:#9f1239 !important}
+    .sol-fig svg .sfg-tag-fix{fill:#5b21b6 !important}
+    .sol-fig svg .sfg-tag-ei{fill:#854d0e !important}
+
     .profx-wm-float{position:fixed;right:0;bottom:0;background:#fff !important;color:#111 !important;border:1px solid #94a3b8 !important;box-shadow:none !important}
     .profx-wm-float strong,.profx-wm-bar strong{color:#000 !important}
     .profx-wm-bar{color:#111 !important;border-top:1px solid #94a3b8 !important}
@@ -2017,6 +2085,9 @@ function mdBuildDoc(B, R){
   });
   doc.eqChain(rxRowsMD);
   doc.endSub();
+  doc.diagram('Solved Beam Free-Body Diagram — Applied Loads, Span Rigidities &amp; Support Reactions',
+              buildGeneralBeamFBDSVG(B, R.Ry, R.Mr, 'Solved Beam Free-Body Diagram — Applied Loads & Support Reactions'),
+              'Solved Beam Free-Body Diagram with Support Reactions');
   renderGlobalEquilibriumCheck(doc, B, R.Ry, R.Rx, R.Mr);
 
   /* STEP 7: PIECEWISE SHEAR & MOMENT EQUATIONS + CRITICAL POINTS */
@@ -2468,7 +2539,7 @@ function fmExactPieces(B, ry, mr, withLoads, extraPts){
     }
     pieces.push({a:a, b:b, h:h, EI:EI, kSp:kSp, c:[M0, V0, c2, c3]});
   }
-  return {bk:bk, pieces:pieces};
+  return {bk:bk, pieces:pieces, ry:(ry||[]).slice(), mr:(mr||[]).slice(), withLoads:!!withLoads};
 }
 
 function fmLeastSquares(Ac, bc, nu){
@@ -3038,6 +3109,15 @@ SolDoc.prototype.table = function(headers, rows, opts){
   this._target().push({ kind: 'table', headers: headers, rows: rows, opts: opts || {} });
   return this;
 };
+SolDoc.prototype.diagram = function(titleHtml, svgHtml, textSummary){
+  this._target().push({
+    kind: 'diagram',
+    titleH: titleHtml || '',
+    svg: svgHtml || '',
+    txt: textSummary || (titleHtml || '').replace(/<[^>]+>/g, '')
+  });
+  return this;
+};
 
 SolDoc.prototype._renderItemsHTML = function(items){
   var out = [], self = this;
@@ -3046,6 +3126,10 @@ SolDoc.prototype._renderItemsHTML = function(items){
       out.push('<div class="sol-sub"><div class="sol-sub-title">' + it.titleH + '</div>' + self._renderItemsHTML(it.items) + '</div>');
     } else if(it.kind === 'note'){
       out.push('<div class="sol-note">' + it.h + '</div>');
+    } else if(it.kind === 'diagram'){
+      out.push('<div class="sol-fig">' +
+        (it.titleH ? '<div class="sol-fig-cap">' + it.titleH + '</div>' : '') +
+        '<div class="sol-fig-svg">' + it.svg + '</div></div>');
     } else if(it.kind === 'eqChain'){
       var trs = it.rows.map(function(r){
         var relH = r[1] === '=' ? '=' : (r[1] === '=>' ? '&rArr;' : (r[1] === '<-' ? '&larr;' : (r[1] === '<->' ? '&hArr;' : (r[1] === 'approx' ? '&approx;' : escH(r[1])))));
@@ -3137,6 +3221,8 @@ SolDoc.prototype._renderItemsText = function(items, indent){
       out.push(self._renderItemsText(it.items, pad + '   '));
     } else if(it.kind === 'note'){
       out.push(pad + it.t);
+    } else if(it.kind === 'diagram'){
+      out.push(pad + '[Plotted Figure: ' + it.txt + ']');
     } else if(it.kind === 'eqChain'){
       var maxL = 0;
       it.rows.forEach(function(r){ maxL = Math.max(maxL, r[0].t.length); });
@@ -3620,6 +3706,17 @@ function fmDecomposeGeometricShapes(c, a, b, EI){
   if(mScale <= 1e-11) return [];
 
   var out = [];
+  function shapePoly(kind, h){
+    if(kind === 'rect') return [h, 0, 0, 0];
+    if(kind === 'triR') return [0, h/Ls, 0, 0];
+    if(kind === 'triL') return [h, -h/Ls, 0, 0];
+    if(kind === 'parabR') return [0, 0, h/(Ls*Ls), 0];
+    if(kind === 'parabL') return [h, -2*h/Ls, h/(Ls*Ls), 0];
+    if(kind === 'symParab') return [0, 4*h/Ls, -4*h/(Ls*Ls), 0];
+    if(kind === 'cubicR') return [0, 0, 0, h/(Ls*Ls*Ls)];
+    if(kind === 'cubicL') return [h, -3*h/Ls, 3*h/(Ls*Ls), -h/(Ls*Ls*Ls)];
+    return [0,0,0,0];
+  }
   function pushShape(kind, name, height, aNum, aDen, cNum, cDen){
     if(Math.abs(height) * Ls <= 1e-10 * Math.max(1, mScale * Ls)) return;
     var area = (aNum / aDen) * Ls * height / EI;
@@ -3628,7 +3725,8 @@ function fmDecomposeGeometricShapes(c, a, b, EI){
       a: a, b: b, base: Ls, h: Ls, height: height, EI: EI,
       kind: kind, name: name,
       aNum: aNum, aDen: aDen, cNum: cNum, cDen: cDen,
-      area: area, xbar: xbar
+      area: area, xbar: xbar,
+      cPoly: shapePoly(kind, height)
     });
   }
   function pushLinearChord(ML, MR){
@@ -3671,7 +3769,6 @@ function fmDecomposeGeometricShapes(c, a, b, EI){
     return out;
   }
 
-  /* Cubic segment (UVL) */
   var ML3 = c0, MR3 = c0 + c1*Ls + c2*Ls*Ls + c3*Ls*Ls*Ls;
   var sR3 = c1 + 2*c2*Ls + 3*c3*Ls*Ls;
   var cR3 = 2*c2 + 6*c3*Ls;
@@ -3683,7 +3780,6 @@ function fmDecomposeGeometricShapes(c, a, b, EI){
     pushShape('cubicL', 'Cubic Spandrel (3rd°)', ML3, 1, 4, 1, 5);
     return out;
   }
-  /* General cubic: Moment Diagram by Parts from left end x_a */
   if(Math.abs(c0) > 1e-8*mScale) pushShape('rect', 'Rectangle', c0, 1, 1, 1, 2);
   if(Math.abs(c1)*Ls > 1e-8*mScale) pushShape('triR', 'Right Triangle', c1*Ls, 1, 2, 2, 3);
   if(Math.abs(c2)*Ls*Ls > 1e-8*mScale) pushShape('parabR', 'Parabolic Spandrel (2nd°)', c2*Ls*Ls, 1, 3, 3, 4);
@@ -4258,6 +4354,1109 @@ function renderOverhangMomentStep(doc, B, side, xk, supLabel){
   }
 }
 
+
+
+/* ============ CANTILEVER METHOD (MOMENT DIAGRAM BY PARTS), VARYING-I & INLINE SVG ENGINE ============ */
+
+function ptJointName(B, x){
+  var tol = 1e-5 * Math.max(1, B.L || 1);
+  var raw = [0, B.L].concat((B.sup||[]).map(function(s){return +s[0];}), B.hinge||[], B.spanX||[]);
+  raw = raw.filter(function(v){ return isFinite(v); }).sort(function(a,b){return a-b;});
+  var jx = [];
+  raw.forEach(function(v){ if(!jx.length || v - jx[jx.length-1] > tol) jx.push(v); });
+  for(var j=0; j<jx.length; j++){
+    if(Math.abs(jx[j] - x) <= tol) return jn(j+1);
+  }
+  return 'x=' + fmtX(x);
+}
+
+function evalPoly4(c, dx){
+  return (c[0]||0) + (c[1]||0)*dx + (c[2]||0)*dx*dx + (c[3]||0)*dx*dx*dx;
+}
+
+function shiftPoly4(c, u){
+  var c0 = c[0]||0, c1 = c[1]||0, c2 = c[2]||0, c3 = c[3]||0;
+  return [
+    c0 + c1*u + c2*u*u + c3*u*u*u,
+    c1 + 2*c2*u + 3*c3*u*u,
+    c2 + 3*c3*u,
+    c3
+  ];
+}
+
+function spandrelPolyOnInterval(side, deg, Mfix, Lp){
+  if(Lp <= 1e-12) return [0,0,0,0];
+  if(deg === 0) return [Mfix, 0, 0, 0];
+  if(side === 'L'){
+    /* M(a + dx) = Mfix * (dx / Lp)^deg */
+    if(deg === 1) return [0, Mfix/Lp, 0, 0];
+    if(deg === 2) return [0, 0, Mfix/(Lp*Lp), 0];
+    return [0, 0, 0, Mfix/(Lp*Lp*Lp)];
+  } else {
+    /* M(a + dx) = Mfix * (1 - dx / Lp)^deg */
+    if(deg === 1) return [Mfix, -Mfix/Lp, 0, 0];
+    if(deg === 2) return [Mfix, -2*Mfix/Lp, Mfix/(Lp*Lp), 0];
+    return [Mfix, -3*Mfix/Lp, 3*Mfix/(Lp*Lp), -Mfix/(Lp*Lp*Lp)];
+  }
+}
+
+function fmHasVaryingEI(B){
+  if(!B.spanX || B.spanX.length <= 2) return false;
+  var ri0 = segEIInfo(B, 0.5*(B.spanX[0] + B.spanX[1]));
+  for(var s=1; s<B.spanX.length-1; s++){
+    var ris = segEIInfo(B, 0.5*(B.spanX[s] + B.spanX[s+1]));
+    if(Math.abs(ris.EI - ri0.EI) > 1e-8 * Math.max(1, ri0.EI)) return true;
+  }
+  return false;
+}
+
+function fmGetEISteps(B){
+  var steps = [], tol = 1e-7 * Math.max(1, B.L);
+  if(!B.spanX || B.spanX.length <= 2) return steps;
+  for(var s=1; s<B.spanX.length-1; s++){
+    var xs = +B.spanX[s];
+    if(xs <= tol || xs >= B.L - tol) continue;
+    var rL = segEIInfo(B, xs - 1e-5), rR = segEIInfo(B, xs + 1e-5);
+    if(Math.abs(rL.EI - rR.EI) > 1e-8 * Math.max(1, rL.EI)) steps.push(xs);
+  }
+  return steps;
+}
+
+function fmChooseCantileverFixity(B, piecesObj, rest, cantOpts){
+  cantOpts = cantOpts || {};
+  var L = B.L, tol = 1e-7 * Math.max(1, L);
+  var xFix = null, reasonH = '', reasonT = '';
+  var redPts = (cantOpts.redPts || []).filter(function(v){ return isFinite(v); });
+  var uniqRed = [];
+  redPts.forEach(function(v){
+    if(!uniqRed.some(function(u){ return Math.abs(u - v) <= tol; })) uniqRed.push(v);
+  });
+
+  if(cantOpts.preferX !== undefined && cantOpts.preferX !== null && isFinite(cantOpts.preferX)){
+    xFix = Math.max(0, Math.min(L, +cantOpts.preferX));
+    var jPref = ptJointName(B, xFix);
+    reasonH = 'Place the imaginary cantilever fixity at <b>Joint ' + escH(jPref) + '</b> (<i class="mv">x</i><sub>fix</sub> = ' + fmtX(xFix) + ' m).';
+    reasonT = 'Place imaginary cantilever fixity at Joint ' + jPref + ' (x_fix = ' + fmtX(xFix) + ' m).';
+  } else if(rest && rest.thR && rest.thR.length === 1){
+    xFix = rest.thR[0].x;
+    var jFx = ptJointName(B, xFix);
+    reasonH = 'Place the cantilever fixity directly at the <b>fixed support ' + escH(jFx) + '</b> (<i class="mv">x</i><sub>fix</sub> = ' + fmtX(xFix) + ' m) so support reactions at ' + escH(jFx) + ' have zero moment arm and each active load/redundant forms a single cantilever shape.';
+    reasonT = 'Place cantilever fixity at fixed support ' + jFx + ' (x_fix = ' + fmtX(xFix) + ' m) so reactions at ' + jFx + ' have zero moment arm.';
+  } else if(uniqRed.length > 0){
+    var intRed = uniqRed.find(function(xr){ return xr > tol && xr < L - tol; });
+    xFix = (intRed !== undefined) ? intRed : uniqRed[0];
+    var jRed = ptJointName(B, xFix);
+    if(uniqRed.length === 1){
+      reasonH = 'Place the imaginary cantilever fixity directly at the <b>redundant location ' + escH(jRed) + '</b> (<i class="mv">x</i><sub>fix</sub> = ' + fmtX(xFix) + ' m), splitting the beam into left/right cantilevers anchored at ' + escH(jRed) + ' so any force at ' + escH(jRed) + ' has zero lever arm.';
+      reasonT = 'Place imaginary cantilever fixity at redundant location ' + jRed + ' (x_fix = ' + fmtX(xFix) + ' m), eliminating any lever arm at ' + jRed + '.';
+    } else {
+      var others = uniqRed.filter(function(xr){ return Math.abs(xr - xFix) > tol; }).map(function(xr){ return ptJointName(B, xr) + ' (x = ' + fmtX(xr) + ' m)'; }).join(', ');
+      reasonH = 'Multiple redundants are present: choose <b>primary redundant ' + escH(jRed) + '</b> (<i class="mv">x</i><sub>fix</sub> = ' + fmtX(xFix) + ' m) as the imaginary cantilever fixity, and determine ordinates &amp; reference-tangent heights at the other redundant location(s) [' + escH(others) + '] by <b>exact geometric (similar-triangle / spandrel) ratio</b> to <i class="mv">x</i><sub>fix</sub>.';
+      reasonT = 'Multiple redundants exist: place imaginary cantilever fixity at primary redundant ' + jRed + ' (x_fix = ' + fmtX(xFix) + ' m), and find ordinates / tangent heights at [' + others + '] by exact geometric ratio.';
+    }
+  } else {
+    var intSup = (rest && rest.vR) ? rest.vR.find(function(vr){ return vr.x > tol && vr.x < L - tol; }) : null;
+    var intP = (piecesObj && piecesObj.withLoads && B.P) ? B.P.find(function(p){ return p[0] > tol && p[0] < L - tol && Math.abs(p[1]) > 1e-9; }) : null;
+    if(intSup){
+      xFix = intSup.x;
+      var jIS = ptJointName(B, xFix);
+      reasonH = 'Place the imaginary cantilever fixity at <b>interior support ' + escH(jIS) + '</b> (<i class="mv">x</i><sub>fix</sub> = ' + fmtX(xFix) + ' m), splitting main span and overhang into cantilevers.';
+      reasonT = 'Place imaginary cantilever fixity at interior support ' + jIS + ' (x_fix = ' + fmtX(xFix) + ' m).';
+    } else if(intP){
+      xFix = +intP[0];
+      var jIP = ptJointName(B, xFix);
+      reasonH = 'Place the imaginary cantilever fixity at the <b>concentrated load location</b> (<i class="mv">x</i><sub>fix</sub> = ' + fmtX(xFix) + ' m), so the load at <i class="mv">x</i><sub>fix</sub> has zero moment arm and left/right reactions form simple cantilever triangles.';
+      reasonT = 'Place imaginary cantilever fixity at concentrated load x_fix = ' + fmtX(xFix) + ' m.';
+    } else if(rest && rest.vR && rest.vR.length >= 2){
+      xFix = rest.vR[rest.vR.length - 1].x;
+      var jEnd = ptJointName(B, xFix);
+      reasonH = 'Place the imaginary cantilever fixity at <b>Support ' + escH(jEnd) + '</b> (<i class="mv">x</i><sub>fix</sub> = ' + fmtX(xFix) + ' m), cantilevering each reaction and load by parts into ' + escH(jEnd) + '.';
+      reasonT = 'Place imaginary cantilever fixity at Support ' + jEnd + ' (x_fix = ' + fmtX(xFix) + ' m), cantilevering each reaction and load by parts.';
+    } else {
+      xFix = 0.5 * L;
+      reasonH = 'Place the imaginary cantilever fixity at midspan (<i class="mv">x</i><sub>fix</sub> = ' + fmtX(xFix) + ' m).';
+      reasonT = 'Place imaginary cantilever fixity at midspan (x_fix = ' + fmtX(xFix) + ' m).';
+    }
+  }
+
+  if(fmHasVaryingEI(B)){
+    reasonH += ' Because the beam has <b>varying moment of inertia <i class="mv">I</i></b> across sections, each bending-moment part <i class="mv">M<sub>k</sub></i>(<i class="mv">x</i>) is divided by its local flexural rigidity <i class="mv">EI<sub>s</sub></i> (producing step changes in <i class="mv">M</i>/<i class="mv">EI</i> at section changes).';
+    reasonT += ' Accounting for varying I: each moment part M_k(x) is divided by its local flexural rigidity EI_s.';
+  }
+  return { xFix: xFix, reasonH: reasonH, reasonT: reasonT, uniqRed: uniqRed };
+}
+
+function fmBuildCantileverDiagram(B, piecesObj, rest, cantOpts){
+  cantOpts = cantOpts || {};
+  var L = B.L, tol = 1e-7 * Math.max(1, L);
+  var fixInfo = fmChooseCantileverFixity(B, piecesObj, rest, cantOpts);
+  var xFix = fixInfo.xFix;
+  var ry = piecesObj.ry || [], mr = piecesObj.mr || [], withLoads = !!piecesObj.withLoads;
+
+  var rawParts = [];
+  var sups = B.sup || [], fi = 0;
+  for(var k=0; k<sups.length; k++){
+    var sx = +sups[k][0], stp = sups[k][1];
+    var rVal = +(ry[k] || 0);
+    var jLbl = ptJointName(B, sx);
+    if(Math.abs(rVal) > 1e-9){
+      var dirArrow = rVal >= 0 ? '&uarr;' : '&darr;', dirTxt = rVal >= 0 ? '↑' : '↓';
+      if(sx < xFix - tol){
+        var armL = xFix - sx;
+        rawParts.push({
+          side:'L', xv:sx, xFix:xFix, a:sx, b:xFix, Lp:armL, deg:1, Mfix: rVal * armL,
+          causeH: 'Support reaction <i class="mv">' + escH(jLbl) + '<sub>y</sub></i> = ' + M.num(Math.abs(rVal),4).h + ' kN ' + dirArrow + ' at <i class="mv">x</i> = ' + fmtX(sx) + ' m',
+          causeT: 'Support reaction ' + jLbl + '_y = ' + M.num(Math.abs(rVal),4).t + ' kN ' + dirTxt + ' at x = ' + fmtX(sx) + ' m',
+          mEqH: '(' + M.num(rVal,4).h + ')(' + fmtX(armL) + ')',
+          mEqT: '(' + M.num(rVal,4).t + ')(' + fmtX(armL) + ')'
+        });
+      } else if(sx > xFix + tol){
+        var armR = sx - xFix;
+        rawParts.push({
+          side:'R', xv:sx, xFix:xFix, a:xFix, b:sx, Lp:armR, deg:1, Mfix: rVal * armR,
+          causeH: 'Support reaction <i class="mv">' + escH(jLbl) + '<sub>y</sub></i> = ' + M.num(Math.abs(rVal),4).h + ' kN ' + dirArrow + ' at <i class="mv">x</i> = ' + fmtX(sx) + ' m',
+          causeT: 'Support reaction ' + jLbl + '_y = ' + M.num(Math.abs(rVal),4).t + ' kN ' + dirTxt + ' at x = ' + fmtX(sx) + ' m',
+          mEqH: '(' + M.num(rVal,4).h + ')(' + fmtX(armR) + ')',
+          mEqT: '(' + M.num(rVal,4).t + ')(' + fmtX(armR) + ')'
+        });
+      }
+    }
+    if(stp === 1){
+      var mVal = +(mr[fi] || 0);
+      fi++;
+      if(Math.abs(mVal) > 1e-9){
+        var mDirH = mVal >= 0 ? '&#8634;' : '&#8635;', mDirT = mVal >= 0 ? '↺' : '↻';
+        if(sx < xFix - tol){
+          rawParts.push({
+            side:'L', xv:sx, xFix:xFix, a:sx, b:xFix, Lp:xFix-sx, deg:0, Mfix: -mVal,
+            causeH: 'Support moment <i class="mv">M<sub>' + escH(jLbl) + '</sub></i> = ' + M.num(Math.abs(mVal),4).h + ' kN&middot;m ' + mDirH + ' at <i class="mv">x</i> = ' + fmtX(sx) + ' m',
+            causeT: 'Support moment M_' + jLbl + ' = ' + M.num(Math.abs(mVal),4).t + ' kN·m ' + mDirT + ' at x = ' + fmtX(sx) + ' m',
+            mEqH: '&minus;(' + M.num(mVal,4).h + ')',
+            mEqT: '-(' + M.num(mVal,4).t + ')'
+          });
+        } else if(sx > xFix + tol){
+          rawParts.push({
+            side:'R', xv:sx, xFix:xFix, a:xFix, b:sx, Lp:sx-xFix, deg:0, Mfix: +mVal,
+            causeH: 'Support moment <i class="mv">M<sub>' + escH(jLbl) + '</sub></i> = ' + M.num(Math.abs(mVal),4).h + ' kN&middot;m ' + mDirH + ' at <i class="mv">x</i> = ' + fmtX(sx) + ' m',
+            causeT: 'Support moment M_' + jLbl + ' = ' + M.num(Math.abs(mVal),4).t + ' kN·m ' + mDirT + ' at x = ' + fmtX(sx) + ' m',
+            mEqH: '+(' + M.num(mVal,4).h + ')',
+            mEqT: '+(' + M.num(mVal,4).t + ')'
+          });
+        }
+      }
+    }
+  }
+
+  if(withLoads){
+    (B.P || []).forEach(function(p){
+      var x0 = +p[0], pv = +p[1];
+      if(Math.abs(pv) <= 1e-9) return;
+      var pArrowH = pv >= 0 ? '&darr;' : '&uarr;', pArrowT = pv >= 0 ? '↓' : '↑';
+      if(x0 < xFix - tol){
+        var armP = xFix - x0;
+        rawParts.push({
+          side:'L', xv:x0, xFix:xFix, a:x0, b:xFix, Lp:armP, deg:1, Mfix: -pv * armP,
+          causeH: 'Concentrated load <i class="mv">P</i> = ' + M.num(Math.abs(pv),4).h + ' kN ' + pArrowH + ' at <i class="mv">x</i> = ' + fmtX(x0) + ' m',
+          causeT: 'Concentrated load P = ' + M.num(Math.abs(pv),4).t + ' kN ' + pArrowT + ' at x = ' + fmtX(x0) + ' m',
+          mEqH: '&minus;(' + M.num(pv,4).h + ')(' + fmtX(armP) + ')',
+          mEqT: '-(' + M.num(pv,4).t + ')(' + fmtX(armP) + ')'
+        });
+      } else if(x0 > xFix + tol){
+        var armPR = x0 - xFix;
+        rawParts.push({
+          side:'R', xv:x0, xFix:xFix, a:xFix, b:x0, Lp:armPR, deg:1, Mfix: -pv * armPR,
+          causeH: 'Concentrated load <i class="mv">P</i> = ' + M.num(Math.abs(pv),4).h + ' kN ' + pArrowH + ' at <i class="mv">x</i> = ' + fmtX(x0) + ' m',
+          causeT: 'Concentrated load P = ' + M.num(Math.abs(pv),4).t + ' kN ' + pArrowT + ' at x = ' + fmtX(x0) + ' m',
+          mEqH: '&minus;(' + M.num(pv,4).h + ')(' + fmtX(armPR) + ')',
+          mEqT: '-(' + M.num(pv,4).t + ')(' + fmtX(armPR) + ')'
+        });
+      }
+    });
+
+    (B.M || []).forEach(function(pm){
+      var x0 = +pm[0], mv = +pm[1];
+      if(Math.abs(mv) <= 1e-9) return;
+      var cDirH = mv >= 0 ? '&#8634;' : '&#8635;', cDirT = mv >= 0 ? '↺' : '↻';
+      if(x0 < xFix - tol){
+        rawParts.push({
+          side:'L', xv:x0, xFix:xFix, a:x0, b:xFix, Lp:xFix-x0, deg:0, Mfix: -mv,
+          causeH: 'Applied couple <i class="mv">M</i><sub>0</sub> = ' + M.num(Math.abs(mv),4).h + ' kN&middot;m ' + cDirH + ' at <i class="mv">x</i> = ' + fmtX(x0) + ' m',
+          causeT: 'Applied couple M_0 = ' + M.num(Math.abs(mv),4).t + ' kN·m ' + cDirT + ' at x = ' + fmtX(x0) + ' m',
+          mEqH: '&minus;(' + M.num(mv,4).h + ')',
+          mEqT: '-(' + M.num(mv,4).t + ')'
+        });
+      } else if(x0 > xFix + tol){
+        rawParts.push({
+          side:'R', xv:x0, xFix:xFix, a:xFix, b:x0, Lp:x0-xFix, deg:0, Mfix: +mv,
+          causeH: 'Applied couple <i class="mv">M</i><sub>0</sub> = ' + M.num(Math.abs(mv),4).h + ' kN&middot;m ' + cDirH + ' at <i class="mv">x</i> = ' + fmtX(x0) + ' m',
+          causeT: 'Applied couple M_0 = ' + M.num(Math.abs(mv),4).t + ' kN·m ' + cDirT + ' at x = ' + fmtX(x0) + ' m',
+          mEqH: '+(' + M.num(mv,4).h + ')',
+          mEqT: '+(' + M.num(mv,4).t + ')'
+        });
+      }
+    });
+
+    (B.W || []).forEach(function(w){
+      var s1 = +w[0], s2 = +w[1], w1 = +w[2], w2 = +w[3];
+      if(s2 - s1 <= tol || (Math.abs(w1) <= 1e-9 && Math.abs(w2) <= 1e-9)) return;
+      var mw = (w2 - w1) / (s2 - s1);
+      if(s1 < xFix - tol){
+        var bL = Math.min(s2, xFix);
+        var wbL = w1 + mw * (bL - s1);
+        var L1 = xFix - s1, wFixExt = w1 + mw * L1;
+        var needExtL = bL < xFix - tol;
+        if(Math.abs(w1) > 1e-9){
+          rawParts.push({
+            side:'L', xv:s1, xFix:xFix, a:s1, b:xFix, Lp:L1, deg:2, Mfix: -0.5 * w1 * L1 * L1,
+            causeH: (needExtL ? 'Extended UDL ' : 'UDL ') + '<i class="mv">w</i> = ' + M.num(w1,4).h + ' kN/m on [' + fmtX(s1) + ', ' + fmtX(xFix) + ' m]',
+            causeT: (needExtL ? 'Extended UDL ' : 'UDL ') + 'w = ' + M.num(w1,4).t + ' kN/m on [' + fmtX(s1) + ', ' + fmtX(xFix) + ' m]',
+            mEqH: '&minus;&frac12;(' + M.num(w1,4).h + ')(' + fmtX(L1) + ')<sup>2</sup>',
+            mEqT: '-1/2(' + M.num(w1,4).t + ')(' + fmtX(L1) + ')²'
+          });
+        }
+        if(Math.abs(wFixExt - w1) > 1e-9){
+          var dwL1 = wFixExt - w1;
+          rawParts.push({
+            side:'L', xv:s1, xFix:xFix, a:s1, b:xFix, Lp:L1, deg:3, Mfix: -dwL1 * L1 * L1 / 6,
+            causeH: (needExtL ? 'Extended triangular load ' : 'Triangular load ') + '&Delta;<i class="mv">w</i> = ' + M.num(dwL1,4).h + ' kN/m on [' + fmtX(s1) + ', ' + fmtX(xFix) + ' m]',
+            causeT: (needExtL ? 'Extended triangular load ' : 'Triangular load ') + 'Δw = ' + M.num(dwL1,4).t + ' kN/m on [' + fmtX(s1) + ', ' + fmtX(xFix) + ' m]',
+            mEqH: '&minus;&#8537;(' + M.num(dwL1,4).h + ')(' + fmtX(L1) + ')<sup>2</sup>',
+            mEqT: '-1/6(' + M.num(dwL1,4).t + ')(' + fmtX(L1) + ')²'
+          });
+        }
+        if(needExtL){
+          var L2 = xFix - bL;
+          if(Math.abs(wbL) > 1e-9){
+            rawParts.push({
+              side:'L', xv:bL, xFix:xFix, a:bL, b:xFix, Lp:L2, deg:2, Mfix: +0.5 * wbL * L2 * L2,
+              causeH: 'Subtract UDL continuation <i class="mv">w</i> = ' + M.num(wbL,4).h + ' kN/m on [' + fmtX(bL) + ', ' + fmtX(xFix) + ' m]',
+              causeT: 'Subtract UDL continuation w = ' + M.num(wbL,4).t + ' kN/m on [' + fmtX(bL) + ', ' + fmtX(xFix) + ' m]',
+              mEqH: '+&frac12;(' + M.num(wbL,4).h + ')(' + fmtX(L2) + ')<sup>2</sup>',
+              mEqT: '+1/2(' + M.num(wbL,4).t + ')(' + fmtX(L2) + ')²'
+            });
+          }
+          if(Math.abs(wFixExt - wbL) > 1e-9){
+            var dwL2 = wFixExt - wbL;
+            rawParts.push({
+              side:'L', xv:bL, xFix:xFix, a:bL, b:xFix, Lp:L2, deg:3, Mfix: +dwL2 * L2 * L2 / 6,
+              causeH: 'Subtract ramp continuation &Delta;<i class="mv">w</i> = ' + M.num(dwL2,4).h + ' kN/m on [' + fmtX(bL) + ', ' + fmtX(xFix) + ' m]',
+              causeT: 'Subtract ramp continuation Δw = ' + M.num(dwL2,4).t + ' kN/m on [' + fmtX(bL) + ', ' + fmtX(xFix) + ' m]',
+              mEqH: '+&#8537;(' + M.num(dwL2,4).h + ')(' + fmtX(L2) + ')<sup>2</sup>',
+              mEqT: '+1/6(' + M.num(dwL2,4).t + ')(' + fmtX(L2) + ')²'
+            });
+          }
+        }
+      }
+      if(s2 > xFix + tol){
+        var aR = Math.max(s1, xFix);
+        var waR = w1 + mw * (aR - s1);
+        var my = -mw, LR2 = s2 - xFix, wFixExtR = w2 + my * LR2;
+        var needExtR = aR > xFix + tol;
+        if(Math.abs(w2) > 1e-9){
+          rawParts.push({
+            side:'R', xv:s2, xFix:xFix, a:xFix, b:s2, Lp:LR2, deg:2, Mfix: -0.5 * w2 * LR2 * LR2,
+            causeH: (needExtR ? 'Extended UDL ' : 'UDL ') + '<i class="mv">w</i> = ' + M.num(w2,4).h + ' kN/m on [' + fmtX(xFix) + ', ' + fmtX(s2) + ' m]',
+            causeT: (needExtR ? 'Extended UDL ' : 'UDL ') + 'w = ' + M.num(w2,4).t + ' kN/m on [' + fmtX(xFix) + ', ' + fmtX(s2) + ' m]',
+            mEqH: '&minus;&frac12;(' + M.num(w2,4).h + ')(' + fmtX(LR2) + ')<sup>2</sup>',
+            mEqT: '-1/2(' + M.num(w2,4).t + ')(' + fmtX(LR2) + ')²'
+          });
+        }
+        if(Math.abs(wFixExtR - w2) > 1e-9){
+          var dwR2 = wFixExtR - w2;
+          rawParts.push({
+            side:'R', xv:s2, xFix:xFix, a:xFix, b:s2, Lp:LR2, deg:3, Mfix: -dwR2 * LR2 * LR2 / 6,
+            causeH: (needExtR ? 'Extended triangular load ' : 'Triangular load ') + '&Delta;<i class="mv">w</i> = ' + M.num(dwR2,4).h + ' kN/m on [' + fmtX(xFix) + ', ' + fmtX(s2) + ' m]',
+            causeT: (needExtR ? 'Extended triangular load ' : 'Triangular load ') + 'Δw = ' + M.num(dwR2,4).t + ' kN/m on [' + fmtX(xFix) + ', ' + fmtX(s2) + ' m]',
+            mEqH: '&minus;&#8537;(' + M.num(dwR2,4).h + ')(' + fmtX(LR2) + ')<sup>2</sup>',
+            mEqT: '-1/6(' + M.num(dwR2,4).t + ')(' + fmtX(LR2) + ')²'
+          });
+        }
+        if(needExtR){
+          var LR1 = aR - xFix;
+          if(Math.abs(waR) > 1e-9){
+            rawParts.push({
+              side:'R', xv:aR, xFix:xFix, a:xFix, b:aR, Lp:LR1, deg:2, Mfix: +0.5 * waR * LR1 * LR1,
+              causeH: 'Subtract UDL continuation <i class="mv">w</i> = ' + M.num(waR,4).h + ' kN/m on [' + fmtX(xFix) + ', ' + fmtX(aR) + ' m]',
+              causeT: 'Subtract UDL continuation w = ' + M.num(waR,4).t + ' kN/m on [' + fmtX(xFix) + ', ' + fmtX(aR) + ' m]',
+              mEqH: '+&frac12;(' + M.num(waR,4).h + ')(' + fmtX(LR1) + ')<sup>2</sup>',
+              mEqT: '+1/2(' + M.num(waR,4).t + ')(' + fmtX(LR1) + ')²'
+            });
+          }
+          if(Math.abs(wFixExtR - waR) > 1e-9){
+            var dwR1 = wFixExtR - waR;
+            rawParts.push({
+              side:'R', xv:aR, xFix:xFix, a:xFix, b:aR, Lp:LR1, deg:3, Mfix: +dwR1 * LR1 * LR1 / 6,
+              causeH: 'Subtract ramp continuation &Delta;<i class="mv">w</i> = ' + M.num(dwR1,4).h + ' kN/m on [' + fmtX(xFix) + ', ' + fmtX(aR) + ' m]',
+              causeT: 'Subtract ramp continuation Δw = ' + M.num(dwR1,4).t + ' kN/m on [' + fmtX(xFix) + ', ' + fmtX(aR) + ' m]',
+              mEqH: '+&#8537;(' + M.num(dwR1,4).h + ')(' + fmtX(LR1) + ')<sup>2</sup>',
+              mEqT: '+1/6(' + M.num(dwR1,4).t + ')(' + fmtX(LR1) + ')²'
+            });
+          }
+        }
+      }
+    });
+  }
+
+  /* Also divide at any internal hinge or interior rotational release in cantOpts.hardCuts ONLY if needed?
+     NO! Internal bending moment M(x) is already continuous (=0 at hinges); Moment-Area cuts at hinges via fmClipCantileverShapes! */
+  var eiSteps = fmGetEISteps(B);
+  var degNames = ['Rectangle', 'Right Triangle', 'Parabolic Spandrel (2nd°)', 'Cubic Spandrel (3rd°)'];
+  var shapes = [];
+
+  rawParts.forEach(function(rp){
+    if(Math.abs(rp.Mfix) * rp.Lp <= 1e-10) return;
+    var fullPoly = spandrelPolyOnInterval(rp.side, rp.deg, rp.Mfix, rp.Lp);
+    var innerSteps = eiSteps.filter(function(xs){ return xs > rp.a + tol && xs < rp.b - tol; });
+
+    if(!innerSteps.length){
+      var ri = segEIInfo(B, 0.5*(rp.a + rp.b));
+      var aNum = 1, aDen = rp.deg + 1;
+      var cDen = rp.deg + 2;
+      var cNum = rp.side === 'L' ? (rp.deg + 1) : 1;
+      var area = (aNum / aDen) * rp.Lp * rp.Mfix / ri.EI;
+      var xbar = rp.a + (cNum / cDen) * rp.Lp;
+      var kindStr = rp.deg===0 ? 'rect' : (rp.deg===1 ? (rp.side==='L'?'triR':'triL') : (rp.deg===2 ? (rp.side==='L'?'parabR':'parabL') : (rp.side==='L'?'cubicR':'cubicL')));
+      shapes.push({
+        a: rp.a, b: rp.b, base: rp.Lp, h: rp.Lp, height: rp.Mfix, EI: ri.EI,
+        eiS: ri.eiS, rEI: ri.r,
+        kind: kindStr, name: degNames[rp.deg],
+        aNum: aNum, aDen: aDen, cNum: cNum, cDen: cDen,
+        area: area, xbar: xbar,
+        cPoly: fullPoly,
+        isPureSpandrel: true,
+        side: rp.side, xv: rp.xv, xFix: rp.xFix, deg: rp.deg, Mfix: rp.Mfix, Lp: rp.Lp,
+        causeH: rp.causeH, causeT: rp.causeT,
+        mEqH: rp.mEqH, mEqT: rp.mEqT,
+        ratioNoteH: '', ratioNoteT: ''
+      });
+    } else {
+      /* Varying-I beam: split raw cantilever part at each EI step and compute exact ratioed ordinates! */
+      var pts = [rp.a].concat(innerSteps, [rp.b]);
+      for(var si=0; si<pts.length-1; si++){
+        var u1 = pts[si], u2 = pts[si+1], subL = u2 - u1;
+        if(subL <= tol) continue;
+        var riSub = segEIInfo(B, 0.5*(u1 + u2));
+        var cSub = shiftPoly4(fullPoly, u1 - rp.a);
+        /* Build ratio explanation for the EI-step cut point(s) */
+        var cutPt = (Math.abs(u1 - rp.xv) > tol && Math.abs(u1 - rp.xFix) > tol) ? u1 : u2;
+        var dCut = Math.abs(cutPt - rp.xv);
+        var mAtCut = rp.Mfix * Math.pow(dCut / rp.Lp, rp.deg);
+        var powStrH = rp.deg > 1 ? '<sup>' + rp.deg + '</sup>' : '';
+        var powStrT = rp.deg > 1 ? '^' + rp.deg : '';
+        var rNoteH = 'At EI-step <i class="mv">x</i> = ' + fmtX(cutPt) + ' m, by ratio from vertex <i class="mv">x<sub>v</sub></i> = ' + fmtX(rp.xv) + ' m: <i class="mv">M</i>(' + fmtX(cutPt) + ') = (' + M.num(rp.Mfix,4).h + ')(' + fmtX(dCut) + ' / ' + fmtX(rp.Lp) + ')' + powStrH + ' = ' + M.num(mAtCut,4).h + ' kN&middot;m; divide by <b>' + escH(riSub.eiS) + '</b>';
+        var rNoteT = 'At EI-step x = ' + fmtX(cutPt) + ' m, by ratio from x_v = ' + fmtX(rp.xv) + ' m: M(' + fmtX(cutPt) + ') = (' + M.num(rp.Mfix,4).t + ')(' + fmtX(dCut) + '/' + fmtX(rp.Lp) + ')' + powStrT + ' = ' + M.num(mAtCut,4).t + ' kN·m; divide by ' + riSub.eiS;
+
+        if(Math.abs(u1 - rp.xv) <= tol || Math.abs(u2 - rp.xv) <= tol){
+          /* Outer tip touching vertex xv remains a single pure spandrel! */
+          var hTip = rp.Mfix * Math.pow(subL / rp.Lp, rp.deg);
+          var aNumT = 1, aDenT = rp.deg + 1, cDenT = rp.deg + 2;
+          var cNumT = rp.side === 'L' ? (rp.deg + 1) : 1;
+          shapes.push({
+            a: u1, b: u2, base: subL, h: subL, height: hTip, EI: riSub.EI,
+            eiS: riSub.eiS, rEI: riSub.r,
+            kind: rp.deg===0 ? 'rect' : (rp.deg===1 ? (rp.side==='L'?'triR':'triL') : (rp.deg===2 ? (rp.side==='L'?'parabR':'parabL') : (rp.side==='L'?'cubicR':'cubicL'))),
+            name: degNames[rp.deg],
+            aNum: aNumT, aDen: aDenT, cNum: cNumT, cDen: cDenT,
+            area: (aNumT / aDenT) * subL * hTip / riSub.EI,
+            xbar: u1 + (cNumT / cDenT) * subL,
+            cPoly: cSub,
+            isPureSpandrel: true,
+            side: rp.side, xv: rp.xv, xFix: (rp.side==='L'?u2:u1), deg: rp.deg, Mfix: hTip, Lp: subL,
+            causeH: rp.causeH + ' [on ' + fmtX(u1) + '&ndash;' + fmtX(u2) + ' m, ' + escH(riSub.eiS) + ']',
+            causeT: rp.causeT + ' [on ' + fmtX(u1) + '-' + fmtX(u2) + ' m, ' + riSub.eiS + ']',
+            mEqH: '(' + M.num(rp.Mfix,4).h + ')(' + fmtX(subL) + '/' + fmtX(rp.Lp) + ')' + powStrH,
+            mEqT: '(' + M.num(rp.Mfix,4).t + ')(' + fmtX(subL) + '/' + fmtX(rp.Lp) + ')' + powStrT,
+            ratioNoteH: rNoteH, ratioNoteT: rNoteT
+          });
+        } else {
+          var subDecomp = fmDecomposeGeometricShapes(cSub, u1, u2, riSub.EI);
+          subDecomp.forEach(function(gs){
+            gs.eiS = riSub.eiS; gs.rEI = riSub.r;
+            gs.causeH = rp.causeH + ' [on ' + fmtX(u1) + '&ndash;' + fmtX(u2) + ' m, ' + escH(riSub.eiS) + ']';
+            gs.causeT = rp.causeT + ' [on ' + fmtX(u1) + '-' + fmtX(u2) + ' m, ' + riSub.eiS + ']';
+            gs.mEqH = M.num(gs.height, 4).h; gs.mEqT = M.num(gs.height, 4).t;
+            gs.ratioNoteH = rNoteH; gs.ratioNoteT = rNoteT;
+            shapes.push(gs);
+          });
+        }
+      }
+    }
+  });
+
+  /* Self-verification against piecesObj.pieces (falls back ONLY if non-equilibrium input was passed, e.g. unit couple jump in VW slope) */
+  var okMatch = true;
+  if(piecesObj && piecesObj.pieces && piecesObj.pieces.length){
+    var mRefMax = 1;
+    piecesObj.pieces.forEach(function(pc){
+      var mMid = Math.abs(evalPoly4(pc.c, 0.5*pc.h));
+      if(mMid > mRefMax) mRefMax = mMid;
+    });
+    piecesObj.pieces.forEach(function(pc){
+      var xm = 0.5*(pc.a + pc.b);
+      if(Math.abs(xm - xFix) <= 1e-4) return;
+      var exM = evalPoly4(pc.c, xm - pc.a) / pc.EI;
+      var caM = 0;
+      shapes.forEach(function(sh){
+        if(xm >= sh.a - 1e-9 && xm <= sh.b + 1e-9){
+          caM += evalPoly4(sh.cPoly, xm - sh.a) / sh.EI;
+        }
+      });
+      if(Math.abs(exM - caM) * pc.EI > 1e-5 * mRefMax) okMatch = false;
+    });
+  }
+
+  if(!okMatch && piecesObj && piecesObj.pieces){
+    shapes = [];
+    piecesObj.pieces.forEach(function(pc){
+      var riF = segEIInfo(B, 0.5*(pc.a + pc.b));
+      fmDecomposeGeometricShapes(pc.c, pc.a, pc.b, pc.EI).forEach(function(gs){
+        gs.eiS = riF.eiS; gs.rEI = riF.r;
+        gs.causeH = 'Segment [' + fmtX(pc.a) + ', ' + fmtX(pc.b) + ' m]';
+        gs.causeT = 'Segment [' + fmtX(pc.a) + ', ' + fmtX(pc.b) + ' m]';
+        gs.mEqH = M.num(gs.height, 4).h; gs.mEqT = M.num(gs.height, 4).t;
+        shapes.push(gs);
+      });
+    });
+  }
+
+  return {
+    xFix: xFix,
+    reasonH: fixInfo.reasonH,
+    reasonT: fixInfo.reasonT,
+    uniqRed: fixInfo.uniqRed,
+    shapes: shapes,
+    ry: ry, mr: mr, withLoads: withLoads, rest: rest
+  };
+}
+
+function fmClipCantileverShapes(shapes, x1, x2){
+  var lo = Math.min(x1, x2), hi = Math.max(x1, x2);
+  var tol = 1e-7 * Math.max(1, hi);
+  if(hi - lo <= tol) return [];
+  var out = [];
+  shapes.forEach(function(sh){
+    if(sh.b <= lo + tol || sh.a >= hi - tol) return;
+    if(sh.a >= lo - tol && sh.b <= hi + tol){
+      out.push(sh);
+      return;
+    }
+    var c1 = Math.max(sh.a, lo), c2 = Math.min(sh.b, hi), subL = c2 - c1;
+    if(subL <= tol) return;
+    var cSub = shiftPoly4(sh.cPoly, c1 - sh.a);
+
+    if(sh.isPureSpandrel && (Math.abs(c1 - sh.xv) <= tol || Math.abs(c2 - sh.xv) <= tol)){
+      var xCut = Math.abs(c1 - sh.xv) <= tol ? c2 : c1;
+      var hNew = sh.Mfix * Math.pow(subL / sh.Lp, sh.deg);
+      var powH = sh.deg > 1 ? '<sup>' + sh.deg + '</sup>' : '';
+      var powT = sh.deg > 1 ? '^' + sh.deg : '';
+      var cNumS = sh.side === 'L' ? (sh.deg + 1) : 1;
+      var cDenS = sh.deg + 2;
+      out.push({
+        a: c1, b: c2, base: subL, h: subL, height: hNew, EI: sh.EI,
+        eiS: sh.eiS, rEI: sh.rEI,
+        kind: sh.kind, name: sh.name,
+        aNum: 1, aDen: sh.deg + 1, cNum: cNumS, cDen: cDenS,
+        area: (1 / (sh.deg + 1)) * subL * hNew / sh.EI,
+        xbar: c1 + (cNumS / cDenS) * subL,
+        cPoly: cSub,
+        isPureSpandrel: true,
+        side: sh.side, xv: sh.xv, xFix: xCut, deg: sh.deg, Mfix: hNew, Lp: subL,
+        causeH: sh.causeH, causeT: sh.causeT,
+        sliceRatioH: 'By ratio at <i class="mv">x</i> = ' + fmtX(xCut) + ' m: <i class="mv">M</i>(' + fmtX(xCut) + ') = (' + M.num(sh.Mfix,4).h + ')(' + fmtX(subL) + ' / ' + fmtX(sh.Lp) + ')' + powH + ' = ' + M.num(hNew,4).h + ' kN&middot;m',
+        sliceRatioT: 'By ratio at x = ' + fmtX(xCut) + ' m: M(' + fmtX(xCut) + ') = (' + M.num(sh.Mfix,4).t + ')(' + fmtX(subL) + '/' + fmtX(sh.Lp) + ')' + powT + ' = ' + M.num(hNew,4).t + ' kN·m'
+      });
+    } else {
+      var rNoteClipH = '', rNoteClipT = '';
+      if(sh.isPureSpandrel){
+        var xc = (Math.abs(c1 - sh.a) > tol) ? c1 : c2;
+        var dc = Math.abs(xc - sh.xv);
+        var mc = sh.Mfix * Math.pow(dc / sh.Lp, sh.deg);
+        var pH2 = sh.deg > 1 ? '<sup>' + sh.deg + '</sup>' : '';
+        var pT2 = sh.deg > 1 ? '^' + sh.deg : '';
+        rNoteClipH = 'By ratio from vertex <i class="mv">x<sub>v</sub></i> = ' + fmtX(sh.xv) + ' m: <i class="mv">M</i>(' + fmtX(xc) + ') = (' + M.num(sh.Mfix,4).h + ')(' + fmtX(dc) + ' / ' + fmtX(sh.Lp) + ')' + pH2 + ' = ' + M.num(mc,4).h + ' kN&middot;m';
+        rNoteClipT = 'By ratio from vertex x_v = ' + fmtX(sh.xv) + ' m: M(' + fmtX(xc) + ') = (' + M.num(sh.Mfix,4).t + ')(' + fmtX(dc) + '/' + fmtX(sh.Lp) + ')' + pT2 + ' = ' + M.num(mc,4).t + ' kN·m';
+      }
+      fmDecomposeGeometricShapes(cSub, c1, c2, sh.EI).forEach(function(gs){
+        gs.eiS = sh.eiS; gs.rEI = sh.rEI;
+        gs.causeH = sh.causeH; gs.causeT = sh.causeT;
+        gs.sliceRatioH = rNoteClipH; gs.sliceRatioT = rNoteClipT;
+        out.push(gs);
+      });
+    }
+  });
+  return out;
+}
+
+/* ============ STEP-BY-STEP CANTILEVER SHAPE BREAKDOWN RENDERER ============ */
+function renderCantileverShapesBreakdown(doc, B, cantObj, sc, unTok, opts){
+  opts = opts || {};
+  var symBase = opts.symBase || 'A'; /* 'A' for Moment-Area/VW, 'F_bar' for Conjugate Beam */
+  var makeSym = function(idx){
+    return symBase === 'F_bar' ? M.bar('F', idx+1) : M.v('A', idx+1);
+  };
+  var figTitle = opts.figTitle || ('Free-Body Diagram (Cantilever Fixity at x = ' + fmtX(cantObj.xFix) + ' m) & (M / EI) Diagram by Parts');
+
+  /* 1. Explain Cantilever Fixity & Varying-I handling */
+  doc.note('<b>Cantilever Method (Moment Diagram by Parts):</b> ' + cantObj.reasonH,
+           'Cantilever Method (Moment Diagram by Parts): ' + cantObj.reasonT);
+
+  /* 2. Inline FBD + (M/EI) Diagram SVG */
+  doc.diagram(figTitle, buildBeamCantileverDiagSVG(B, cantObj, sc, opts),
+              'FBD with Cantilever Fixity at x_fix = ' + fmtX(cantObj.xFix) + ' m and (M/EI) Diagram by Parts (' + cantObj.shapes.length + ' shape(s))');
+
+  if(!cantObj.shapes.length){
+    doc.note('Bending moment is identically zero along the entire beam; all (<i>M</i> / <i>EI</i>) geometric areas are zero.',
+             'Bending moment is zero along the entire beam; all (M / EI) geometric areas are zero.');
+    return;
+  }
+
+  /* 3. Detailed step-by-step derivation of every individual (M/EI) shape A_k & centroid x̄_k */
+  var tblRows = [];
+  cantObj.shapes.forEach(function(sh, idx){
+    var kNo = idx + 1;
+    var eiLbl = sh.eiS || segEIInfo(B, 0.5*(sh.a + sh.b)).eiS;
+    var rVal = sh.rEI || segEIInfo(B, 0.5*(sh.a + sh.b)).r;
+    var hOverEI = zr(sh.height / rVal); /* ordinate in units of (1 / EI) */
+    var aScaled = zr(sh.area * sc);
+    var symK = makeSym(idx);
+
+    var partHdrH = '<b>Part ' + kNo + ' (' + symK.h + '):</b> ' + (sh.causeH || sh.name) +
+      ' &mdash; <b>' + escH(sh.name) + '</b> on [' + fmtX(sh.a) + ', ' + fmtX(sh.b) + ' m] (<i class="mv">b</i><sub>' + kNo + '</sub> = ' + fmtX(sh.base) + ' m, Span Rigidity = <b>' + escH(eiLbl) + '</b>)' +
+      (sh.ratioNoteH ? '<br><span style="opacity:.92">&bull; <i>Varying-I / Step Ratio:</i> ' + sh.ratioNoteH + '</span>' : '');
+    var partHdrT = 'Part ' + kNo + ' (' + symK.t + '): ' + (sh.causeT || sh.name) +
+      ' — ' + sh.name + ' on [' + fmtX(sh.a) + ', ' + fmtX(sh.b) + ' m] (b_' + kNo + ' = ' + fmtX(sh.base) + ' m, Rigidity = ' + eiLbl + ')' +
+      (sh.ratioNoteT ? ' | ' + sh.ratioNoteT : '');
+    doc.note(partHdrH, partHdrT);
+
+    var pRows = [];
+    /* Row 1: Bending moment ordinate M_k and division by local flexural rigidity EI_s */
+    var mExprTok = (sh.mEqH && sh.mEqH !== M.num(sh.height, 4).h) ? { h: sh.mEqH + ' = ' + M.num(sh.height, 4).h, t: sh.mEqT + ' = ' + M.num(sh.height, 4).t } : M.num(sh.height, 4);
+    pRows.push([
+      M.v('h', kNo),
+      '=',
+      M.cat(
+        M.frac(M.v('M', kNo), M.txt(eiLbl)),
+        M.op('='),
+        M.frac(M.cat(mExprTok, M.u('kN&middot;m','kN·m')), M.txt(eiLbl)),
+        M.op('='),
+        M.num(hOverEI, 4), unTok
+      ),
+      Math.abs(rVal - 1) > 1e-7 ? ('Ordinate divided by local rigidity ' + eiLbl) : 'Peak (M / EI) ordinate of Part ' + kNo
+    ]);
+
+    /* Row 2: Natural geometric area formula A_k = (aNum/aDen) * b_k * h_k */
+    var fSym = sh.aDen === 1
+      ? M.cat(M.v('b', kNo), M.op('*'), M.v('h', kNo))
+      : M.cat(M.frac(M.raw(String(sh.aNum),String(sh.aNum)), M.raw(String(sh.aDen),String(sh.aDen))), M.sp(), M.v('b', kNo), M.op('*'), M.v('h', kNo));
+    var fNum = sh.aDen === 1
+      ? M.cat(M.p(M.num(sh.base, 2)), M.p(M.cat(M.num(hOverEI, 4), unTok)))
+      : M.cat(M.frac(M.raw(String(sh.aNum),String(sh.aNum)), M.raw(String(sh.aDen),String(sh.aDen))), M.p(M.num(sh.base, 2)), M.p(M.cat(M.num(hOverEI, 4), unTok)));
+    pRows.push([
+      symK,
+      '=',
+      M.cat(fSym, M.op('='), fNum, M.op('='), M.box(M.cat(M.num(aScaled, 4), unTok))),
+      sh.name + ' area formula (' + (sh.aDen === 1 ? 'b·h' : sh.aNum + '/' + sh.aDen + ' b·h') + ')'
+    ]);
+
+    /* Row 3: Centroid location x̄_k (shown from x_fix for pure cantilever spandrels, or from left end x_a) */
+    var centCalcTok, centNote;
+    if(sh.isPureSpandrel){
+      var dDen = sh.deg + 2;
+      var signOp = sh.side === 'L' ? '-' : '+';
+      var isAtMainFix = Math.abs(sh.xFix - cantObj.xFix) <= 1e-6;
+      var altSym = isAtMainFix ? M.v('x', 'fix') : M.v('x', 'alt');
+      var altLbl = isAtMainFix ? ('x_fix = ' + fmtX(sh.xFix) + ' m') : ('x = ' + fmtX(sh.xFix) + ' m');
+      centCalcTok = M.cat(
+        altSym, M.op(signOp),
+        M.frac(M.raw('1','1'), M.raw(String(dDen),String(dDen))), M.p(M.num(sh.base, 2)),
+        M.op('='),
+        M.num(sh.xFix, 2), M.op(signOp),
+        M.frac(M.raw('1','1'), M.raw(String(dDen),String(dDen))), M.p(M.num(sh.base, 2)),
+        M.op('='),
+        M.box(M.cat(M.num(sh.xbar, 4), M.u('m','m')))
+      );
+      centNote = 'Centroid is 1/' + dDen + ' of base from altitude at ' + altLbl + ' (' + (dDen-1) + '/' + dDen + ' from vertex x_v = ' + fmtX(sh.xv) + ' m)';
+    } else {
+      centCalcTok = M.cat(
+        M.num(sh.a, 2), M.op('+'),
+        M.frac(M.raw(String(sh.cNum),String(sh.cNum)), M.raw(String(sh.cDen),String(sh.cDen))), M.p(M.num(sh.base, 2)),
+        M.op('='),
+        M.box(M.cat(M.num(sh.xbar, 4), M.u('m','m')))
+      );
+      centNote = 'Global centroid coordinate from x = 0';
+    }
+    pRows.push([M.bar('x', kNo), '=', centCalcTok, centNote]);
+    doc.eqChain(pRows);
+
+    tblRows.push([
+      symK.t,
+      fmtX(sh.a) + ' to ' + fmtX(sh.b) + ' m',
+      eiLbl,
+      sh.name + ' (' + (sh.aDen===1 ? 'bh' : sh.aNum+'/'+sh.aDen+' bh') + ')',
+      fmtX(sh.base) + ' m',
+      M.num(hOverEI, 4).t + ' / EI',
+      M.cat(M.num(aScaled, 4), unTok),
+      M.num(sh.xbar, 4).t + ' m'
+    ]);
+  });
+
+  doc.table(
+    [symBase === 'F_bar' ? 'Elastic Force' : 'Part', 'Interval', 'Rigidity', 'Cantilever Shape', 'Base b_k', 'Ordinate h_k', symBase === 'F_bar' ? 'Resultant F̄_k' : 'Area A_k', 'Centroid x̄_k'],
+    tblRows,
+    {align:['c','c','c','l','r','r','r','r']}
+  );
+}
+
+/* ============ INLINE TECHNICAL SVG DIAGRAM GENERATORS ============ */
+
+function _svgArrowV(x, yTip, yTail, cls, headSz){
+  var hs = headSz || 5.5;
+  var dir = yTip < yTail ? -1 : 1; /* -1 = pointing up in SVG, +1 = pointing down */
+  var yBase = yTip - dir * hs;
+  return '<line x1="' + x.toFixed(1) + '" y1="' + yTail.toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + yTip.toFixed(1) + '" class="' + cls + '" stroke-width="1.9"/>' +
+         '<polygon points="' + x.toFixed(1) + ',' + yTip.toFixed(1) + ' ' + (x - hs*0.62).toFixed(1) + ',' + yBase.toFixed(1) + ' ' + (x + hs*0.62).toFixed(1) + ',' + yBase.toFixed(1) + '" class="' + cls + '"/>';
+}
+
+function _svgCoupleArc(x, y, ccw, cls){
+  /* Draw crisp circular couple arrow centered at (x, y) */
+  var r = 11;
+  if(ccw){
+    return '<path d="M ' + (x+r).toFixed(1) + ' ' + y.toFixed(1) + ' A ' + r + ' ' + r + ' 0 1 0 ' + (x-r*0.7).toFixed(1) + ' ' + (y+r*0.7).toFixed(1) + '" fill="none" class="' + cls + '" stroke-width="1.8"/>' +
+           '<polygon points="' + (x-r*0.85).toFixed(1) + ',' + (y+r*0.95).toFixed(1) + ' ' + (x-r*0.2).toFixed(1) + ',' + (y+r*0.85).toFixed(1) + ' ' + (x-r*0.85).toFixed(1) + ',' + (y+r*0.3).toFixed(1) + '" class="' + cls + '"/>';
+  } else {
+    return '<path d="M ' + (x-r).toFixed(1) + ' ' + y.toFixed(1) + ' A ' + r + ' ' + r + ' 0 1 1 ' + (x+r*0.7).toFixed(1) + ' ' + (y+r*0.7).toFixed(1) + '" fill="none" class="' + cls + '" stroke-width="1.8"/>' +
+           '<polygon points="' + (x+r*0.85).toFixed(1) + ',' + (y+r*0.95).toFixed(1) + ' ' + (x+r*0.2).toFixed(1) + ',' + (y+r*0.85).toFixed(1) + ' ' + (x+r*0.85).toFixed(1) + ',' + (y+r*0.3).toFixed(1) + '" class="' + cls + '"/>';
+  }
+}
+
+function _svgSupportGlyph(x, y, type, atLeft){
+  if(type === 1){
+    /* Fixed wall */
+    var sgn = atLeft ? -1 : 1;
+    var s = '<line x1="' + x.toFixed(1) + '" y1="' + (y-16).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + (y+16).toFixed(1) + '" class="sfg-sup" stroke-width="2.4"/>';
+    for(var h=-14; h<=14; h+=7){
+      s += '<line x1="' + x.toFixed(1) + '" y1="' + (y+h).toFixed(1) + '" x2="' + (x+sgn*7).toFixed(1) + '" y2="' + (y+h+5).toFixed(1) + '" class="sfg-axis"/>';
+    }
+    return s;
+  }
+  if(type === 2){
+    /* Pin triangle */
+    return '<polygon points="' + x.toFixed(1) + ',' + (y+2).toFixed(1) + ' ' + (x-8).toFixed(1) + ',' + (y+15).toFixed(1) + ' ' + (x+8).toFixed(1) + ',' + (y+15).toFixed(1) + '" class="sfg-sup"/>' +
+           '<line x1="' + (x-11).toFixed(1) + '" y1="' + (y+16).toFixed(1) + '" x2="' + (x+11).toFixed(1) + '" y2="' + (y+16).toFixed(1) + '" class="sfg-axis"/>';
+  }
+  if(type === 3){
+    /* Roller */
+    return '<polygon points="' + x.toFixed(1) + ',' + (y+2).toFixed(1) + ' ' + (x-7.5).toFixed(1) + ',' + (y+12).toFixed(1) + ' ' + (x+7.5).toFixed(1) + ',' + (y+12).toFixed(1) + '" class="sfg-sup"/>' +
+           '<circle cx="' + (x-4).toFixed(1) + '" cy="' + (y+15).toFixed(1) + '" r="2.3" class="sfg-sup"/>' +
+           '<circle cx="' + (x+4).toFixed(1) + '" cy="' + (y+15).toFixed(1) + '" r="2.3" class="sfg-sup"/>' +
+           '<line x1="' + (x-11).toFixed(1) + '" y1="' + (y+18.5).toFixed(1) + '" x2="' + (x+11).toFixed(1) + '" y2="' + (y+18.5).toFixed(1) + '" class="sfg-axis"/>';
+  }
+  if(type === 4){
+    /* Elastic spring */
+    return '<polyline points="' + x.toFixed(1) + ',' + (y+2).toFixed(1) + ' ' + (x-5).toFixed(1) + ',' + (y+6).toFixed(1) + ' ' + (x+5).toFixed(1) + ',' + (y+10).toFixed(1) + ' ' + (x-5).toFixed(1) + ',' + (y+14).toFixed(1) + ' ' + x.toFixed(1) + ',' + (y+18).toFixed(1) + '" fill="none" class="sfg-sup"/>' +
+           '<line x1="' + (x-9).toFixed(1) + '" y1="' + (y+19).toFixed(1) + '" x2="' + (x+9).toFixed(1) + '" y2="' + (y+19).toFixed(1) + '" class="sfg-axis"/>';
+  }
+  return '';
+}
+
+function _svgVaryingBeamSegments(B, xOf, yBeam){
+  var out = '', sx = B.spanX || [0, B.L];
+  var rVals = [];
+  for(var i=0; i<sx.length-1; i++) rVals.push(segEIInfo(B, 0.5*(sx[i]+sx[i+1])).r || 1);
+  var rMin = Math.min.apply(null, rVals), rMax = Math.max.apply(null, rVals);
+  var hasVar = (rMax - rMin) > 1e-6 * Math.max(1, rMin);
+  for(var s=0; s<sx.length-1; s++){
+    var x1 = xOf(sx[s]), x2 = xOf(sx[s+1]);
+    var ri = segEIInfo(B, 0.5*(sx[s]+sx[s+1]));
+    var thk = hasVar ? (4.5 + 5.5 * Math.min(1, (ri.r - rMin) / Math.max(1e-9, rMax - rMin))) : 5.0;
+    out += '<rect x="' + x1.toFixed(1) + '" y="' + (yBeam - thk/2).toFixed(1) + '" width="' + Math.max(1, x2 - x1).toFixed(1) + '" height="' + thk.toFixed(1) + '" rx="1.5" class="sfg-beam-fill"/>';
+    if(hasVar || sx.length > 2){
+      out += '<text x="' + (0.5*(x1+x2)).toFixed(1) + '" y="' + (yBeam - thk/2 - 4).toFixed(1) + '" text-anchor="middle" class="sfg-tag-ei">' + escH(ri.eiS) + '</text>';
+    }
+  }
+  return out;
+}
+
+/* 1) 2-Panel FBD (with Imaginary Cantilever Fixity & Varying I) + (M / EI) Diagram by Parts */
+function buildBeamCantileverDiagSVG(B, cantObj, sc, opts){
+  opts = opts || {};
+  var W = 820, H = 356, padL = 72, padR = 58;
+  var plotW = W - padL - padR, L = Math.max(1e-6, B.L);
+  var xOf = function(x){ return padL + (x / L) * plotW; };
+  var yFBD = 86, yM0 = 256, maxAmp = 66;
+
+  var out = [];
+  out.push('<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">');
+  out.push('<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="6" class="sfg-bg"/>');
+
+  /* Panel frames & titles */
+  out.push('<rect x="10" y="10" width="' + (W-20) + '" height="142" rx="5" class="sfg-panel"/>');
+  out.push('<text x="22" y="27" class="sfg-txt">(a) Free-Body Diagram &amp; Cantilever Fixity at x_fix = ' + fmtX(cantObj.xFix) + ' m</text>');
+  out.push('<rect x="10" y="160" width="' + (W-20) + '" height="186" rx="5" class="sfg-panel"/>');
+  out.push('<text x="22" y="177" class="sfg-txt">(b) (M / EI) Diagram by Parts (Cantilever Method' + (fmHasVaryingEI(B) ? ', Scaled for Varying I' : '') + ')</text>');
+
+  /* Collect key x ticks */
+  var keyX = [0, cantObj.xFix, L];
+  (B.spanX||[]).forEach(function(v){ keyX.push(+v); });
+  (B.sup||[]).forEach(function(s){ keyX.push(+s[0]); });
+  cantObj.shapes.forEach(function(sh){ keyX.push(sh.a); keyX.push(sh.b); });
+  keyX = keyX.filter(function(v){ return isFinite(v) && v >= -1e-6 && v <= L+1e-6; }).sort(function(a,b){return a-b;});
+  var uniqX = [];
+  keyX.forEach(function(v){ if(!uniqX.length || v - uniqX[uniqX.length-1] > 1e-4*L) uniqX.push(v); });
+  uniqX.forEach(function(xv){
+    var px = xOf(xv);
+    out.push('<line x1="' + px.toFixed(1) + '" y1="' + (yFBD+22).toFixed(1) + '" x2="' + px.toFixed(1) + '" y2="334" class="sfg-grid"/>');
+    out.push('<text x="' + px.toFixed(1) + '" y="342" text-anchor="middle" class="sfg-sub">' + fmtX(xv) + ' m</text>');
+  });
+
+  /* Distributed loads on FBD */
+  if(cantObj.withLoads && B.W && B.W.length){
+    var wMax = 1e-6;
+    B.W.forEach(function(w){ wMax = Math.max(wMax, Math.abs(w[2]), Math.abs(w[3])); });
+    B.W.forEach(function(w){
+      if(Math.abs(w[2]) < 1e-9 && Math.abs(w[3]) < 1e-9) return;
+      var x1 = xOf(w[0]), x2 = xOf(w[1]);
+      var h1 = 10 + 20 * (Math.abs(w[2]) / wMax), h2 = 10 + 20 * (Math.abs(w[3]) / wMax);
+      var yTop1 = yFBD - 5 - h1, yTop2 = yFBD - 5 - h2;
+      out.push('<polygon points="' + x1.toFixed(1) + ',' + (yFBD-5).toFixed(1) + ' ' + x1.toFixed(1) + ',' + yTop1.toFixed(1) + ' ' + x2.toFixed(1) + ',' + yTop2.toFixed(1) + ' ' + x2.toFixed(1) + ',' + (yFBD-5).toFixed(1) + '" class="sfg-load-area"/>');
+      var nArr = Math.max(3, Math.min(8, Math.round((x2 - x1) / 48)));
+      for(var a=0; a<=nArr; a++){
+        var t = a / nArr, xa = x1 + t*(x2 - x1), ya = yTop1 + t*(yTop2 - yTop1);
+        out.push(_svgArrowV(xa, yFBD - 5, ya, 'sfg-load', 4.5));
+      }
+      var wLbl = Math.abs(w[2] - w[3]) < 1e-6 ? (M.num(w[2],2).t + ' kN/m') : (M.num(w[2],2).t + '→' + M.num(w[3],2).t + ' kN/m');
+      out.push('<text x="' + (0.5*(x1+x2)).toFixed(1) + '" y="' + (Math.min(yTop1,yTop2) - 4).toFixed(1) + '" text-anchor="middle" class="sfg-tag-load">' + escH(wLbl) + '</text>');
+    });
+  }
+
+  /* Beam bar (with varying I thickness) */
+  out.push(_svgVaryingBeamSegments(B, xOf, yFBD));
+
+  /* Active supports & hinges on FBD */
+  var rest = cantObj.rest;
+  if(rest && rest.vR){
+    rest.vR.forEach(function(vr){
+      var hasFixHere = rest.thR && rest.thR.some(function(tr){ return Math.abs(tr.x - vr.x) < 1e-5; });
+      out.push(_svgSupportGlyph(xOf(vr.x), yFBD, hasFixHere ? 1 : (vr.type || 3), vr.x <= 0.5*L));
+    });
+  }
+  (B.hinge || []).forEach(function(xh){
+    out.push('<circle cx="' + xOf(xh).toFixed(1) + '" cy="' + yFBD.toFixed(1) + '" r="4.2" class="sfg-hinge"/>');
+  });
+
+  /* Imaginary Cantilever Fixity Wall at xFix */
+  var xFxPx = xOf(cantObj.xFix);
+  out.push('<line x1="' + xFxPx.toFixed(1) + '" y1="' + (yFBD - 26).toFixed(1) + '" x2="' + xFxPx.toFixed(1) + '" y2="' + (yFBD + 26).toFixed(1) + '" class="sfg-fixwall"/>');
+  for(var hh=-22; hh<=20; hh+=7){
+    out.push('<line x1="' + xFxPx.toFixed(1) + '" y1="' + (yFBD + hh).toFixed(1) + '" x2="' + (xFxPx - 6).toFixed(1) + '" y2="' + (yFBD + hh + 5).toFixed(1) + '" class="sfg-fixhatch"/>');
+  }
+  out.push('<text x="' + xFxPx.toFixed(1) + '" y="42" text-anchor="middle" class="sfg-tag-fix">Fixity (' + escH(ptJointName(B, cantObj.xFix)) + ')</text>');
+
+  /* Point loads & couples on FBD */
+  if(cantObj.withLoads){
+    (B.P || []).forEach(function(p){
+      if(Math.abs(p[1]) <= 1e-9) return;
+      var xp = xOf(p[0]);
+      if(p[1] > 0) out.push(_svgArrowV(xp, yFBD - 4, yFBD - 36, 'sfg-load', 5.5));
+      else         out.push(_svgArrowV(xp, yFBD - 36, yFBD - 4, 'sfg-load', 5.5));
+      out.push('<text x="' + (xp + 5).toFixed(1) + '" y="' + (yFBD - 28).toFixed(1) + '" class="sfg-tag-load">' + escH(M.num(Math.abs(p[1]),2).t) + ' kN</text>');
+    });
+    (B.M || []).forEach(function(pm){
+      if(Math.abs(pm[1]) <= 1e-9) return;
+      var xm = xOf(pm[0]);
+      out.push(_svgCoupleArc(xm, yFBD, pm[1] > 0, 'sfg-load'));
+      out.push('<text x="' + xm.toFixed(1) + '" y="' + (yFBD - 15).toFixed(1) + '" text-anchor="middle" class="sfg-tag-load">' + escH(M.num(Math.abs(pm[1]),2).t) + ' kN·m</text>');
+    });
+  }
+
+  /* Support / unit-redundant reactions on FBD */
+  var fi2 = 0;
+  (B.sup || []).forEach(function(sp, k){
+    var sx = +sp[0], rv = +(cantObj.ry[k] || 0);
+    var px = xOf(sx), jN = ptJointName(B, sx);
+    if(Math.abs(rv) > 1e-9){
+      if(rv > 0) out.push(_svgArrowV(px, yFBD + 5, yFBD + 38, 'sfg-rxn', 5.5));
+      else       out.push(_svgArrowV(px, yFBD + 38, yFBD + 5, 'sfg-rxn', 5.5));
+      var txOff = sx < 0.08*L ? 6 : (sx > 0.92*L ? -6 : 6);
+      var anch = sx > 0.92*L ? 'end' : 'start';
+      out.push('<text x="' + (px + txOff).toFixed(1) + '" y="' + (yFBD + 47).toFixed(1) + '" text-anchor="' + anch + '" class="sfg-tag-rxn">' + escH(jN + '_y=' + M.num(rv,2).t) + '</text>');
+    }
+    if(sp[1] === 1){
+      var mv2 = +(cantObj.mr[fi2] || 0); fi2++;
+      if(Math.abs(mv2) > 1e-9){
+        out.push(_svgCoupleArc(px, yFBD, mv2 > 0, 'sfg-rxn'));
+        out.push('<text x="' + px.toFixed(1) + '" y="' + (yFBD + 31).toFixed(1) + '" text-anchor="middle" class="sfg-tag-rxn">' + escH('M_' + jN + '=' + M.num(mv2,2).t) + '</text>');
+      }
+    }
+  });
+
+  /* Panel B: M / EI = 0 axis */
+  out.push('<line x1="' + padL + '" y1="' + yM0 + '" x2="' + (W - padR) + '" y2="' + yM0 + '" class="sfg-axis"/>');
+  out.push('<text x="' + (padL - 8) + '" y="' + (yM0 + 4) + '" text-anchor="end" class="sfg-sub">M/EI = 0</text>');
+
+  /* Scale across all individual cantilever shapes */
+  var maxOrd = 1e-9;
+  cantObj.shapes.forEach(function(sh){
+    for(var s=0; s<=16; s++){
+      var dx = (sh.base * s) / 16;
+      var val = Math.abs(evalPoly4(sh.cPoly, dx) * (sc / sh.EI));
+      if(val > maxOrd) maxOrd = val;
+    }
+  });
+
+  var posRow = 0, negRow = 0;
+  var symPref = (opts.symBase === 'F_bar') ? 'F̄' : 'A';
+  cantObj.shapes.forEach(function(sh, idx){
+    var nPts = 28, pts = [];
+    pts.push(xOf(sh.a).toFixed(1) + ',' + yM0.toFixed(1));
+    var peakVal = 0, peakX = 0.5*(sh.a + sh.b);
+    for(var s=0; s<=nPts; s++){
+      var xx = sh.a + (sh.base * s) / nPts;
+      var ord = evalPoly4(sh.cPoly, xx - sh.a) * (sc / sh.EI);
+      if(Math.abs(ord) >= Math.abs(peakVal)){ peakVal = ord; peakX = xx; }
+      var py = yM0 - (ord / maxOrd) * maxAmp;
+      pts.push(xOf(xx).toFixed(1) + ',' + py.toFixed(1));
+    }
+    pts.push(xOf(sh.b).toFixed(1) + ',' + yM0.toFixed(1));
+    var isPos = sh.area >= 0;
+    out.push('<polygon points="' + pts.join(' ') + '" class="' + (isPos ? 'sfg-pos' : 'sfg-neg') + '"/>');
+
+    /* Centroid marker & label */
+    var cx = xOf(sh.xbar);
+    var cOrd = evalPoly4(sh.cPoly, sh.xbar - sh.a) * (sc / sh.EI);
+    var cy = yM0 - 0.5 * (cOrd / maxOrd) * maxAmp;
+    out.push('<circle cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="3.1" class="' + (isPos ? 'sfg-rxn' : 'sfg-load') + '"/>');
+
+    var stagger = isPos ? (-10 - (posRow++ % 3)*12) : (16 + (negRow++ % 3)*12);
+    var lblY = Math.max(191, Math.min(327, yM0 - (peakVal / maxOrd) * maxAmp * 0.65 + stagger));
+    var lblTxt = symPref + (idx+1) + ' (' + M.num(zr(peakVal), 2).t + '/EI, x̄=' + fmtX(sh.xbar) + ')';
+    out.push('<text x="' + cx.toFixed(1) + '" y="' + lblY.toFixed(1) + '" text-anchor="middle" class="' + (isPos ? 'sfg-tag-pos' : 'sfg-tag-neg') + '">' + escH(lblTxt) + '</text>');
+  });
+
+  out.push('</svg>');
+  return out.join('');
+}
+
+/* 2) Moment-Area Elastic Curve, Reference Tangent & Similar-Triangles Ratio SVG */
+function buildMARefTangentSVG(B, ma, sc, targets, tag){
+  var W = 820, H = 212, padL = 72, padR = 58;
+  var plotW = W - padL - padR, L = Math.max(1e-6, B.L);
+  var xOf = function(x){ return padL + (x / L) * plotW; };
+  var yAxis = 104, amp = 56;
+
+  /* Sample elastic curve & reference tangent */
+  var nSmp = 80, xs = [], vs = [], tans = [];
+  var rf0 = ma.refPts[0] || {x:0, v:0, th:0};
+  var maxMag = 1e-12;
+  for(var i=0; i<=nSmp; i++){
+    var x = (L * i) / nSmp;
+    var ev = ma.evalAt(x, 'L');
+    var vSc = ev.v * sc;
+    var tSc = (ev.ref.v + ev.ref.th * (x - ev.ref.x)) * sc;
+    xs.push(x); vs.push(vSc); tans.push(tSc);
+    maxMag = Math.max(maxMag, Math.abs(vSc), Math.abs(tSc));
+  }
+  var yOf = function(valSc){ return Math.max(28, Math.min(194, yAxis - (valSc / maxMag) * amp)); };
+
+  var out = [];
+  out.push('<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">');
+  out.push('<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="6" class="sfg-bg"/>');
+  out.push('<rect x="10" y="10" width="' + (W-20) + '" height="' + (H-20) + '" rx="5" class="sfg-panel"/>');
+  out.push('<text x="22" y="27" class="sfg-txt">Elastic Curve, Reference Tangent at ' + escH(ptJointName(B, rf0.x)) + ' (x = ' + fmtX(rf0.x) + ' m) &amp; Similar-Triangles Ratio</text>');
+
+  /* Undeformed beam axis */
+  out.push('<line x1="' + padL + '" y1="' + yAxis + '" x2="' + (W - padR) + '" y2="' + yAxis + '" class="sfg-axis"/>');
+
+  /* Similar-triangles shaded wedge on first sub-beam if inclined tangent */
+  if(rf0.vsIn && rf0.vsIn.length >= 2 && Math.abs(rf0.th * sc) > 1e-9){
+    var sA = rf0.vsIn[0], sB = rf0.vsIn[1];
+    var xApx = xOf(sA.x), xBpx = xOf(sB.x);
+    var yAtA = yOf(sA.v * sc), yTanB = yOf((rf0.v + rf0.th*(sB.x - rf0.x))*sc);
+    out.push('<polygon points="' + xApx.toFixed(1) + ',' + yAtA.toFixed(1) + ' ' + xBpx.toFixed(1) + ',' + yAtA.toFixed(1) + ' ' + xBpx.toFixed(1) + ',' + yTanB.toFixed(1) + '" class="sfg-ratio"/>');
+    out.push('<line x1="' + xBpx.toFixed(1) + '" y1="' + yOf(sB.v*sc).toFixed(1) + '" x2="' + xBpx.toFixed(1) + '" y2="' + yTanB.toFixed(1) + '" class="sfg-fixwall" stroke-width="1.8"/>');
+    out.push('<text x="' + (xBpx - 6).toFixed(1) + '" y="' + (0.5*(yOf(sB.v*sc)+yTanB)).toFixed(1) + '" text-anchor="end" class="sfg-tag-fix">Δ_' + escH(ptJointName(B,sB.x)+ptJointName(B,sA.x)) + '</text>');
+  }
+
+  /* Reference tangent polyline */
+  var tanPts = xs.map(function(x, idx){ return xOf(x).toFixed(1) + ',' + yOf(tans[idx]).toFixed(1); });
+  out.push('<polyline points="' + tanPts.join(' ') + '" class="sfg-tan"/>');
+
+  /* Elastic curve polyline */
+  var elPts = xs.map(function(x, idx){ return xOf(x).toFixed(1) + ',' + yOf(vs[idx]).toFixed(1); });
+  out.push('<polyline points="' + elPts.join(' ') + '" class="sfg-curve"/>');
+
+  /* Target / redundant ordinates (y_tan by ratio + Δ_PA) */
+  (targets || []).forEach(function(tg, ti){
+    var evT = ma.evalAt(tg.x, tg.side);
+    var px = xOf(tg.x);
+    var y0 = yOf(0), yT = yOf((evT.ref.v + evT.ref.th*(tg.x - evT.ref.x))*sc), yE = yOf(evT.v * sc);
+    out.push('<line x1="' + px.toFixed(1) + '" y1="' + y0.toFixed(1) + '" x2="' + px.toFixed(1) + '" y2="' + yT.toFixed(1) + '" class="sfg-fixhatch" stroke-width="2"/>');
+    out.push('<line x1="' + px.toFixed(1) + '" y1="' + yT.toFixed(1) + '" x2="' + px.toFixed(1) + '" y2="' + yE.toFixed(1) + '" class="sfg-rxn" stroke-width="2"/>');
+    out.push('<circle cx="' + px.toFixed(1) + '" cy="' + yE.toFixed(1) + '" r="3.6" class="sfg-rxn"/>');
+    var jT = ptJointName(B, tg.x);
+    out.push('<text x="' + (px + 5).toFixed(1) + '" y="' + Math.max(40, Math.min(186, yE + (ti%2===0?-8:13))).toFixed(1) + '" class="sfg-tag-rxn">' + escH(jT + ' (x=' + fmtX(tg.x) + ' m)') + '</text>');
+  });
+
+  out.push('</svg>');
+  return out.join('');
+}
+
+/* 3) Conjugate-Beam Free-Body Diagram SVG (Mapped Supports, Elastic Load F̄_k, Conjugate Reactions) */
+function buildConjugateBeamSVG(B, cb, sc, tag){
+  var W = 820, H = 228, padL = 72, padR = 58;
+  var plotW = W - padL - padR, L = Math.max(1e-6, B.L);
+  var xOf = function(x){ return padL + (x / L) * plotW; };
+  var yBeam = 118, maxAmp = 54;
+
+  var out = [];
+  out.push('<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">');
+  out.push('<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="6" class="sfg-bg"/>');
+  out.push('<rect x="10" y="10" width="' + (W-20) + '" height="' + (H-20) + '" rx="5" class="sfg-panel"/>');
+  out.push('<text x="22" y="27" class="sfg-txt">Conjugate-Beam Free-Body Diagram — Elastic Load (M / EI), Resultants F̄_k &amp; Conjugate Reactions</text>');
+
+  /* Elastic load shapes (positive M/EI acts UPWARD on conjugate beam!) */
+  var shapes = cb.cantShapes || [];
+  var maxOrd = 1e-9;
+  shapes.forEach(function(sh){
+    for(var s=0; s<=12; s++){
+      var v = Math.abs(evalPoly4(sh.cPoly, (sh.base*s)/12) * (sc / sh.EI));
+      if(v > maxOrd) maxOrd = v;
+    }
+  });
+
+  shapes.forEach(function(sh, idx){
+    var pts = [xOf(sh.a).toFixed(1) + ',' + yBeam.toFixed(1)];
+    for(var s=0; s<=24; s++){
+      var xx = sh.a + (sh.base * s) / 24;
+      var ord = evalPoly4(sh.cPoly, xx - sh.a) * (sc / sh.EI);
+      var py = yBeam - (ord / maxOrd) * maxAmp;
+      pts.push(xOf(xx).toFixed(1) + ',' + py.toFixed(1));
+    }
+    pts.push(xOf(sh.b).toFixed(1) + ',' + yBeam.toFixed(1));
+    var isPos = sh.area >= 0;
+    out.push('<polygon points="' + pts.join(' ') + '" class="' + (isPos ? 'sfg-pos' : 'sfg-neg') + '"/>');
+
+    /* Resultant elastic force arrow F̄_k at x̄_k (positive = upward!) */
+    var cx = xOf(sh.xbar);
+    var fSc = zr(sh.area * sc);
+    if(isPos){
+      out.push(_svgArrowV(cx, yBeam - 34, yBeam - 4, 'sfg-pos', 5));
+      out.push('<text x="' + cx.toFixed(1) + '" y="' + (yBeam - 39).toFixed(1) + '" text-anchor="middle" class="sfg-tag-pos">' + escH('F̄' + (idx+1) + '=' + M.num(fSc,2).t + '/EI ↑') + '</text>');
+    } else {
+      out.push(_svgArrowV(cx, yBeam + 34, yBeam + 4, 'sfg-load', 5));
+      out.push('<text x="' + cx.toFixed(1) + '" y="' + (yBeam + 46).toFixed(1) + '" text-anchor="middle" class="sfg-tag-neg">' + escH('F̄' + (idx+1) + '=' + M.num(Math.abs(fSc),2).t + '/EI ↓') + '</text>');
+    }
+  });
+
+  /* Conjugate beam bar */
+  out.push('<line x1="' + padL + '" y1="' + yBeam + '" x2="' + (W - padR) + '" y2="' + yBeam + '" class="sfg-beam" stroke-width="4.5"/>');
+
+  /* Mapped conjugate supports & hinges */
+  (cb.mapRows || []).forEach(function(mr){
+    var px = xOf(mr.x), cj = mr.conj.toLowerCase();
+    if(cj.indexOf('fixed') >= 0) out.push(_svgSupportGlyph(px, yBeam, 1, mr.x <= 0.5*L));
+    else if(cj.indexOf('pin') >= 0 || cj.indexOf('roller') >= 0) out.push(_svgSupportGlyph(px, yBeam, 3, false));
+    else if(cj.indexOf('hinge') >= 0) out.push('<circle cx="' + px.toFixed(1) + '" cy="' + yBeam.toFixed(1) + '" r="4.5" class="sfg-hinge"/>');
+    out.push('<text x="' + px.toFixed(1) + '" y="210" text-anchor="middle" class="sfg-sub">' + fmtX(mr.x) + ' m</text>');
+  });
+
+  /* Solved conjugate support reactions */
+  (cb.unks || []).forEach(function(u, ui){
+    var valSc = zr(cb.sol[ui] * sc);
+    if(Math.abs(valSc) <= 1e-9) return;
+    var px = xOf(u.x);
+    if(u.kind === 'R0' || u.kind === 'RL' || u.kind === 'Rh' || u.kind === 'Rf'){
+      if(valSc > 0) out.push(_svgArrowV(px, yBeam + 6, yBeam + 38, 'sfg-rxn', 5.5));
+      else          out.push(_svgArrowV(px, yBeam + 38, yBeam + 6, 'sfg-rxn', 5.5));
+      var anch = u.x > 0.88*L ? 'end' : (u.x < 0.12*L ? 'start' : 'middle');
+      var dxT = u.x > 0.88*L ? -7 : (u.x < 0.12*L ? 7 : 0);
+      out.push('<text x="' + (px + dxT).toFixed(1) + '" y="' + (yBeam + 52).toFixed(1) + '" text-anchor="' + anch + '" class="sfg-tag-rxn">' + escH(u.tok.t + '=' + M.num(valSc,2).t + '/EI') + '</text>');
+    } else {
+      out.push(_svgCoupleArc(px, yBeam, valSc > 0, 'sfg-rxn'));
+      out.push('<text x="' + px.toFixed(1) + '" y="' + (yBeam - 18).toFixed(1) + '" text-anchor="middle" class="sfg-tag-rxn">' + escH(u.tok.t + '=' + M.num(valSc,2).t + '/EI') + '</text>');
+    }
+  });
+
+  out.push('</svg>');
+  return out.join('');
+}
+
+/* 4) General Solved Beam Free-Body Diagram SVG (used across TM, SD, MD, FM) */
+function buildGeneralBeamFBDSVG(B, Ry, Mr, titleCap){
+  var W = 820, H = 176, padL = 72, padR = 58;
+  var plotW = W - padL - padR, L = Math.max(1e-6, B.L);
+  var xOf = function(x){ return padL + (x / L) * plotW; };
+  var yFBD = 92;
+
+  var out = [];
+  out.push('<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">');
+  out.push('<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="6" class="sfg-bg"/>');
+  out.push('<rect x="10" y="10" width="' + (W-20) + '" height="' + (H-20) + '" rx="5" class="sfg-panel"/>');
+  out.push('<text x="22" y="27" class="sfg-txt">' + escH(titleCap || 'Beam Free-Body Diagram — Applied Loads, Span Rigidities & Support Reactions') + '</text>');
+
+  /* Distributed loads */
+  if(B.W && B.W.length){
+    var wMax = 1e-6;
+    B.W.forEach(function(w){ wMax = Math.max(wMax, Math.abs(w[2]), Math.abs(w[3])); });
+    B.W.forEach(function(w){
+      if(Math.abs(w[2]) < 1e-9 && Math.abs(w[3]) < 1e-9) return;
+      var x1 = xOf(w[0]), x2 = xOf(w[1]);
+      var h1 = 9 + 18 * (Math.abs(w[2]) / wMax), h2 = 9 + 18 * (Math.abs(w[3]) / wMax);
+      var yT1 = yFBD - 5 - h1, yT2 = yFBD - 5 - h2;
+      out.push('<polygon points="' + x1.toFixed(1) + ',' + (yFBD-5).toFixed(1) + ' ' + x1.toFixed(1) + ',' + yT1.toFixed(1) + ' ' + x2.toFixed(1) + ',' + yT2.toFixed(1) + ' ' + x2.toFixed(1) + ',' + (yFBD-5).toFixed(1) + '" class="sfg-load-area"/>');
+      var nArr = Math.max(3, Math.min(8, Math.round((x2 - x1) / 48)));
+      for(var a=0; a<=nArr; a++){
+        var t = a / nArr;
+        out.push(_svgArrowV(x1 + t*(x2-x1), yFBD - 5, yT1 + t*(yT2-yT1), 'sfg-load', 4.5));
+      }
+      var wLbl = Math.abs(w[2] - w[3]) < 1e-6 ? (M.num(w[2],2).t + ' kN/m') : (M.num(w[2],2).t + '→' + M.num(w[3],2).t + ' kN/m');
+      out.push('<text x="' + (0.5*(x1+x2)).toFixed(1) + '" y="' + (Math.min(yT1,yT2) - 4).toFixed(1) + '" text-anchor="middle" class="sfg-tag-load">' + escH(wLbl) + '</text>');
+    });
+  }
+
+  out.push(_svgVaryingBeamSegments(B, xOf, yFBD));
+
+  (B.hinge || []).forEach(function(xh){
+    out.push('<circle cx="' + xOf(xh).toFixed(1) + '" cy="' + yFBD.toFixed(1) + '" r="4.2" class="sfg-hinge"/>');
+  });
+
+  (B.P || []).forEach(function(p){
+    if(Math.abs(p[1]) <= 1e-9) return;
+    var xp = xOf(p[0]);
+    if(p[1] > 0) out.push(_svgArrowV(xp, yFBD - 4, yFBD - 34, 'sfg-load', 5.5));
+    else         out.push(_svgArrowV(xp, yFBD - 34, yFBD - 4, 'sfg-load', 5.5));
+    out.push('<text x="' + (xp + 5).toFixed(1) + '" y="' + (yFBD - 26).toFixed(1) + '" class="sfg-tag-load">' + escH(M.num(Math.abs(p[1]),2).t) + ' kN</text>');
+  });
+
+  (B.M || []).forEach(function(pm){
+    if(Math.abs(pm[1]) <= 1e-9) return;
+    var xm = xOf(pm[0]);
+    out.push(_svgCoupleArc(xm, yFBD, pm[1] > 0, 'sfg-load'));
+    out.push('<text x="' + xm.toFixed(1) + '" y="' + (yFBD - 15).toFixed(1) + '" text-anchor="middle" class="sfg-tag-load">' + escH(M.num(Math.abs(pm[1]),2).t) + ' kN·m</text>');
+  });
+
+  (B.sup || []).forEach(function(sp, k){
+    var sx = +sp[0], px = xOf(sx), jN = ptJointName(B, sx);
+    out.push(_svgSupportGlyph(px, yFBD, sp[1], sx <= 0.5*L));
+    var rv = Ry ? +(Ry[k] || 0) : 0;
+    if(Math.abs(rv) > 1e-9){
+      if(rv > 0) out.push(_svgArrowV(px, yFBD + 6, yFBD + 38, 'sfg-rxn', 5.5));
+      else       out.push(_svgArrowV(px, yFBD + 38, yFBD + 6, 'sfg-rxn', 5.5));
+      var anch = sx > 0.88*L ? 'end' : (sx < 0.12*L ? 'start' : 'middle');
+      var dxT = sx > 0.88*L ? -6 : (sx < 0.12*L ? 6 : 0);
+      out.push('<text x="' + (px + dxT).toFixed(1) + '" y="' + (yFBD + 51).toFixed(1) + '" text-anchor="' + anch + '" class="sfg-tag-rxn">' + escH(jN + '_y=' + M.num(rv,2).t + ' kN') + '</text>');
+    }
+    if(sp[1] === 1 && Mr && Math.abs(Mr[k] || 0) > 1e-9){
+      out.push(_svgCoupleArc(px, yFBD, Mr[k] > 0, 'sfg-rxn'));
+      out.push('<text x="' + px.toFixed(1) + '" y="' + (yFBD + 63).toFixed(1) + '" text-anchor="middle" class="sfg-tag-rxn">' + escH('M_' + jN + '=' + M.num(Mr[k],2).t) + '</text>');
+    }
+    out.push('<text x="' + px.toFixed(1) + '" y="159" text-anchor="middle" class="sfg-sub">' + escH(jN + ' (' + fmtX(sx) + ' m)') + '</text>');
+  });
+
+  out.push('</svg>');
+  return out.join('');
+}
+
 /* ============ METHOD 1: THREE-MOMENT EQUATION (KASSIMALI CHAPTER 14) ============ */
 function tmBuildDoc(B, R){
   var S = R.sol, xs = S.xs, nS = S.nS, nSpan = S.nSpan, typ = S.typ, jx = S.jx;
@@ -4393,13 +5592,13 @@ function tmBuildDoc(B, R){
           rowsK.push([
             M.cat(M.op('-'), M.frac(M.cat(M.v('P'), M.v('L',null,'2'), M.v('k','l'), M.p(M.cat(M.raw('1','1'), M.op('-'), M.v('k','l','2')))), M.clean(rho,4))),
             '=',
-            M.cat(M.num(tAsLeft, 4), M.txt('   (when Span ' + aa + bb + ' is left span l)')),
+            M.cat(M.op('-'), M.frac(M.cat(M.pnum(pv,'clean'), M.p(M.num(ls,2)), M.raw('<sup>2</sup>','²'), M.p(M.clean(kl,4)), M.p(M.cat(M.raw('1','1'), M.op('-'), M.clean(kl,4), M.raw('<sup>2</sup>','²')))), M.clean(rho,4)), M.op('='), M.num(tAsLeft, 4), M.txt('   (when Span ' + aa + bb + ' is left span l)')),
             ''
           ]);
           rowsK.push([
             M.cat(M.op('-'), M.frac(M.cat(M.v('P'), M.v('L',null,'2'), M.v('k','r'), M.p(M.cat(M.raw('1','1'), M.op('-'), M.v('k','r','2')))), M.clean(rho,4))),
             '=',
-            M.cat(M.num(tAsRight, 4), M.txt('   (when Span ' + aa + bb + ' is right span r)')),
+            M.cat(M.op('-'), M.frac(M.cat(M.pnum(pv,'clean'), M.p(M.num(ls,2)), M.raw('<sup>2</sup>','²'), M.p(M.clean(kr,4)), M.p(M.cat(M.raw('1','1'), M.op('-'), M.clean(kr,4), M.raw('<sup>2</sup>','²')))), M.clean(rho,4)), M.op('='), M.num(tAsRight, 4), M.txt('   (when Span ' + aa + bb + ' is right span r)')),
             ''
           ]);
         });
@@ -4414,13 +5613,13 @@ function tmBuildDoc(B, R){
           ]);
         });
         rowsK.push([
-          M.cat(M.txt('Total Left-Span Load Term (Span '), M.v('', aa+bb), M.txt(' as l)')),
+          M.txt('Total Left-Span Load Term (Span ' + aa + bb + ' as l)'),
           '=',
           M.box(M.num(zr(spanTermL[sp]), 4)),
           'Kassimali Eq. (14.9) left-span contribution'
         ]);
         rowsK.push([
-          M.cat(M.txt('Total Right-Span Load Term (Span '), M.v('', aa+bb), M.txt(' as r)')),
+          M.txt('Total Right-Span Load Term (Span ' + aa + bb + ' as r)'),
           '=',
           M.box(M.num(zr(spanTermR[sp]), 4)),
           'Kassimali Eq. (14.9) right-span contribution'
@@ -4432,14 +5631,12 @@ function tmBuildDoc(B, R){
         doc.eqChain([
           [M.v(aa, 'y,0'), '=', M.cat(M.num(zr(qSD.RA), 4), M.u('kN','kN'), M.txt(',   '), M.v(bb, 'y,0'), M.op('='), M.num(zr(qSD.RB), 4), M.u('kN','kN')), 'Simple-beam reactions of Span ' + aa + bb]
         ]);
-        var tmShapeRows = [], tmShIdx = 0;
-        pSp.pieces.forEach(function(pc){
-          fmDecomposeGeometricShapes(pc.c, pc.a, pc.b, 1).forEach(function(sh){
-            var ki = tmShIdx++;
-            tmShapeRows.push(renderGeometricShapeRow(sh, ki, '', 1, null, M.v('A', ki+1)));
-          });
+        var restSp = { vR:[{x:0,v:0,type:2},{x:ls,v:0,type:3}], thR:[], hinges:[] };
+        var cantSp = fmBuildCantileverDiagram(Bsp, pSp, restSp, {});
+        renderCantileverShapesBreakdown(doc, Bsp, cantSp, 1, M.raw('',''), {
+          symBase: 'A',
+          figTitle: 'Simple-Beam Span ' + aa + bb + ' — FBD & Moment Diagram by Parts (Cantilever Method)'
         });
-        if(tmShapeRows.length) doc.eqChain(tmShapeRows);
         doc.eqChain([
           [M.cat(M.v('A'), M.bar('a')), '=', M.cat(M.raw('&Sigma; <i class="mv">A<sub>k</sub></i> <span class="mbar"><i class="mv">x</i></span><sub><i>k</i></sub>', '∑ A_k x̄_k'), M.op('='), M.num(qSD.Ta, 4), M.txt(' ,   '), M.v('A'), M.bar('b'), M.op('='), M.raw('&Sigma; <i class="mv">A<sub>k</sub></i>(<i class="mv">L</i> &minus; <span class="mbar"><i class="mv">x</i></span><sub><i>k</i></sub>)', '∑ A_k (L - x̄_k)'), M.op('='), M.num(qSD.Tb, 4)), 'Moments of simple-beam geometric areas about left & right supports'],
           [M.cat(M.op('-'), M.frac(M.cat(M.raw('6','6'), M.v('A'), M.bar('a')), M.cat(M.p(M.clean(rho,4)), M.v('L')))), '=', M.cat(M.op('-'), M.frac(M.cat(M.raw('6','6'), M.pnum(qSD.Ta, 4)), M.cat(M.p(M.clean(rho,4)), M.p(M.num(ls,2)))), M.op('='), M.box(M.num(zr(spanTermL[sp]), 4))), 'Left-span load term (−6 EI_ref θ_l1)'],
@@ -4637,6 +5834,9 @@ function tmBuildDoc(B, R){
   }
   doc.eqChain(rxEqRows);
   doc.endSub();
+  doc.diagram('Solved Beam Free-Body Diagram — Applied Loads, Span Rigidities &amp; Support Reactions',
+              buildGeneralBeamFBDSVG(B, R.Ry, R.Mr, 'Solved Beam Free-Body Diagram — Applied Loads & Support Reactions'),
+              'Solved Beam Free-Body Diagram with Support Reactions');
   renderGlobalEquilibriumCheck(doc, B, R.Ry, R.Rx, R.Mr);
 
   st++;
@@ -5031,6 +6231,9 @@ function sdBuildDoc(B, R){
     doc.eqChain(rowsSup);
   });
   doc.endSub();
+  doc.diagram('Solved Beam Free-Body Diagram — Applied Loads, Span Rigidities &amp; Support Reactions',
+              buildGeneralBeamFBDSVG(B, R.Ry, R.Mr, 'Solved Beam Free-Body Diagram — Applied Loads & Support Reactions'),
+              'Solved Beam Free-Body Diagram with Support Reactions');
   renderGlobalEquilibriumCheck(doc, B, R.Ry, R.Rx, R.Mr);
 
   /* STEP 9: PIECEWISE SHEAR & MOMENT EQUATIONS + CRITICAL POINTS */
@@ -5049,103 +6252,90 @@ function sdBuildDoc(B, R){
 
 function fmSolveDI(B, piecesObj, rest){
   var pcs = piecesObj.pieces, P = pcs.length, tol = 1e-7*Math.max(1, B.L);
-  var nu = 2*P, Ac = [], bc = [], condLog = [], condMeta = [];
-  function pThetaEnd(p){
-    var c = p.c, h = p.h;
-    return (c[0]*h + c[1]*h*h/2 + c[2]*Math.pow(h,3)/3 + c[3]*Math.pow(h,4)/4) / p.EI;
+  var hingeSet = rest.hinges;
+  var isHingeAt = function(x){ return hingeSet.some(function(xh){ return Math.abs(xh - x) < tol; }); };
+
+  function intAt(pIdx, xi){
+    var c = pcs[pIdx].c, EI = pcs[pIdx].EI;
+    var P1 = (c[0]*xi + c[1]*xi*xi/2 + c[2]*Math.pow(xi,3)/3 + c[3]*Math.pow(xi,4)/4) / EI;
+    var P2 = (c[0]*xi*xi/2 + c[1]*Math.pow(xi,3)/6 + c[2]*Math.pow(xi,4)/12 + c[3]*Math.pow(xi,5)/20) / EI;
+    return [P1, P2];
   }
-  function pDeflEnd(p){
-    var c = p.c, h = p.h;
-    return (c[0]*h*h/2 + c[1]*Math.pow(h,3)/6 + c[2]*Math.pow(h,4)/12 + c[3]*Math.pow(h,5)/20) / p.EI;
-  }
-  for(var p=0; p<P-1; p++){
-    var xb = pcs[p].b;
-    var isH = rest.hinges.some(function(h){ return Math.abs(h - xb) < tol; });
-    var isIntFix = rest.thR.some(function(tr){ return Math.abs(tr.x - xb) < tol; });
-    var rv = new Array(nu).fill(0);
-    rv[2*(p+1)] = 1; rv[2*p] = -1; rv[2*p+1] = -pcs[p].h;
-    var p2End = pDeflEnd(pcs[p]);
-    Ac.push(rv); bc.push(p2End);
-    condMeta.push({
-      title: 'Deflection continuity at x = ' + xb.toFixed(2) + ' m : y_' + (p+1) + '(h=' + pcs[p].h.toFixed(2) + ') = y_' + (p+2) + '(0)'
-    });
-    if(!isH && !isIntFix){
-      var rt = new Array(nu).fill(0);
-      rt[2*(p+1)+1] = 1; rt[2*p+1] = -1;
-      var p1End = pThetaEnd(pcs[p]);
-      Ac.push(rt); bc.push(p1End);
-      condMeta.push({
-        title: 'Slope continuity at x = ' + xb.toFixed(2) + ' m : θ_' + (p+1) + '(h=' + pcs[p].h.toFixed(2) + ') = θ_' + (p+2) + '(0)'
-      });
-      condLog.push('Continuity at x = ' + xb.toFixed(2) + ' m');
-    } else if(isH){
-      condLog.push('Internal hinge at x = ' + xb.toFixed(2) + ' m');
+
+  var nu = 2*P, Ac = [], bc = [], condMeta = [];
+
+  for(var i = 0; i < P - 1; i++){
+    var xb = pcs[i].b, hi = pcs[i].h;
+    var Iend = intAt(i, hi);
+    var rV = new Array(nu).fill(0);
+    rV[2*i] = 1; rV[2*i+1] = hi; rV[2*(i+1)] = -1;
+    Ac.push(rV); bc.push(-Iend[1]);
+    condMeta.push({ kind:'cont_v', x:xb, segL:i+1, segR:i+2, title:'Deflection continuity at x = ' + xb.toFixed(2) + ' m: y_' + (i+1) + '(' + hi.toFixed(2) + ') = y_' + (i+2) + '(0)' });
+
+    if(!isHingeAt(xb)){
+      var rT = new Array(nu).fill(0);
+      rT[2*i+1] = 1; rT[2*(i+1)+1] = -1;
+      Ac.push(rT); bc.push(-Iend[0]);
+      condMeta.push({ kind:'cont_th', x:xb, segL:i+1, segR:i+2, title:'Slope continuity at x = ' + xb.toFixed(2) + ' m: θ_' + (i+1) + '(' + hi.toFixed(2) + ') = θ_' + (i+2) + '(0)' });
     }
   }
+
   rest.vR.forEach(function(vr){
-    var idx = pcs.findIndex(function(p){ return Math.abs(p.a - vr.x) < tol; });
-    var row = new Array(nu).fill(0);
-    if(idx >= 0){
-      row[2*idx] = 1; Ac.push(row); bc.push(vr.v);
-      condMeta.push({ title: 'Support deflection BC at x = ' + vr.x.toFixed(2) + ' m (start of Seg ' + (idx+1) + ')' });
-    } else {
-      var idxE = pcs.findIndex(function(p){ return Math.abs(p.b - vr.x) < tol; });
-      var p2e = pDeflEnd(pcs[idxE]);
-      row[2*idxE] = 1; row[2*idxE+1] = pcs[idxE].h;
-      Ac.push(row); bc.push(vr.v - p2e);
-      condMeta.push({ title: 'Support deflection BC at x = ' + vr.x.toFixed(2) + ' m (end of Seg ' + (idxE+1) + ', h = ' + pcs[idxE].h.toFixed(2) + ' m)' });
+    for(var p = 0; p < P; p++){
+      if(vr.x >= pcs[p].a - tol && vr.x <= pcs[p].b + tol){
+        var xi = Math.max(0, vr.x - pcs[p].a);
+        var Iv = intAt(p, xi);
+        var row = new Array(nu).fill(0);
+        row[2*p] = 1; row[2*p+1] = xi;
+        Ac.push(row); bc.push(vr.v - Iv[1]);
+        condMeta.push({ kind:'sup_v', x:vr.x, seg:p+1, v:vr.v, title:'Support deflection at x = ' + vr.x.toFixed(2) + ' m (Seg ' + (p+1) + '): y = ' + fmCoefStr(vr.v) });
+        break;
+      }
     }
-    condLog.push('Support BC at x = ' + vr.x.toFixed(2) + ' m');
   });
+
   rest.thR.forEach(function(tr){
-    var idxL = pcs.findIndex(function(p){ return Math.abs(p.b - tr.x) < tol; });
-    var idxR = pcs.findIndex(function(p){ return Math.abs(p.a - tr.x) < tol; });
-    if(idxR >= 0){
-      var r1 = new Array(nu).fill(0); r1[2*idxR+1] = 1; Ac.push(r1); bc.push(tr.th);
-      condMeta.push({ title: 'Fixed-support slope BC at x = ' + tr.x.toFixed(2) + ' m (start of Seg ' + (idxR+1) + ')' });
+    for(var p = 0; p < P; p++){
+      if(tr.x >= pcs[p].a - tol && tr.x <= pcs[p].b + tol){
+        var xi = Math.max(0, tr.x - pcs[p].a);
+        var It = intAt(p, xi);
+        var row = new Array(nu).fill(0);
+        row[2*p+1] = 1;
+        Ac.push(row); bc.push(tr.th - It[0]);
+        condMeta.push({ kind:'sup_th', x:tr.x, seg:p+1, th:tr.th, title:'Fixed-support zero slope at x = ' + tr.x.toFixed(2) + ' m (Seg ' + (p+1) + '): θ = 0' });
+      }
     }
-    if(idxL >= 0){
-      var p1e = pThetaEnd(pcs[idxL]);
-      var r2 = new Array(nu).fill(0); r2[2*idxL+1] = 1; Ac.push(r2); bc.push(tr.th - p1e);
-      condMeta.push({ title: 'Fixed-support slope BC at x = ' + tr.x.toFixed(2) + ' m (end of Seg ' + (idxL+1) + ', h = ' + pcs[idxL].h.toFixed(2) + ' m)' });
-    }
-    condLog.push('Fixed slope BC at x = ' + tr.x.toFixed(2) + ' m');
   });
+
   var u = fmLeastSquares(Ac, bc, nu);
+
   function evalAt(x, side){
-    var pIdx = -1;
+    var pIdx = 0;
     if(side === 'R'){
-      for(var i=P-1;i>=0;i--) if(x >= pcs[i].a - tol && x <= pcs[i].b + tol){ pIdx = i; break; }
+      for(var i = P - 1; i >= 0; i--) if(x >= pcs[i].a - tol && x <= pcs[i].b + tol){ pIdx = i; break; }
     } else {
-      for(var i2=0;i2<P;i2++) if(x >= pcs[i2].a - tol && x <= pcs[i2].b + tol){ pIdx = i2; break; }
+      for(var j = 0; j < P; j++) if(x >= pcs[j].a - tol && x <= pcs[j].b + tol){ pIdx = j; break; }
     }
-    if(pIdx < 0) pIdx = x <= 0 ? 0 : P - 1;
-    var p = pcs[pIdx], xi = Math.max(0, Math.min(p.h, x - p.a)), c = p.c;
-    var P1 = (c[0]*xi + c[1]*xi*xi/2 + c[2]*Math.pow(xi,3)/3 + c[3]*Math.pow(xi,4)/4) / p.EI;
-    var P2 = (c[0]*xi*xi/2 + c[1]*Math.pow(xi,3)/6 + c[2]*Math.pow(xi,4)/12 + c[3]*Math.pow(xi,5)/20) / p.EI;
-    return { v: u[2*pIdx] + u[2*pIdx+1]*xi + P2, th: u[2*pIdx+1] + P1, pIdx: pIdx, xi: xi, P1: P1, P2: P2 };
+    var xi = Math.max(0, Math.min(pcs[pIdx].h, x - pcs[pIdx].a));
+    var I = intAt(pIdx, xi);
+    var C2 = u[2*pIdx], C1 = u[2*pIdx+1];
+    return { v: I[1] + C1*xi + C2, th: I[0] + C1, pIdx: pIdx, xi: xi, P1: I[0], P2: I[1], C1: C1, C2: C2 };
   }
-  return { u:u, Ac:Ac, bc:bc, condLog:condLog, condMeta:condMeta, evalAt:evalAt };
+  return { u:u, Ac:Ac, bc:bc, condMeta:condMeta, evalAt:evalAt };
 }
 
-function fmSolveMA(B, piecesObj, rest){
-  var pcs = piecesObj.pieces, tol = 1e-7*Math.max(1, B.L);
-  var shapes = [];
-  pcs.forEach(function(p, idx){
-    var gShapes = fmDecomposeGeometricShapes(p.c, p.a, p.b, p.EI);
-    gShapes.forEach(function(gs){
-      gs.pIdx = idx;
-      shapes.push(gs);
-    });
-  });
+function fmSolveMA(B, piecesObj, rest, cantOpts){
+  var tol = 1e-7 * Math.max(1, B.L);
+  var cantObj = fmBuildCantileverDiagram(B, piecesObj, rest, cantOpts);
+  var shapes = cantObj.shapes;
+
   var cuts = [0].concat(rest.hinges, [B.L]);
   rest.thR.forEach(function(tr){ if(tr.x > tol && tr.x < B.L - tol) cuts.push(tr.x); });
   cuts = cuts.sort(function(a,b){return a-b;}).filter(function(v,i,arr){ return i===0 || v - arr[i-1] > tol; });
   var nSub = cuts.length - 1;
 
   function shapesBetween(x1, x2){
-    var lo = Math.min(x1, x2), hi = Math.max(x1, x2);
-    return shapes.filter(function(sh){ return sh.a >= lo - tol && sh.b <= hi + tol; });
+    return fmClipCantileverShapes(shapes, x1, x2);
   }
   function maThetaBetween(xA, xB){
     if(Math.abs(xB - xA) <= tol) return 0;
@@ -5198,7 +6388,7 @@ function fmSolveMA(B, piecesObj, rest){
     var xR = fx ? fx.x : (vsIn.length ? vsIn[0].x : cuts[m]);
     var vRval = u[2*m] + u[2*m+1]*(xR - cuts[m]) + maTDev(xR, cuts[m]);
     var thRval = u[2*m+1] + maThetaBetween(cuts[m], xR);
-    refPts.push({x:xR, v:vRval, th:thRval, vsIn:vsIn, hasFix:!!fx});
+    refPts.push({x:xR, v:vRval, th:thRval, vsIn:vsIn, hasFix:!!fx, xLo:cuts[m], xHi:cuts[m+1]});
   }
 
   function evalAt(x, side){
@@ -5218,27 +6408,25 @@ function fmSolveMA(B, piecesObj, rest){
       subShapes: shapesBetween(rf.x, x)
     };
   }
-  return { shapes:shapes, cuts:cuts, u:u, Ac:Ac, bc:bc, eqDesc:eqDesc, refPts:refPts, evalAt:evalAt, maTDev:maTDev, maThetaBetween:maThetaBetween, shapesBetween:shapesBetween };
+  return { cantObj:cantObj, shapes:shapes, cuts:cuts, u:u, Ac:Ac, bc:bc, eqDesc:eqDesc, refPts:refPts, evalAt:evalAt, maTDev:maTDev, maThetaBetween:maThetaBetween, shapesBetween:shapesBetween };
 }
 
-function fmSolveCB(B, piecesObj, rest){
-  var pcs = piecesObj.pieces, L = B.L, tol = 1e-7*Math.max(1, L);
-  var loads = pcs.map(function(p){
-    var c = p.c, h = p.h;
-    var gShapes = fmDecomposeGeometricShapes(c, p.a, p.b, p.EI);
-    var F = 0, Q = 0;
-    gShapes.forEach(function(gs){ F += gs.area; Q += gs.area * (gs.xbar - p.a); });
-    return {a:p.a, b:p.b, h:h, c:c, EI:p.EI, F:F, Q:Q, shapes:gShapes, xbar: Math.abs(F)>1e-12 ? p.a + Q/F : p.a + h/2};
-  });
+function fmSolveCB(B, piecesObj, rest, cantOpts){
+  var L = B.L, tol = 1e-7 * Math.max(1, L);
+  var cantObj = fmBuildCantileverDiagram(B, piecesObj, rest, cantOpts);
+  var cantShapes = cantObj.shapes;
 
+  function shapesLeftOf(x){
+    return fmClipCantileverShapes(cantShapes, 0, x);
+  }
   function elasticV(x){
     var s = 0;
-    loads.forEach(function(ld){ if(ld.b <= x + tol) s += ld.F; });
+    shapesLeftOf(x).forEach(function(sh){ s += sh.area; });
     return s;
   }
   function elasticM(x){
     var s = 0;
-    loads.forEach(function(ld){ if(ld.b <= x + tol) s += ld.F*(x - ld.a) - ld.Q; });
+    shapesLeftOf(x).forEach(function(sh){ s += sh.area * (x - sh.xbar); });
     return s;
   }
 
@@ -5249,45 +6437,50 @@ function fmSolveCB(B, piecesObj, rest){
   var intFix = rest.thR.filter(function(r){ return r.x > tol && r.x < L - tol; });
 
   var mapRows = [];
-  if(hasTh0 && hasV0) mapRows.push({x:0, real:'Fixed support (v = '+fmCoefStr(hasV0.v)+', θ = 0)', conj:'Free end (V̄ = 0, M̄ = '+fmCoefStr(hasV0.v)+')'});
-  else if(hasV0)      mapRows.push({x:0, real:'Pin / Roller support (v = '+fmCoefStr(hasV0.v)+')', conj:'Pin / Roller support (R̄_0 unknown, M̄ = '+fmCoefStr(hasV0.v)+')'});
-  else                mapRows.push({x:0, real:'Free end (v, θ free)', conj:'Fixed support (R̄_0, M̄_0 unknown)'});
+  if(hasTh0 && hasV0) mapRows.push({x:0, real:'Fixed support (y = '+fmCoefStr(hasV0.v)+', θ = 0)', conj:'Free end (S̄ = 0, M̄ = '+fmCoefStr(hasV0.v)+')'});
+  else if(hasV0)      mapRows.push({x:0, real:'Pin / Roller support (y = '+fmCoefStr(hasV0.v)+')', conj:'Pin / Roller support (R̄_'+ptJointName(B,0)+' unknown, M̄ = '+fmCoefStr(hasV0.v)+')'});
+  else                mapRows.push({x:0, real:'Free end (y, θ free)', conj:'Fixed support (R̄_'+ptJointName(B,0)+', M̄_'+ptJointName(B,0)+' unknown)'});
 
   var intPts = [];
   rest.vR.forEach(function(vr){
     if(vr.x > tol && vr.x < L - tol){
       var isF = intFix.some(function(rf){ return Math.abs(rf.x - vr.x) < tol; });
-      intPts.push({x:vr.x, real: isF ? 'Interior fixed support' : 'Interior support (v = '+fmCoefStr(vr.v)+')',
-                   conj: isF ? 'Complete release / two free ends' : 'Internal hinge (M̄ = '+fmCoefStr(vr.v)+')'});
+      intPts.push({x:vr.x, real: isF ? 'Interior fixed support' : 'Interior support '+ptJointName(B,vr.x)+' (y = '+fmCoefStr(vr.v)+')',
+                   conj: isF ? 'Complete release / two free ends' : 'Internal hinge at '+ptJointName(B,vr.x)+' (M̄ = '+fmCoefStr(vr.v)+')'});
     }
   });
   rest.hinges.forEach(function(xh){
-    intPts.push({x:xh, real:'Internal hinge (M = 0, slope jump)', conj:'Interior roller/pin support (R̄ unknown)'});
+    intPts.push({x:xh, real:'Internal hinge at '+ptJointName(B,xh)+' (M = 0, slope jump)', conj:'Interior roller/pin support (R̄_'+ptJointName(B,xh)+' unknown)'});
   });
   intPts.sort(function(a,b){return a.x - b.x;});
   mapRows = mapRows.concat(intPts);
 
-  if(hasThL && hasVL) mapRows.push({x:L, real:'Fixed support (v = '+fmCoefStr(hasVL.v)+', θ = 0)', conj:'Free end (V̄ = 0, M̄ = '+fmCoefStr(hasVL.v)+')'});
-  else if(hasVL)      mapRows.push({x:L, real:'Pin / Roller support (v = '+fmCoefStr(hasVL.v)+')', conj:'Pin / Roller support (R̄_L unknown, M̄ = '+fmCoefStr(hasVL.v)+')'});
-  else                mapRows.push({x:L, real:'Free end (v, θ free)', conj:'Fixed support (R̄_L, M̄_L unknown)'});
+  if(hasThL && hasVL) mapRows.push({x:L, real:'Fixed support (y = '+fmCoefStr(hasVL.v)+', θ = 0)', conj:'Free end (S̄ = 0, M̄ = '+fmCoefStr(hasVL.v)+')'});
+  else if(hasVL)      mapRows.push({x:L, real:'Pin / Roller support (y = '+fmCoefStr(hasVL.v)+')', conj:'Pin / Roller support (R̄_'+ptJointName(B,L)+' unknown, M̄ = '+fmCoefStr(hasVL.v)+')'});
+  else                mapRows.push({x:L, real:'Free end (y, θ free)', conj:'Fixed support (R̄_'+ptJointName(B,L)+', M̄_'+ptJointName(B,L)+' unknown)'});
 
+  var j0 = ptJointName(B, 0), jL = ptJointName(B, L);
   var unks = [];
   var M0known = 0, V0known = 0;
   if(hasTh0 && hasV0){ V0known = hasTh0.th; M0known = hasV0.v; }
-  else if(hasV0){ M0known = hasV0.v; unks.push({kind:'R0', x:0, name:'R_bar(0)', tok:M.bar('R','0')}); }
-  else { unks.push({kind:'R0', x:0, name:'R_bar(0)', tok:M.bar('R','0')}); unks.push({kind:'M0', x:0, name:'M_bar(0)', tok:M.bar('M','0')}); }
+  else if(hasV0){ M0known = hasV0.v; unks.push({kind:'R0', x:0, name:'R_bar_'+j0, tok:M.bar('R', j0)}); }
+  else { unks.push({kind:'R0', x:0, name:'R_bar_'+j0, tok:M.bar('R', j0)}); unks.push({kind:'M0', x:0, name:'M_bar_'+j0, tok:M.bar('M', j0)}); }
 
-  rest.hinges.forEach(function(xh){ unks.push({kind:'Rh', x:xh, name:'R_bar('+xh.toFixed(2)+')', tok:M.bar('R', xh.toFixed(2))}); });
+  rest.hinges.forEach(function(xh){
+    var jh = ptJointName(B, xh);
+    unks.push({kind:'Rh', x:xh, name:'R_bar_'+jh, tok:M.bar('R', jh)});
+  });
   intFix.forEach(function(rf){
-    unks.push({kind:'Rf', x:rf.x, name:'dV_bar('+rf.x.toFixed(2)+')', tok:M.cat(M.grk('Delta'), M.bar('V', rf.x.toFixed(2)))});
-    unks.push({kind:'Mf', x:rf.x, name:'dM_bar('+rf.x.toFixed(2)+')', tok:M.cat(M.grk('Delta'), M.bar('M', rf.x.toFixed(2)))});
+    var jf = ptJointName(B, rf.x);
+    unks.push({kind:'Rf', x:rf.x, name:'dV_bar_'+jf, tok:M.cat(M.grk('Delta'), M.bar('V', jf))});
+    unks.push({kind:'Mf', x:rf.x, name:'dM_bar_'+jf, tok:M.cat(M.grk('Delta'), M.bar('M', jf))});
   });
 
   if(hasThL && hasVL){ /* conjugate free end at L */ }
-  else if(hasVL){ unks.push({kind:'RL', x:L, name:'R_bar('+L.toFixed(2)+')', tok:M.bar('R','L')}); }
-  else { unks.push({kind:'RL', x:L, name:'R_bar('+L.toFixed(2)+')', tok:M.bar('R','L')}); unks.push({kind:'ML', x:L, name:'M_bar('+L.toFixed(2)+')', tok:M.bar('M','L')}); }
+  else if(hasVL){ unks.push({kind:'RL', x:L, name:'R_bar_'+jL, tok:M.bar('R', jL)}); }
+  else { unks.push({kind:'RL', x:L, name:'R_bar_'+jL, tok:M.bar('R', jL)}); unks.push({kind:'ML', x:L, name:'M_bar_'+jL, tok:M.bar('M', jL)}); }
 
-  var nu = unks.length, Ac = [], bc = [], eqNames = [];
+  var nu = unks.length, Ac = [], bc = [], eqNames = [], eqMeta = [];
   function rowV(x, includeMode){
     var r = new Array(nu).fill(0), c0 = V0known + elasticV(x);
     unks.forEach(function(u, i){
@@ -5309,52 +6502,71 @@ function fmSolveCB(B, piecesObj, rest){
     return {r:r, c0:c0};
   }
 
-  var eqFy = rowV(L, 'END');
-  Ac.push(eqFy.r); bc.push(-eqFy.c0); eqNames.push('∑F̄_y = 0 (vertical equilibrium of conjugate beam)');
-
+  /* Order moment equations FIRST (so ΣM̄_B = 0 solves R̄_A directly before ΣF̄_y = 0!), then ΣF̄_y = 0! */
   var eqML = rowM(L, false);
   var mlIdx = unks.findIndex(function(u){ return u.kind === 'ML'; });
   if(mlIdx >= 0){
     var rM = eqML.r.slice(); rM[mlIdx] = -1;
-    Ac.push(rM); bc.push(-eqML.c0); eqNames.push('∑M̄(x = ' + L.toFixed(2) + ' m) = 0');
+    Ac.push(rM); bc.push(-eqML.c0);
+    eqNames.push('+↺ ∑M̄_' + jL + ' = 0 (moment equilibrium about x = ' + fmtX(L) + ' m)');
+    eqMeta.push({type:'mom', xPivot:L, targetM:0, label:'+↺ ∑M̄_' + jL + ' = 0'});
   } else if(hasVL){
-    Ac.push(eqML.r); bc.push(hasVL.v - eqML.c0); eqNames.push('Conjugate end moment M̄(' + L.toFixed(2) + ' m) = ' + fmCoefStr(hasVL.v));
+    Ac.push(eqML.r); bc.push(hasVL.v - eqML.c0);
+    eqNames.push('+↺ ∑M̄_' + jL + ' = 0 (conjugate moment at ' + jL + ', x = ' + fmtX(L) + ' m)');
+    eqMeta.push({type:'mom', xPivot:L, targetM:hasVL.v, label:'+↺ ∑M̄_' + jL + ' = 0'});
+  } else if(hasThL && hasVL){
+    Ac.push(eqML.r); bc.push(hasVL.v - eqML.c0);
+    eqNames.push('+↺ ∑M̄_' + jL + ' = 0 (conjugate free end at ' + jL + ')');
+    eqMeta.push({type:'mom', xPivot:L, targetM:hasVL.v, label:'+↺ ∑M̄_' + jL + ' = 0'});
   }
 
   rest.vR.forEach(function(vr){
     if(vr.x > tol && vr.x < L - tol){
       var isF = intFix.some(function(rf){ return Math.abs(rf.x - vr.x) < tol; });
+      var jH = ptJointName(B, vr.x);
       if(!isF){
         var eqH = rowM(vr.x, false);
-        Ac.push(eqH.r); bc.push(vr.v - eqH.c0); eqNames.push('Conjugate internal hinge M̄(' + vr.x.toFixed(2) + ' m) = ' + fmCoefStr(vr.v));
+        Ac.push(eqH.r); bc.push(vr.v - eqH.c0);
+        eqNames.push('+↺ ∑M̄_' + jH + '(left) = 0 (conjugate internal hinge at x = ' + fmtX(vr.x) + ' m)');
+        eqMeta.push({type:'hinge', xPivot:vr.x, targetM:vr.v, label:'+↺ ∑M̄_' + jH + '(left) = 0'});
       } else {
         var eqMLf = rowM(vr.x, false), eqMRf = rowM(vr.x, true);
-        Ac.push(eqMLf.r); bc.push(vr.v - eqMLf.c0); eqNames.push('M̄(' + vr.x.toFixed(2) + '-) = ' + fmCoefStr(vr.v));
-        Ac.push(eqMRf.r); bc.push(vr.v - eqMRf.c0); eqNames.push('M̄(' + vr.x.toFixed(2) + '+) = ' + fmCoefStr(vr.v));
+        Ac.push(eqMLf.r); bc.push(vr.v - eqMLf.c0); eqNames.push('M̄(' + vr.x.toFixed(2) + '-) = ' + fmCoefStr(vr.v)); eqMeta.push({type:'hinge', xPivot:vr.x, targetM:vr.v});
+        Ac.push(eqMRf.r); bc.push(vr.v - eqMRf.c0); eqNames.push('M̄(' + vr.x.toFixed(2) + '+) = ' + fmCoefStr(vr.v)); eqMeta.push({type:'hinge', xPivot:vr.x, targetM:vr.v});
       }
     }
   });
   intFix.forEach(function(rf){
     var eqVL = rowV(rf.x, false), eqVR = rowV(rf.x, true);
-    Ac.push(eqVL.r); bc.push(rf.th - eqVL.c0); eqNames.push('S̄(' + rf.x.toFixed(2) + '-) = 0');
-    Ac.push(eqVR.r); bc.push(rf.th - eqVR.c0); eqNames.push('S̄(' + rf.x.toFixed(2) + '+) = 0');
+    Ac.push(eqVL.r); bc.push(rf.th - eqVL.c0); eqNames.push('S̄(' + rf.x.toFixed(2) + '-) = 0'); eqMeta.push({type:'fy', xPivot:rf.x});
+    Ac.push(eqVR.r); bc.push(rf.th - eqVR.c0); eqNames.push('S̄(' + rf.x.toFixed(2) + '+) = 0'); eqMeta.push({type:'fy', xPivot:rf.x});
   });
 
-  var sol = fmLeastSquares(Ac, bc, nu);
+  var eqFy = rowV(L, 'END');
+  Ac.push(eqFy.r); bc.push(-eqFy.c0);
+  eqNames.push('+↑ ∑F̄_y = 0 (vertical force equilibrium of conjugate beam)');
+  eqMeta.push({type:'fy_all', xPivot:L, label:'+↑ ∑F̄_y = 0'});
+
+  var sol = nu > 0 ? fmLeastSquares(Ac, bc, nu) : [];
   function evalAt(x, side){
     var mv = rowM(x, side === 'R'), vv = rowV(x, side === 'R');
     var vVal = mv.c0, thVal = vv.c0, rxV = V0known, rxM = M0known + V0known*x;
-    var leftLoads = loads.filter(function(ld){ return ld.b <= x + tol; });
+    var leftShapes = shapesLeftOf(x);
     for(var i=0;i<nu;i++){
       vVal += mv.r[i]*sol[i]; thVal += vv.r[i]*sol[i];
       rxV += vv.r[i]*sol[i]; rxM += mv.r[i]*sol[i];
     }
-    return { v:vVal, th:thVal, elV:elasticV(x), elM:elasticM(x), rxV:rxV, rxM:rxM, leftLoads:leftLoads, vvRow:vv.r, mvRow:mv.r };
+    return { v:vVal, th:thVal, elV:elasticV(x), elM:elasticM(x), rxV:rxV, rxM:rxM, leftShapes:leftShapes, vvRow:vv.r, mvRow:mv.r };
   }
-  return { loads:loads, mapRows:mapRows, unks:unks, Ac:Ac, bc:bc, eqNames:eqNames, sol:sol, evalAt:evalAt, V0known:V0known, M0known:M0known };
+  return {
+    cantObj:cantObj, cantShapes:cantShapes, shapesLeftOf:shapesLeftOf,
+    mapRows:mapRows, unks:unks, Ac:Ac, bc:bc, eqNames:eqNames, eqMeta:eqMeta,
+    sol:sol, evalAt:evalAt, V0known:V0known, M0known:M0known, hasVL:hasVL, hasV0:hasV0
+  };
 }
 
-function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, targets, tag){
+function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, targets, tag, cantOpts){
+  cantOpts = cantOpts || {};
   var lhsTh = M.cat(M.v('EI'), M.sp(), M.grk('theta', tag || null));
   var lhsV  = M.cat(M.v('EI'), M.sp(), M.v('y', tag || null));
   var lhsV2 = M.cat(M.v('EI'), M.sp(), M.frac(M.cat(M.raw('d<sup>2</sup>','d²'), M.v('y', tag || null)), M.raw('d<i class="mv">x</i><sup>2</sup>','dx²')));
@@ -5493,37 +6705,26 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
   }
 
   if(methodId === 'ma'){
-    var ma = fmSolveMA(B, piecesObj, rest);
-    doc.note('<b>Moment-Area Theorems by Geometric Shapes (Kassimali Sec. 6.4, Eqs. 6.12 &amp; 6.15):</b> Divide the (<i class="mv">M</i> / <i class="mv">EI</i>) diagram into simple geometric shapes (rectangles <i class="mv">A</i> = <i class="mv">b</i>&middot;<i class="mv">h</i>, right triangles <i class="mv">A</i> = &frac12;<i class="mv">b</i>&middot;<i class="mv">h</i>, parabolas <i class="mv">A</i> = &#8532;<i class="mv">b</i>&middot;<i class="mv">h</i>, parabolic spandrels <i class="mv">A</i> = &#8531;<i class="mv">b</i>&middot;<i class="mv">h</i>):<br>&bull; <b>First Moment-Area Theorem:</b> &theta;<sub>BA</sub> = &theta;<sub>B</sub> &minus; &theta;<sub>A</sub> = &Sigma;<i class="mv">A<sub>k</sub></i> (total area of <i class="mv">M</i>/<i class="mv">EI</i> diagram between A and B)<br>&bull; <b>Second Moment-Area Theorem:</b> &Delta;<sub>BA</sub> = &Sigma; <i class="mv">A<sub>k</sub></i>&thinsp;|<i class="mv">x</i><sub>B</sub> &minus; <span class="mbar"><i class="mv">x</i></span><sub>k</sub>| (sum of moments of geometric areas about B)',
-             'Moment-Area Theorems by Geometric Shapes (Kassimali Sec. 6.4): Divide M/EI diagram into rectangles (bh), triangles (1/2 bh), parabolas (2/3 bh), spandrels (1/3 bh): θ_BA = ∑A_k ; Δ_BA = ∑ A_k |x_B - x̄_k|.');
+    var ma = fmSolveMA(B, piecesObj, rest, cantOpts);
+    doc.note('<b>Moment-Area Method via Cantilever Method (Moment Diagram by Parts, Kassimali Sec. 6.4):</b> Construct the (<i class="mv">M</i> / <i class="mv">EI</i>) diagram by parts about the chosen cantilever fixity <i class="mv">x</i><sub>fix</sub>, dividing each part by its local flexural rigidity <i class="mv">EI<sub>s</sub></i>:<br>&bull; <b>First Moment-Area Theorem:</b> &theta;<sub>BA</sub> = &theta;<sub>B</sub> &minus; &theta;<sub>A</sub> = &Sigma;<i class="mv">A<sub>k</sub></i> (algebraic sum of <i class="mv">M</i>/<i class="mv">EI</i> areas between A and B)<br>&bull; <b>Second Moment-Area Theorem:</b> &Delta;<sub>BA</sub> = &Sigma; <i class="mv">A<sub>k</sub></i>&thinsp;|<i class="mv">x</i><sub>B</sub> &minus; <span class="mbar"><i class="mv">x</i></span><sub>k</sub>| (sum of moments of geometric areas about B)',
+             'Moment-Area Method via Cantilever Method (Moment Diagram by Parts, Kassimali Sec. 6.4): θ_BA = ∑A_k ; Δ_BA = ∑ A_k |x_B - x̄_k|.');
 
-    doc.sub('1) Geometric Areas (<i class="mv">A<sub>k</sub></i>) &amp; Centroids (<span class="mbar"><i class="mv">x</i></span><sub><i>k</i></sub>) of the (<i class="mv">M</i> / <i class="mv">EI</i>) Diagram',
-            '1) Geometric Areas (A_k) & Centroids (x̄_k) of the (M / EI) Diagram');
-    if(!ma.shapes.length){
-      doc.note('Bending moment is identically zero along the entire beam; all (<i>M</i> / <i>EI</i>) geometric areas are zero.',
-               'Bending moment is zero along the entire beam; all geometric areas are zero.');
-    } else {
-      var shEqRows = [], shTblRows = [];
-      ma.shapes.forEach(function(sh, idx){
-        var riSh = segEIInfo(B, 0.5*(sh.a + sh.b));
-        var aScaled = sh.area * sc;
-        shEqRows.push(renderGeometricShapeRow(sh, idx, riSh.eiS, sc, unTok, M.v('A', idx+1)));
-        shTblRows.push([
-          'A_' + (idx+1),
-          sh.a.toFixed(2) + ' to ' + sh.b.toFixed(2) + ' m',
-          riSh.eiS,
-          sh.name + ' (b=' + sh.base.toFixed(2) + ', h=' + M.num(sh.height, 4).t + ')',
-          M.cat(M.num(zrC(aScaled), 4), unTok),
-          sh.xbar.toFixed(4) + ' m'
-        ]);
-      });
-      doc.eqChain(shEqRows);
-      doc.table(['Part', 'Interval', 'Span EI', 'Geometric Shape (base b, height h)', 'Area A_k', 'Centroid x̄_k'], shTblRows, {align:['c','c','c','l','r','r']});
-    }
+    doc.sub('1) Geometric Areas (<i class="mv">A<sub>k</sub></i>) &amp; Centroids (<span class="mbar"><i class="mv">x</i></span><sub><i>k</i></sub>) of the (<i class="mv">M</i> / <i class="mv">EI</i>) Diagram — Cantilever Method',
+            '1) Geometric Areas (A_k) & Centroids (x̄_k) of the (M / EI) Diagram — Cantilever Method');
+    renderCantileverShapesBreakdown(doc, B, ma.cantObj, sc, unTok, {
+      symBase: 'A',
+      figTitle: 'Free-Body Diagram (Cantilever Fixity at x = ' + fmtX(ma.cantObj.xFix) + ' m) & (M / EI) Diagram by Parts'
+    });
     doc.endSub();
 
-    doc.sub('2) Reference Tangent Slope(s) via Second Moment-Area Theorem (&Delta;<sub>BA</sub>)',
-            '2) Reference Tangent Slope(s) via Second Moment-Area Theorem (Δ_BA)');
+    doc.sub('2) Reference Tangent Slope &amp; Tangent Ordinates by Similar-Triangles Ratio',
+            '2) Reference Tangent Slope & Tangent Ordinates by Similar-Triangles Ratio');
+    doc.diagram(
+      'Elastic Curve, Reference Tangent &amp; Similar-Triangles Ratio Geometry',
+      buildMARefTangentSVG(B, ma, sc, targets, tag),
+      'Elastic Curve, Reference Tangent, Δ_BA, and Similar-Triangles Ratio Ordinates'
+    );
+
     if(ma.cuts.length > 2){
       var nSub = ma.cuts.length - 1, nuMA = 2 * nSub;
       var maVars = [];
@@ -5539,13 +6740,16 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
                'Solve coupled Moment-Area sub-beam boundary & hinge compatibility equations:');
       renderLinearSystemSolution(doc, A_ma, b_ma, maVars, '', { eqPrefix: 'M', ansDec: 4 });
     }
-    ma.refPts.forEach(function(rf){
+
+    ma.refPts.forEach(function(rf, rfIdx){
+      var jRef = ptJointName(B, rf.x);
       if(rf.hasFix){
         doc.eqChain([
-          [M.cat(M.v('y', 'A'), M.txt(' (at fixed x_A = ' + rf.x.toFixed(2) + ' m)')), '=', M.cat(M.num(zrC(rf.v*sc), 4), unTok, M.txt(' ,   '), M.grk('theta','A'), M.op('='), M.raw('0','0')), 'Horizontal reference tangent at fixed support']
+          [M.cat(M.v('y', jRef), M.txt(' (at fixed support ' + jRef + ', x = ' + rf.x.toFixed(2) + ' m)')), '=', M.cat(M.num(zrC(rf.v*sc), 4), unTok, M.txt(' ,   '), M.grk('theta', jRef), M.op('='), M.raw('0','0')), 'Horizontal reference tangent at fixed support ' + jRef]
         ]);
       } else if(rf.vsIn.length >= 2){
         var sA = rf.vsIn[0], sB = rf.vsIn[1], LAB = sB.x - sA.x;
+        var jA = ptJointName(B, sA.x), jB = ptJointName(B, sB.x);
         var shAB = ma.shapesBetween(sA.x, sB.x);
         var tTermsH = [], tTermsT = [], tProds = [];
         shAB.forEach(function(sh){
@@ -5555,26 +6759,68 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
           tTermsT.push('(' + M.num(zrC(aS),4).t + ')|' + sB.x.toFixed(2) + ' - ' + sh.xbar.toFixed(4) + '|');
         });
         var tBA = ma.maTDev(sB.x, sA.x) * sc;
+        var endRise = ((sB.v - sA.v)*sc) - tBA;
         var refRows = [
-          [M.grk('Delta', 'BA'), '=', shAB.length ? { h: tTermsH.join(' + '), t: tTermsT.join(' + ') } : M.raw('0','0'), 'Tangential deviation of B (x = ' + sB.x.toFixed(2) + ' m) from tangent at A (x = ' + sA.x.toFixed(2) + ' m) [Eq. 6.15]']
+          [M.grk('Delta', jB+jA), '=', shAB.length ? { h: tTermsH.join(' + '), t: tTermsT.join(' + ') } : M.raw('0','0'), 'Tangential deviation of ' + jB + ' (x = ' + sB.x.toFixed(2) + ' m) from tangent at ' + jA + ' (x = ' + sA.x.toFixed(2) + ' m) [Eq. 6.15]']
         ];
         if(tProds.length > 1){
-          refRows.push(['', '=', M.cat(M.signedSum(tProds, 4), M.op('='), M.num(zrC(tBA), 4), unTok), 'Evaluate each A_k · |x_B - x̄_k| product']);
+          refRows.push(['', '=', M.cat(M.signedSum(tProds, 4), M.op('='), M.num(zrC(tBA), 4), unTok), 'Evaluate each A_k · |x_' + jB + ' - x̄_k| product']);
         } else {
           refRows.push(['', '=', M.cat(M.num(zrC(tBA), 4), unTok), '']);
         }
         refRows.push([
-          M.grk('theta', 'A'),
+          M.grk('theta', jA),
           '=',
           M.cat(
-            M.frac(M.cat(M.p(M.cat(M.v('y','B'), M.op('-'), M.v('y','A'))), M.op('-'), M.grk('Delta','BA')), M.v('L','AB')),
+            M.frac(M.cat(M.p(M.cat(M.v('y', jB), M.op('-'), M.v('y', jA))), M.op('-'), M.grk('Delta', jB+jA)), M.v('L', jA+jB)),
             M.op('='),
             M.frac(M.cat(M.pnum(zrC((sB.v - sA.v)*sc), 4), M.op('-'), M.pnum(zrC(tBA), 4)), M.num(LAB, 2)),
             M.op('='),
             M.box(M.cat(M.num(zrC(rf.th*sc), 4), unTok))
           ),
-          'Reference tangent slope at x_A = ' + sA.x.toFixed(2) + ' m'
+          'Reference tangent slope at ' + jA + ' (x = ' + sA.x.toFixed(2) + ' m)'
         ]);
+
+        /* Explicit Similar-Triangles Ratio for Reference Tangent Ordinates y_tan(x_P) */
+        var subTgs = (targets || []).filter(function(tg){
+          return (tg.kind === 'v' || tg.kind === 'both') &&
+                 tg.x >= rf.xLo - 1e-6 && tg.x <= rf.xHi + 1e-6 &&
+                 Math.abs(tg.x - sA.x) > 1e-6 && Math.abs(tg.x - sB.x) > 1e-6;
+        });
+        if(subTgs.length > 0){
+          var tg1 = subTgs[0], jP1 = ptJointName(B, tg1.x);
+          var yTan1 = (rf.v + rf.th * (tg1.x - rf.x)) * sc;
+          var dx1 = tg1.x - sA.x;
+          refRows.push([
+            M.v('y', 'tan,'+jP1),
+            '=',
+            M.cat(
+              M.v('y', jA), M.op('+'),
+              M.p(M.frac(M.num(dx1, 2), M.num(LAB, 2))),
+              M.pnum(zrC(endRise), 4),
+              M.op('='),
+              M.box(M.cat(M.num(zrC(yTan1), 4), unTok))
+            ),
+            'By similar-triangles ratio from ' + jA + ': (x_' + jP1 + ' - x_' + jA + ') / L_' + jA+jB + ' = ' + fmtX(dx1) + ' / ' + fmtX(LAB)
+          ]);
+          for(var ti2 = 1; ti2 < subTgs.length; ti2++){
+            var tgm = subTgs[ti2], jPm = ptJointName(B, tgm.x);
+            var dxm = tgm.x - sA.x;
+            var yTanm = (rf.v + rf.th * (tgm.x - rf.x)) * sc;
+            refRows.push([
+              M.v('y', 'tan,'+jPm),
+              '=',
+              M.cat(
+                M.v('y', jA), M.op('+'),
+                M.p(M.frac(M.num(dxm, 2), M.num(dx1, 2))),
+                M.pnum(zrC(yTan1 - rf.v*sc), 4),
+                M.op('='),
+                M.box(M.cat(M.num(zrC(yTanm), 4), unTok))
+              ),
+              'Ratioed directly to redundant ' + jP1 + ': (x_' + jPm + ' - x_' + jA + ') / (x_' + jP1 + ' - x_' + jA + ') = ' + fmtX(dxm) + ' / ' + fmtX(dx1)
+            ]);
+          }
+        }
         doc.eqChain(refRows);
       }
     });
@@ -5584,12 +6830,28 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
     targets.forEach(function(tg){
       var ev = ma.evalAt(tg.x, tg.side);
       var rf = ev.ref;
+      var jRefP = ptJointName(B, rf.x), jTg = ptJointName(B, tg.x);
       var sgnDir = tg.x >= rf.x ? 1 : -1;
+
+      /* Show any exact ratio ordinate notes when [rf.x, tg.x] slices a cantilever shape */
+      var sliceSeen = {}, sliceNotesH = [], sliceNotesT = [];
+      ev.subShapes.forEach(function(sh){
+        if(sh.sliceRatioH && !sliceSeen[sh.sliceRatioT]){
+          sliceSeen[sh.sliceRatioT] = true;
+          sliceNotesH.push(sh.sliceRatioH);
+          sliceNotesT.push(sh.sliceRatioT);
+        }
+      });
+      if(sliceNotesH.length){
+        doc.note('<b>Sub-Interval Ordinate Ratio at <i class="mv">x</i> = ' + fmtX(tg.x) + ' m:</b><br>&bull; ' + sliceNotesH.join('<br>&bull; '),
+                 'Sub-Interval Ordinate Ratio at x = ' + fmtX(tg.x) + ' m: ' + sliceNotesT.join(' | '));
+      }
+
       var rowsMA = [];
       if(tg.kind === 'th' || tg.kind === 'both'){
         var thAreas = ev.subShapes.map(function(sh){ return sgnDir * sh.area * sc; });
-        rowsMA.push([M.grk('theta', 'PA'), '=', M.cat(thAreas.length ? M.signedSum(thAreas, 4) : M.raw('0','0'), M.op('='), M.num(zrC(ev.dTh*sc), 4), unTok), 'First Moment-Area Theorem (Eq. 6.12) from x_A = ' + rf.x.toFixed(2) + ' to x_P = ' + fmtX(tg.x) + ' m']);
-        rowsMA.push([tg.thTok || M.grk('theta', tag+'('+fmtX(tg.x)+')'), '=', M.cat(M.grk('theta','A'), M.op('+'), M.grk('theta','PA'), M.op('='), M.pnum(zrC(rf.th*sc),4), M.op('+'), M.pnum(zrC(ev.dTh*sc),4), M.op('='), fmtThAns(ev.th, tg.showPhys)), 'Slope at x_P = ' + fmtX(tg.x) + ' m']);
+        rowsMA.push([M.grk('theta', jTg+jRefP), '=', M.cat(thAreas.length ? M.signedSum(thAreas, 4) : M.raw('0','0'), M.op('='), M.num(zrC(ev.dTh*sc), 4), unTok), 'First Moment-Area Theorem (Eq. 6.12) from x_' + jRefP + ' = ' + rf.x.toFixed(2) + ' to x = ' + fmtX(tg.x) + ' m']);
+        rowsMA.push([tg.thTok || M.grk('theta', tag+'('+fmtX(tg.x)+')'), '=', M.cat(M.grk('theta', jRefP), M.op('+'), M.grk('theta', jTg+jRefP), M.op('='), M.pnum(zrC(rf.th*sc),4), M.op('+'), M.pnum(zrC(ev.dTh*sc),4), M.op('='), fmtThAns(ev.th, tg.showPhys)), 'Slope at x = ' + fmtX(tg.x) + ' m']);
       }
       if(tg.kind === 'v' || tg.kind === 'both'){
         var tpTermsH = [], tpTermsT = [], tpProds = [];
@@ -5599,21 +6861,22 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
           tpTermsH.push('(' + M.num(zrC(aS),4).h + ')|' + tg.x.toFixed(4) + ' &minus; ' + sh.xbar.toFixed(4) + '|');
           tpTermsT.push('(' + M.num(zrC(aS),4).t + ')|' + tg.x.toFixed(4) + ' - ' + sh.xbar.toFixed(4) + '|');
         });
-        rowsMA.push([M.grk('Delta', 'PA'), '=', ev.subShapes.length ? { h: tpTermsH.join(' + '), t: tpTermsT.join(' + ') } : M.raw('0','0'), 'Second Moment-Area Theorem (Eq. 6.15) about x_P = ' + fmtX(tg.x) + ' m']);
+        rowsMA.push([M.grk('Delta', jTg+jRefP), '=', ev.subShapes.length ? { h: tpTermsH.join(' + '), t: tpTermsT.join(' + ') } : M.raw('0','0'), 'Second Moment-Area Theorem (Eq. 6.15) about x = ' + fmtX(tg.x) + ' m']);
         if(tpProds.length){
-          rowsMA.push(['', '=', M.cat(tpProds.length > 1 ? M.cat(M.signedSum(tpProds, 4), M.op('=')) : '', M.num(zrC(ev.tPA*sc), 4), unTok), 'Tangential deviation Δ_PA']);
+          rowsMA.push(['', '=', M.cat(tpProds.length > 1 ? M.cat(M.signedSum(tpProds, 4), M.op('=')) : '', M.num(zrC(ev.tPA*sc), 4), unTok), 'Tangential deviation Δ_' + jTg+jRefP]);
         }
+        var yTanAtTg = (rf.v + rf.th * (tg.x - rf.x)) * sc;
         rowsMA.push([
           tg.vTok || M.v('y', tag+'('+fmtX(tg.x)+')'),
           '=',
-          M.cat(M.v('y','A'), M.op('+'), M.grk('theta','A'), M.p(M.cat(M.v('x','P'), M.op('-'), M.v('x','A'))), M.op('+'), M.grk('Delta','PA')),
-          'Deflection geometry from reference tangent at A'
+          M.cat(M.v('y', 'tan,'+jTg), M.op('+'), M.grk('Delta', jTg+jRefP), M.op('='), M.b(M.cat(M.v('y', jRefP), M.op('+'), M.grk('theta', jRefP), M.p(M.cat(M.v('x', jTg), M.op('-'), M.v('x', jRefP))))), M.op('+'), M.grk('Delta', jTg+jRefP)),
+          'Superpose reference-tangent ordinate y_tan and tangential deviation'
         ]);
         rowsMA.push([
           '',
           '=',
-          M.cat(M.pnum(zrC(rf.v*sc), 4), M.op('+'), M.pnum(zrC(rf.th*sc), 4), M.p(M.num(tg.x - rf.x, 4)), M.op('+'), M.pnum(zrC(ev.tPA*sc), 4), M.op('='), fmtVAns(ev.v, tg.showPhys)),
-          'Deflection at x_P = ' + fmtX(tg.x) + ' m'
+          M.cat(M.pnum(zrC(yTanAtTg), 4), M.op('+'), M.pnum(zrC(ev.tPA*sc), 4), M.op('='), fmtVAns(ev.v, tg.showPhys)),
+          'Deflection at x = ' + fmtX(tg.x) + ' m'
         ]);
       }
       doc.eqChain(rowsMA);
@@ -5623,9 +6886,9 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
   }
 
   if(methodId === 'cb'){
-    var cb = fmSolveCB(B, piecesObj, rest);
-    doc.note('<b>Conjugate-Beam Method (Kassimali Sec. 6.6, Fig. 6.12 &amp; Fig. 6.13):</b> Load the conjugate beam with the <i class="mv">M</i> / <i class="mv">EI</i> diagram (positive <i class="mv">M</i>/<i class="mv">EI</i> acts upward, +<i class="mv">y</i>).<br>&bull; <b>Conjugate Shear = Real Slope:</b> &theta;(<i class="mv">x</i>) = <span class="mbar"><i class="mv">S</i></span>(<i class="mv">x</i>) (+ upward on left segment &rArr; &#8634; CCW)<br>&bull; <b>Conjugate Bending Moment = Real Deflection:</b> <i class="mv">y</i>(<i class="mv">x</i>) = <span class="mbar"><i class="mv">M</i></span>(<i class="mv">x</i>) (+ sagging &rArr; &uarr; upward)',
-             'Conjugate-Beam Method (Kassimali Sec. 6.6): Elastic load M/EI upward (+). Real slope θ(x) = Conjugate shear S̄(x); Real deflection y(x) = Conjugate moment M̄(x).');
+    var cb = fmSolveCB(B, piecesObj, rest, cantOpts);
+    doc.note('<b>Conjugate-Beam Method via Cantilever Method (Kassimali Sec. 6.6, Fig. 6.12 &amp; Fig. 6.13):</b> Construct the (<i class="mv">M</i> / <i class="mv">EI</i>) diagram by parts about <i class="mv">x</i><sub>fix</sub> (accounting for varying <i class="mv">I</i>) and apply it as the elastic load on the conjugate beam (positive <i class="mv">M</i>/<i class="mv">EI</i> acts upward, +<i class="mv">y</i>):<br>&bull; <b>Conjugate Shear = Real Slope:</b> &theta;(<i class="mv">x</i>) = <span class="mbar"><i class="mv">S</i></span>(<i class="mv">x</i>) (+ upward on left segment &rArr; &#8634; CCW)<br>&bull; <b>Conjugate Bending Moment = Real Deflection:</b> <i class="mv">y</i>(<i class="mv">x</i>) = <span class="mbar"><i class="mv">M</i></span>(<i class="mv">x</i>) (+ sagging &rArr; &uarr; upward)',
+             'Conjugate-Beam Method via Cantilever Method (Kassimali Sec. 6.6): Elastic load M/EI upward (+). Real slope θ(x) = Conjugate shear S̄(x); Real deflection y(x) = Conjugate moment M̄(x).');
 
     doc.sub('1) Real-to-Conjugate Support Mapping (Kassimali Fig. 6.12)', '1) Real-to-Conjugate Support Mapping (Kassimali Fig. 6.12)');
     doc.table(['Position x', 'Real Beam Support / Joint', 'Conjugate Beam Support / Joint'],
@@ -5633,44 +6896,134 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
       {align:['r','l','l']});
     doc.endSub();
 
-    doc.sub('2) Geometric Areas of the Elastic (<i class="mv">M</i> / <i class="mv">EI</i>) Load (<span class="mbar"><i>F</i></span><sub><i>k</i></sub>) &amp; Centroids (<span class="mbar"><i>x</i></span><sub><i>k</i></sub>)',
-            '2) Geometric Areas of the Elastic (M / EI) Load (F̄_k) & Centroids (x̄_k)');
-    var cbLoadEqs = [], cbLoadTbl = [], fCounter = 0;
-    cb.loads.forEach(function(ld){
-      var riLd = segEIInfo(B, 0.5*(ld.a + ld.b));
-      ld.shapes.forEach(function(sh){
-        var kIdx = fCounter++;
-        var fz = zrC(sh.area * sc);
-        cbLoadEqs.push(renderGeometricShapeRow(sh, kIdx, riLd.eiS, sc, unTok, M.bar('F', kIdx+1)));
-        cbLoadTbl.push([
-          'F̄_' + (kIdx+1),
-          sh.a.toFixed(2) + ' to ' + sh.b.toFixed(2) + ' m',
-          riLd.eiS,
-          sh.name + ' (b=' + sh.base.toFixed(2) + ', h=' + M.num(sh.height, 4).t + ')',
-          M.cat(M.num(fz, 4), unTok),
-          'x̄_' + (kIdx+1) + ' = ' + sh.xbar.toFixed(4) + ' m'
-        ]);
-      });
+    doc.sub('2) Geometric Areas of the Elastic (<i class="mv">M</i> / <i class="mv">EI</i>) Load (<span class="mbar"><i>F</i></span><sub><i>k</i></sub>) &amp; Centroids (<span class="mbar"><i>x</i></span><sub><i>k</i></sub>) — Cantilever Method',
+            '2) Geometric Areas of the Elastic (M / EI) Load (F̄_k) & Centroids (x̄_k) — Cantilever Method');
+    renderCantileverShapesBreakdown(doc, B, cb.cantObj, sc, unTok, {
+      symBase: 'F_bar',
+      figTitle: 'Real-Beam FBD (Cantilever Fixity at x = ' + fmtX(cb.cantObj.xFix) + ' m) & Elastic (M / EI) Load Diagram by Parts'
     });
-    if(!cbLoadEqs.length){
-      doc.note('Elastic load M / EI is identically zero along the entire beam.', 'Elastic load M / EI is zero along the entire beam.');
-    } else {
-      doc.eqChain(cbLoadEqs);
-      doc.table(['Elastic Force', 'Interval', 'Span EI', 'Geometric Shape (base b, height h)', 'Resultant F̄_k', 'Centroid x̄_k'], cbLoadTbl, {align:['c','c','c','l','r','r']});
-    }
     doc.endSub();
 
-    doc.sub('3) Conjugate-Beam Support Reactions from Equilibrium',
-            '3) Conjugate-Beam Support Reactions from Equilibrium');
+    doc.sub('3) Conjugate-Beam Free-Body Diagram &amp; Support Reactions from Static Equilibrium (&Sigma;<span class="mbar"><i>M</i></span> = 0, &Sigma;<span class="mbar"><i>F</i></span><sub><i>y</i></sub> = 0)',
+            '3) Conjugate-Beam Free-Body Diagram & Support Reactions from Static Equilibrium (∑M̄ = 0, ∑F̄_y = 0)');
+    doc.diagram(
+      'Conjugate-Beam Free-Body Diagram — Mapped Supports, Elastic Load Resultants F̄_k &amp; Conjugate Reactions',
+      buildConjugateBeamSVG(B, cb, sc, tag),
+      'Conjugate-Beam FBD with Elastic Load Resultants F̄_k and Solved Conjugate Support Reactions'
+    );
+
     if(!cb.unks.length){
-      doc.note('Left end is fixed on the real beam &rArr; free end on the conjugate beam (<span class="mbar"><i class="mv">S</i></span><sub>0</sub> = 0, <span class="mbar"><i class="mv">M</i></span><sub>0</sub> = 0); no unknown conjugate support reactions are needed.',
-               'Conjugate left end is free; no unknown conjugate reactions needed.');
+      /* Both ends free on conjugate beam (e.g. solved Fixed-Fixed beam): show equilibrium verification! */
+      var sumF0 = 0, sumM0 = 0;
+      cb.cantShapes.forEach(function(sh){ sumF0 += sh.area * sc; sumM0 += (sh.area * sc) * sh.xbar; });
+      doc.note('Both ends of the real beam are fixed &rArr; both ends of the conjugate beam are <b>free</b> (<span class="mbar"><i class="mv">S</i></span><sub>0</sub> = 0, <span class="mbar"><i class="mv">M</i></span><sub>0</sub> = 0). Verify self-equilibrium of the elastic load on the free-free conjugate beam:',
+               'Both ends of conjugate beam are free; verify self-equilibrium of elastic load:');
+      doc.eqChain([
+        [M.raw('+&uarr; &Sigma;<span class="mbar"><i class="mv">F</i></span><sub><i class="mv">y</i></sub>', '+↑ ∑F̄_y'), '=', M.cat(M.num(zrC(sumF0), 4), unTok, M.op('='), M.raw('0','0'), M.chk('Checks')), 'Vertical equilibrium of conjugate beam'],
+        [M.raw('+&#8634; &Sigma;<span class="mbar"><i class="mv">M</i></span><sub>0</sub>', '+↺ ∑M̄_0'), '=', M.cat(M.num(zrC(sumM0), 4), unTok, M.op('='), M.raw('0','0'), M.chk('Checks')), 'Moment equilibrium of conjugate beam']
+      ]);
+    } else if(cb.unks.length === 2 && cb.unks[0].kind === 'R0' && cb.unks[1].kind === 'RL'){
+      /* Classic Simply-Supported Conjugate Beam: write full step-by-step ΣM̄_B = 0 and ΣF̄_y = 0! */
+      var jA_cb = ptJointName(B, 0), jB_cb = ptJointName(B, B.L);
+      var R0Tok = cb.unks[0].tok, RLTok = cb.unks[1].tok;
+      var R0Val = zrC(cb.sol[0] * sc), RLVal = zrC(cb.sol[1] * sc);
+      var mEndDiff = zrC(((cb.hasVL ? cb.hasVL.v : 0) - cb.M0known) * sc);
+
+      /* (a) Moment equilibrium about right conjugate support B: +↺ ∑M̄_B = 0 */
+      var mSymPartsH = ['&minus;' + R0Tok.h + '(' + fmtX(B.L) + ')'], mSymPartsT = ['-' + R0Tok.t + '(' + fmtX(B.L) + ')'];
+      var mSubPartsH = ['&minus;' + R0Tok.h + '(' + fmtX(B.L) + ')'], mSubPartsT = ['-' + R0Tok.t + '(' + fmtX(B.L) + ')'];
+      var fArmProds = [], sumFArm = 0;
+      cb.cantShapes.forEach(function(sh, idx){
+        var fSc = zrC(sh.area * sc), armB = B.L - sh.xbar;
+        var prodB = fSc * armB;
+        fArmProds.push(prodB);
+        sumFArm += prodB;
+        mSymPartsH.push('&minus; <span class="mbar"><i class="mv">F</i></span><sub>' + (idx+1) + '</sub>(' + fmtX(B.L) + ' &minus; <span class="mbar"><i class="mv">x</i></span><sub>' + (idx+1) + '</sub>)');
+        mSymPartsT.push('- F̄_' + (idx+1) + '(' + fmtX(B.L) + ' - x̄_' + (idx+1) + ')');
+        mSubPartsH.push('&minus; (' + M.num(fSc,4).h + ')(' + armB.toFixed(4) + ')');
+        mSubPartsT.push('- (' + M.num(fSc,4).t + ')(' + armB.toFixed(4) + ')');
+      });
+      if(Math.abs(mEndDiff) > 1e-10){
+        mSymPartsH.push('+ (' + M.num(mEndDiff,4).h + ')'); mSymPartsT.push('+ (' + M.num(mEndDiff,4).t + ')');
+        mSubPartsH.push('+ (' + M.num(mEndDiff,4).h + ')'); mSubPartsT.push('+ (' + M.num(mEndDiff,4).t + ')');
+      }
+
+      var momEqRows = [
+        [M.raw('+&#8634; &Sigma;<span class="mbar"><i class="mv">M</i></span><sub>' + escH(jB_cb) + '</sub> = 0', '+↺ ∑M̄_' + jB_cb + ' = 0'), '=>', { h: mSymPartsH.join(' ') + ' = 0', t: mSymPartsT.join(' ') + ' = 0' }, 'Take moments about conjugate support ' + jB_cb + ' (x = ' + fmtX(B.L) + ' m)'],
+        ['', '=>', { h: mSubPartsH.join(' ') + ' = 0', t: mSubPartsT.join(' ') + ' = 0' }, 'Substitute elastic load resultants F̄_k and moment arms'],
+        [M.cat(R0Tok, M.p(M.num(B.L, 2))), '=', M.cat(fArmProds.length > 1 ? M.cat(M.op('-'), M.p(M.signedSum(fArmProds, 4)), Math.abs(mEndDiff)>1e-10 ? M.cat(M.op('+'), M.pnum(mEndDiff,4)) : M.raw('',''), M.op('=')) : M.raw('',''), M.num(zrC(mEndDiff - sumFArm), 4), unTok), 'Sum elastic load moments about ' + jB_cb],
+        [R0Tok, '=', M.cat(M.frac(M.num(zrC(mEndDiff - sumFArm), 4), M.num(B.L, 2)), unTok, M.op('='), M.ans(M.cat(M.num(R0Val, 4), unTok), Math.abs(R0Val)<1e-9?'':(R0Val>0?'up':'down'))), 'Conjugate reaction at ' + jA_cb + ' (= real slope θ_' + jA_cb + ')']
+      ];
+      doc.eqChain(momEqRows);
+
+      /* (b) Vertical force equilibrium: +↑ ∑F̄_y = 0 */
+      var fTerms = cb.cantShapes.map(function(sh){ return zrC(sh.area * sc); });
+      var sumFAll = fTerms.reduce(function(a,b){return a+b;}, 0);
+      var fSymStrH = R0Tok.h + ' + ' + RLTok.h + cb.cantShapes.map(function(_, idx){ return ' + <span class="mbar"><i class="mv">F</i></span><sub>' + (idx+1) + '</sub>'; }).join('') + ' = 0';
+      var fSymStrT = R0Tok.t + ' + ' + RLTok.t + cb.cantShapes.map(function(_, idx){ return ' + F̄_' + (idx+1); }).join('') + ' = 0';
+      var fyEqRows = [
+        [M.raw('+&uarr; &Sigma;<span class="mbar"><i class="mv">F</i></span><sub><i class="mv">y</i></sub> = 0', '+↑ ∑F̄_y = 0'), '=>', { h: fSymStrH, t: fSymStrT }, 'Sum vertical forces on the conjugate beam'],
+        ['', '=>', M.cat(M.pnum(R0Val, 4), M.op('+'), RLTok, M.op('+'), M.p(fTerms.length ? M.signedSum(fTerms, 4) : M.raw('0','0')), M.op('='), M.raw('0','0')), 'Substitute ' + R0Tok.t + ' and elastic forces F̄_k'],
+        [RLTok, '=', M.cat(M.op('-'), M.pnum(R0Val, 4), M.op('-'), M.pnum(zrC(sumFAll), 4), M.op('='), M.ans(M.cat(M.num(RLVal, 4), unTok), Math.abs(RLVal)<1e-9?'':(RLVal>0?'up':'down'))), 'Conjugate reaction at ' + jB_cb + ' (= −θ_' + jB_cb + ')']
+      ];
+
+      /* (c) Check moment equilibrium about A: +↺ ∑M̄_A = 0 */
+      var sumMA = RLVal * B.L;
+      cb.cantShapes.forEach(function(sh){ sumMA += (sh.area * sc) * sh.xbar; });
+      fyEqRows.push([
+        M.raw('Check +&#8634; &Sigma;<span class="mbar"><i class="mv">M</i></span><sub>' + escH(jA_cb) + '</sub>', 'Check +↺ ∑M̄_' + jA_cb),
+        '=',
+        M.cat(M.pnum(RLVal, 4), M.p(M.num(B.L, 2)), M.op('+'), M.pnum(zrC(sumMA - RLVal*B.L), 4), M.op('='), M.num(zrC(sumMA - mEndDiff), 4), M.chk('Checks')),
+        'Conjugate moment equilibrium check about ' + jA_cb
+      ]);
+      doc.eqChain(fyEqRows);
     } else {
+      /* General Conjugate Beam (cantilevers with fixed conjugate end, overhangs, internal hinges, compound beams) */
       var cbVarToks = cb.unks.map(function(u){ return u.tok; });
       var bcCBScaled = cb.bc.map(function(v){ return v * sc; });
       var partCB = selectIndependentRows(cb.Ac, bcCBScaled, cb.unks.length);
-      var eqRowsCB = [];
+
+      /* First show explicit physical force/moment expansion for each equilibrium equation! */
+      var expRows = [], eqRowsCB = [];
       partCB.indIdx.forEach(function(ri, kIdx){
+        var meta = cb.eqMeta[ri] || {};
+        if(meta.type === 'mom' || meta.type === 'hinge'){
+          var xp = meta.xPivot;
+          var shLeft = cb.shapesLeftOf(xp);
+          var fTermsH = [], fTermsT = [], fSum = 0;
+          shLeft.forEach(function(sh, sIdx){
+            var fS = zrC(sh.area * sc), arm = xp - sh.xbar;
+            fSum += fS * arm;
+            fTermsH.push('(' + M.num(fS,4).h + ')(' + arm.toFixed(4) + ')');
+            fTermsT.push('(' + M.num(fS,4).t + ')(' + arm.toFixed(4) + ')');
+          });
+          expRows.push([
+            M.raw(escH(meta.label || cb.eqNames[ri]), meta.label || cb.eqNames[ri]),
+            '=>',
+            M.cat(
+              M.linComb(cb.Ac[ri], cbVarToks, null, 4),
+              M.op('+'),
+              M.b(fTermsH.length ? { h: fTermsH.join(' + '), t: fTermsT.join(' + ') } : M.raw('0','0')),
+              M.op('='),
+              M.num(zrC((meta.targetM || 0)*sc), 4)
+            ),
+            'Expand conjugate reaction & elastic-load moments about x = ' + fmtX(xp) + ' m'
+          ]);
+        } else if(meta.type === 'fy_all'){
+          var fAllVals = cb.cantShapes.map(function(sh){ return zrC(sh.area * sc); });
+          expRows.push([
+            M.raw('+&uarr; &Sigma;<span class="mbar"><i class="mv">F</i></span><sub><i class="mv">y</i></sub> = 0', '+↑ ∑F̄_y = 0'),
+            '=>',
+            M.cat(
+              M.linComb(cb.Ac[ri], cbVarToks, null, 4),
+              M.op('+'),
+              M.b(fAllVals.length ? M.signedSum(fAllVals, 4) : M.raw('0','0')),
+              M.op('='),
+              M.raw('0','0')
+            ),
+            'Sum vertical conjugate reactions and elastic load resultants F̄_k'
+          ]);
+        }
         eqRowsCB.push([
           M.linComb(cb.Ac[ri], cbVarToks, null, 4),
           '=',
@@ -5679,6 +7032,7 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
           'CB' + (kIdx+1)
         ]);
       });
+      if(expRows.length) doc.eqChain(expRows);
       doc.eqChain(eqRowsCB);
       var A_cb = partCB.indIdx.map(function(ri){ return cb.Ac[ri].slice(); });
       var b_cb = partCB.indIdx.map(function(ri){ return bcCBScaled[ri]; });
@@ -5690,17 +7044,31 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
             '4) Conjugate Shear S̄ (= θ) & Conjugate Bending Moment M̄ (= y) at Required Point(s)');
     targets.forEach(function(tg){
       var ev = cb.evalAt(tg.x, tg.side);
+      /* Show any exact ratio ordinate notes when [0, tg.x] slices a cantilever shape */
+      var cbSliceSeen = {}, cbSliceH = [], cbSliceT = [];
+      ev.leftShapes.forEach(function(sh){
+        if(sh.sliceRatioH && !cbSliceSeen[sh.sliceRatioT]){
+          cbSliceSeen[sh.sliceRatioT] = true;
+          cbSliceH.push(sh.sliceRatioH);
+          cbSliceT.push(sh.sliceRatioT);
+        }
+      });
+      if(cbSliceH.length){
+        doc.note('<b>Elastic Load Ordinate Ratio at Section <i class="mv">x</i> = ' + fmtX(tg.x) + ' m:</b><br>&bull; ' + cbSliceH.join('<br>&bull; '),
+                 'Elastic Load Ordinate Ratio at Section x = ' + fmtX(tg.x) + ' m: ' + cbSliceT.join(' | '));
+      }
+
       var secRows = [];
       if(tg.kind === 'th' || tg.kind === 'both'){
         var vTerms = [];
         if(Math.abs(cb.V0known*sc) > 1e-10) vTerms.push(cb.V0known*sc);
         cb.unks.forEach(function(u, ui){ if(Math.abs(ev.vvRow[ui]) > 1e-10) vTerms.push(ev.vvRow[ui]*cb.sol[ui]*sc); });
-        ev.leftLoads.forEach(function(ld){ ld.shapes.forEach(function(sh){ if(Math.abs(sh.area*sc) > 1e-10) vTerms.push(sh.area*sc); }); });
+        ev.leftShapes.forEach(function(sh){ if(Math.abs(sh.area*sc) > 1e-10) vTerms.push(sh.area*sc); });
         secRows.push([
           M.cat(tg.thTok || M.grk('theta', tag+'('+fmtX(tg.x)+')'), M.op('='), M.bar('S'), M.p(M.num(tg.x, 4))),
           '=',
           M.cat(vTerms.length ? M.signedSum(vTerms, 4) : M.raw('0','0'), M.op('='), fmtThAns(ev.th, tg.showPhys)),
-          'Conjugate shear left of x = ' + fmtX(tg.x) + ' m'
+          'Conjugate shear (+↑ ∑F̄_y on segment [0, ' + fmtX(tg.x) + ' m])'
         ]);
       }
       if(tg.kind === 'v' || tg.kind === 'both'){
@@ -5718,27 +7086,25 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
             mTermsT.push('(' + M.num(cb.sol[ui]*sc, 4).t + ')(' + M.clean(ev.mvRow[ui], 4).t + ')');
           }
         });
-        ev.leftLoads.forEach(function(ld){
-          ld.shapes.forEach(function(sh){
-            var fSc = sh.area * sc, arm = tg.x - sh.xbar, netM = fSc * arm;
-            if(Math.abs(netM) > 1e-10){
-              mVals.push(netM);
-              mTermsH.push('(' + M.num(fSc, 4).h + ')(' + arm.toFixed(4) + ')');
-              mTermsT.push('(' + M.num(fSc, 4).t + ')(' + arm.toFixed(4) + ')');
-            }
-          });
+        ev.leftShapes.forEach(function(sh){
+          var fSc = sh.area * sc, arm = tg.x - sh.xbar, netM = fSc * arm;
+          if(Math.abs(netM) > 1e-10){
+            mVals.push(netM);
+            mTermsH.push('(' + M.num(fSc, 4).h + ')(' + arm.toFixed(4) + ')');
+            mTermsT.push('(' + M.num(fSc, 4).t + ')(' + arm.toFixed(4) + ')');
+          }
         });
         secRows.push([
           M.cat(tg.vTok || M.v('y', tag+'('+fmtX(tg.x)+')'), M.op('='), M.bar('M'), M.p(M.num(tg.x, 4))),
           '=',
           mTermsH.length ? { h: mTermsH.join(' + '), t: mTermsT.join(' + ') } : M.raw('0','0'),
-          'Conjugate bending moment at x = ' + fmtX(tg.x) + ' m'
+          'Conjugate bending moment at x = ' + fmtX(tg.x) + ' m (+↺ ∑M̄_x on left segment)'
         ]);
         secRows.push([
           '',
           '=',
           M.cat(mVals.length > 1 ? M.cat(M.signedSum(mVals, 4), M.op('=')) : '', fmtVAns(ev.v, tg.showPhys)),
-          'Evaluate & sum moment contributions'
+          'Evaluate & sum conjugate moment contributions'
         ]);
       }
       doc.eqChain(secRows);
@@ -5746,35 +7112,84 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
     doc.endSub();
   }
 }
-
 /* ============ METHOD 4: METHOD OF CONSISTENT DEFORMATIONS (KASSIMALI CH. 13) + CH. 6 & 7 DEFLECTIONS ============ */
-function renderGeometricVirtualWork(doc, B, realPcs, virtPcs, sc, unTok, mvSub){
-  var areaRows = [], prodRows = [], tblRows = [], contribsScaled = [], kCounter = 0;
+function renderGeometricVirtualWork(doc, B, realPiecesObj, virtPcs, restRef, sc, unTok, mvSub, cantOpts){
+  cantOpts = cantOpts || {};
+  var pObj = Array.isArray(realPiecesObj) ? { pieces: realPiecesObj, ry:[], mr:[], withLoads:false } : realPiecesObj;
+  var cantObj = cantOpts.preCantObj || fmBuildCantileverDiagram(B, pObj, restRef, cantOpts);
   var mvSymStr = mvSub || 'v';
-  realPcs.forEach(function(pc, pIdx){
-    var cv = virtPcs[pIdx].c;
-    if(Math.abs(cv[0]||0) + Math.abs(cv[1]||0)*pc.h <= 1e-12) return;
-    var ri = segEIInfo(B, 0.5*(pc.a + pc.b));
-    var gShapes = fmDecomposeGeometricShapes(pc.c, pc.a, pc.b, pc.EI);
-    gShapes.forEach(function(sh){
+
+  if(!cantOpts.skipBreakdown){
+    renderCantileverShapesBreakdown(doc, B, cantObj, sc, unTok, {
+      symBase: 'A',
+      figTitle: cantOpts.figTitle || ('Free-Body Diagram (Cantilever Fixity at x = ' + fmtX(cantObj.xFix) + ' m) & (M / EI) Diagram by Parts')
+    });
+  }
+
+  /* Merge collinear pieces of virtPcs into maximal linear segments [a, b] */
+  var vSegs = [];
+  virtPcs.forEach(function(vp){
+    var mL = vp.c[0] || 0, slope = vp.c[1] || 0, mR = mL + slope * vp.h;
+    if(vSegs.length){
+      var prev = vSegs[vSegs.length - 1];
+      if(Math.abs(vp.a - prev.b) <= 1e-7 && Math.abs(mL - prev.mR) <= 1e-7 && Math.abs(slope - prev.slope) <= 1e-7){
+        prev.b = vp.b; prev.mR = mR;
+        return;
+      }
+    }
+    vSegs.push({ a: vp.a, b: vp.b, mL: mL, mR: mR, slope: slope });
+  });
+
+  var ratioRows = [], prodRows = [], tblRows = [], contribsScaled = [], kCounter = 0;
+  vSegs.forEach(function(vs){
+    if(Math.abs(vs.mL) + Math.abs(vs.mR) <= 1e-11) return;
+    var clipped = fmClipCantileverShapes(cantObj.shapes, vs.a, vs.b);
+    clipped.forEach(function(sh){
       var kIdx = kCounter++;
+      var kNo = kIdx + 1;
+      var eiLbl = sh.eiS || segEIInfo(B, 0.5*(sh.a + sh.b)).eiS;
       var aSc = zr(sh.area * sc);
-      var xiBar = sh.xbar - pc.a;
-      var mvVal = zr((cv[0]||0) + (cv[1]||0) * xiBar);
+      var Lvs = vs.b - vs.a;
+      var mvVal = zr(vs.mL + vs.slope * (sh.xbar - vs.a));
       var prodSc = aSc * mvVal;
       contribsScaled.push(prodSc);
-      areaRows.push(renderGeometricShapeRow(sh, kIdx, ri.eiS, sc, unTok, M.v('A', kIdx+1)));
+
+      /* Similar-triangles / linear interpolation ratio for M_v(x̄_k) */
+      var ratioExprTok, ratioNote;
+      if(Math.abs(vs.mL - vs.mR) <= 1e-8){
+        ratioExprTok = M.num(mvVal, 4);
+        ratioNote = 'Constant virtual moment on [' + fmtX(vs.a) + ', ' + fmtX(vs.b) + ' m]';
+      } else if(Math.abs(vs.mL) <= 1e-8){
+        var dA = sh.xbar - vs.a;
+        ratioExprTok = M.cat(M.pnum(vs.mR, 4), M.p(M.frac(M.num(dA, 4), M.num(Lvs, 2))), M.op('='), M.num(mvVal, 4));
+        ratioNote = 'By similar-triangles ratio from vertex x = ' + fmtX(vs.a) + ' m';
+      } else if(Math.abs(vs.mR) <= 1e-8){
+        var dB = vs.b - sh.xbar;
+        ratioExprTok = M.cat(M.pnum(vs.mL, 4), M.p(M.frac(M.num(dB, 4), M.num(Lvs, 2))), M.op('='), M.num(mvVal, 4));
+        ratioNote = 'By similar-triangles ratio from vertex x = ' + fmtX(vs.b) + ' m';
+      } else {
+        var dLin = sh.xbar - vs.a;
+        ratioExprTok = M.cat(M.num(vs.mL, 4), M.op('+'), M.p(M.frac(M.num(dLin, 4), M.num(Lvs, 2))), M.pnum(vs.mR - vs.mL, 4), M.op('='), M.num(mvVal, 4));
+        ratioNote = 'By linear ordinate ratio on [' + fmtX(vs.a) + ', ' + fmtX(vs.b) + ' m]';
+      }
+
+      ratioRows.push([
+        M.cat(M.v('M', mvSymStr), M.p(M.bar('x', kNo))),
+        '=',
+        ratioExprTok,
+        ratioNote + (sh.sliceRatioT ? ' (' + sh.sliceRatioT + ')' : '')
+      ]);
       prodRows.push([
-        M.cat(M.v('A', kIdx+1), M.sp(), M.v('M', mvSymStr), M.p(M.bar('x', kIdx+1))),
+        M.cat(M.v('A', kNo), M.sp(), M.v('M', mvSymStr), M.p(M.bar('x', kNo))),
         '=',
         M.cat(M.p(M.cat(M.num(aSc, 4), unTok)), M.p(M.num(mvVal, 4)), M.op('='), M.num(zr(prodSc), 4), unTok),
-        'At centroid x̄_' + (kIdx+1) + ' = ' + sh.xbar.toFixed(4) + ' m, M_' + mvSymStr + ' = ' + M.num(mvVal, 4).t
+        'At centroid x̄_' + kNo + ' = ' + sh.xbar.toFixed(4) + ' m (' + sh.name + ', ' + eiLbl + ')'
       ]);
       tblRows.push([
-        'A_' + (kIdx+1),
-        sh.a.toFixed(2) + ' to ' + sh.b.toFixed(2) + ' m',
-        ri.eiS,
-        sh.name + ' (b=' + sh.base.toFixed(2) + ', h=' + M.num(sh.height, 4).t + ')',
+        'A_' + kNo,
+        fmtX(sh.a) + ' to ' + fmtX(sh.b) + ' m',
+        eiLbl,
+        sh.name + ' (b=' + fmtX(sh.base) + ', h=' + M.num(sh.height, 4).t + ')',
         M.cat(M.num(aSc, 4), unTok),
         sh.xbar.toFixed(4) + ' m',
         M.num(mvVal, 4),
@@ -5782,12 +7197,13 @@ function renderGeometricVirtualWork(doc, B, realPcs, virtPcs, sc, unTok, mvSub){
       ]);
     });
   });
-  if(!areaRows.length){
+
+  if(!prodRows.length){
     doc.note('All active geometric moment-area × virtual-ordinate products are zero.', 'All active geometric moment-area × virtual-ordinate products are zero.');
   } else {
-    doc.eqChain(areaRows);
+    doc.eqChain(ratioRows);
     doc.eqChain(prodRows);
-    doc.table(['Part', 'Interval', 'EI', 'Geometric Shape (base b, height h)', 'Area A_k', 'Centroid x̄_k', 'Ordinate M_' + mvSymStr + '(x̄_k)', 'A_k · M_' + mvSymStr + '(x̄_k)'],
+    doc.table(['Part', 'Interval', 'Rigidity', 'Cantilever Shape (base b, M)', 'Area A_k', 'Centroid x̄_k', 'Ordinate M_' + mvSymStr + '(x̄_k)', 'A_k · M_' + mvSymStr + '(x̄_k)'],
               tblRows, {align:['c','c','c','l','r','r','r','r']});
   }
   return contribsScaled;
@@ -5990,10 +7406,18 @@ function fmBuildDoc(B, R, fmOpts){
     if(dm === 'vw'){
       doc.note('<b>Virtual Work by Geometric Area &times; Ordinate Method:</b> Break the primary (<i class="mv">M</i><sub>O</sub> / <i class="mv">EI</i>) diagram into simple geometric shapes (rectangles <i class="mv">b</i>&middot;<i class="mv">h</i>, triangles &frac12;<i class="mv">b</i>&middot;<i class="mv">h</i>, parabolas &#8532;<i class="mv">b</i>&middot;<i class="mv">h</i>, parabolic spandrels &#8531;<i class="mv">b</i>&middot;<i class="mv">h</i>) and multiply each area <i class="mv">A<sub>k</sub></i> by the linear virtual-moment ordinate <i class="mv">M</i><sub>v,<i>i</i></sub>(<span class="mbar"><i class="mv">x</i></span><sub><i>k</i></sub>) at its centroid: 1(&Delta;<sub><i>i</i>O</sub>) = &Sigma; <i class="mv">A<sub>k</sub></i>&thinsp;<i class="mv">M</i><sub>v,<i>i</i></sub>(<span class="mbar"><i class="mv">x</i></span><sub><i>k</i></sub>):',
                'Virtual Work by Geometric Area × Ordinate Method: Break M_O/EI into geometric shapes (bh, 1/2 bh, 2/3 bh, 1/3 bh) and evaluate 1(Δ_iO) = ∑ A_k · M_v,i(x̄_k):');
+      var cantP0 = fmBuildCantileverDiagram(B, p0, restPrim, { redPts: redPts });
+      doc.sub('Cantilever-Method (<i class="mv">M</i><sub>O</sub> / <i class="mv">EI</i>) Diagram Areas &amp; Centroids of Primary Beam',
+              'Cantilever-Method (M_O / EI) Diagram Areas & Centroids of Primary Beam');
+      renderCantileverShapesBreakdown(doc, B, cantP0, sc, unTok, {
+        symBase: 'A',
+        figTitle: 'Primary Beam FBD (Cantilever Fixity at x = ' + fmtX(cantP0.xFix) + ' m) & (M_O / EI) Diagram by Parts'
+      });
+      doc.endSub();
       for(i=0; i<nRed; i++){
         doc.sub('Evaluation of ' + dTok(i).h + '  (at Support ' + jl[red[i]] + ', <i>x</i> = ' + redPts[i].toFixed(2) + ' m)',
                 'Evaluation of ' + dTok(i).t + ' (at Support ' + jl[red[i]] + ', x = ' + redPts[i].toFixed(2) + ' m)');
-        var segContribs = renderGeometricVirtualWork(doc, B, p0.pieces, mUnitPieces[i].pieces, sc, unTok, 'v,'+lab[i]);
+        var segContribs = renderGeometricVirtualWork(doc, B, p0, mUnitPieces[i].pieces, restPrim, sc, unTok, 'v,'+lab[i], { preCantObj: cantP0, skipBreakdown: true, redPts: redPts });
         if(!segContribs.length) segContribs = [0];
         var d0Dir = Math.abs(S.D0[i]) < 1e-12 ? '' : (red[i] < nS ? (S.D0[i] > 0 ? 'up' : 'down') : (S.D0[i] > 0 ? 'ccw' : 'cw'));
         var physNote = isSymFM ? '' : (' = ' + (red[i] < nS ? M.num(zr(S.D0[i]*1000), 4).t + ' mm (' + M.num(zr(S.D0[i])).t + ' m)' : M.num(zr(S.D0[i])).t + ' rad'));
@@ -6015,7 +7439,7 @@ function fmBuildDoc(B, R, fmOpts){
           showPhys: !isSymFM
         };
       });
-      fmRenderMethodWorkingDoc(doc, dm, B, p0, restPrim, sc, unTok, tgs0, 'O');
+      fmRenderMethodWorkingDoc(doc, dm, B, p0, restPrim, sc, unTok, tgs0, 'O', { redPts: redPts });
     }
     if(sR.some(function(v){ return Math.abs(v) > 1e-12; })){
       doc.sub('Support Settlement / Spring Displacement Terms (Kassimali Sec. 13.4)', 'Support Settlement / Spring Displacement Terms (Kassimali Sec. 13.4)');
@@ -6036,7 +7460,7 @@ function fmBuildDoc(B, R, fmOpts){
       for(i=0; i<nRed; i++){
         for(j2=0; j2<=i; j2++){
           doc.sub('Evaluation of ' + fTok(i, j2).h, 'Evaluation of ' + fTok(i, j2).t);
-          var fSegs = renderGeometricVirtualWork(doc, B, mUnitPieces[j2].pieces, mUnitPieces[i].pieces, sc, unTok, 'v,'+lab[i]);
+          var fSegs = renderGeometricVirtualWork(doc, B, mUnitPieces[j2], mUnitPieces[i].pieces, restPrim, sc, unTok, 'v,'+lab[i], { redPts: redPts, figTitle: 'Unit Redundant ' + rnTok(red[j2]).t + ' = 1 — FBD & (M_v,' + lab[j2] + ' / EI) Diagram by Parts' });
           if(!fSegs.length) fSegs = [0];
           doc.eqChain([
             [fTok(i, j2), '=', M.cat(fSegs.length > 1 ? M.p(M.signedSum(fSegs, 4)) : M.signedSum(fSegs, 4), unTok, M.op('='), M.box(fmtOverEI(zr(Fbs[i][j2])))), 'Flexibility coefficient ' + fTok(i, j2).t]
@@ -6061,7 +7485,7 @@ function fmBuildDoc(B, R, fmOpts){
             showPhys: false
           });
         }
-        fmRenderMethodWorkingDoc(doc, dm, B, mUnitPieces[j2], restPrim, sc, unTok, tgsU, ''+(j2+1));
+        fmRenderMethodWorkingDoc(doc, dm, B, mUnitPieces[j2], restPrim, sc, unTok, tgsU, ''+(j2+1), { redPts: redPts });
         doc.endSub();
       }
     }
@@ -6176,6 +7600,9 @@ function fmBuildDoc(B, R, fmOpts){
     }
   });
   doc.eqChain(rxAnsRows);
+  doc.diagram('Solved Beam Free-Body Diagram — Applied Loads, Span Rigidities &amp; Support Reactions',
+              buildGeneralBeamFBDSVG(B, R.Ry, R.Mr, 'Solved Beam Free-Body Diagram — Applied Loads & Support Reactions'),
+              'Solved Beam Free-Body Diagram with Support Reactions');
   doc.endSub();
   renderGlobalEquilibriumCheck(doc, B, R.Ry, R.Rx, R.Mr);
 
@@ -6253,7 +7680,7 @@ function fmBuildDoc(B, R, fmOpts){
           return [M.cat(rnTok(cc), M.txt(' (virtual)')), '=', M.num(vw.Rv[cc], 4), 'Virtual reaction under 1 kN at x* = ' + ep.x.toFixed(4) + ' m'];
         });
         doc.eqChain(rvRows);
-        var vSegList = renderGeometricVirtualWork(doc, B, vw.pReal.pieces, vw.pv.pieces, sc, unTok, 'v');
+        var vSegList = renderGeometricVirtualWork(doc, B, vw.pReal, vw.pv.pieces, restFin, sc, unTok, 'v', { figTitle: 'Solved Beam FBD & (M / EI) Diagram by Parts' });
         if(!vSegList.length) vSegList = [0];
         if(Math.abs(vw.supWorkV) > 1e-14) vSegList.push(-vw.supWorkV * sc);
         var vDirVW = Math.abs(vw.v*sc) < 1e-9 ? '' : (vw.v > 0 ? 'up' : 'down');
@@ -6270,7 +7697,7 @@ function fmBuildDoc(B, R, fmOpts){
           return [M.cat(rnTok(cc), M.txt(' (virtual)')), '=', M.num(vw.Rt[cc], 4), 'Virtual reaction under 1 kN·m at x* = ' + ep.x.toFixed(4) + ' m'];
         });
         doc.eqChain(rtRows);
-        var thSegList = renderGeometricVirtualWork(doc, B, vw.pReal.pieces, vw.pt.pieces, sc, unTok, 'θ');
+        var thSegList = renderGeometricVirtualWork(doc, B, vw.pReal, vw.pt.pieces, restFin, sc, unTok, 'θ', { skipBreakdown: (ep.kind === 'both') });
         if(!thSegList.length) thSegList = [0];
         if(Math.abs(vw.supWorkTh) > 1e-14) thSegList.push(-vw.supWorkTh * sc);
         var thDirVW = Math.abs(vw.th*sc) < 1e-9 ? '' : (vw.th > 0 ? 'ccw' : 'cw');
@@ -7197,5 +8624,5 @@ loadRow({type:'UDL', a:0, b:10, v1:10, v2:10, dir:'Downward'});
 refreshSpanTable();
 calculate();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5026ce3dfe3efdf',t:'MTc5Mjk0MzkzNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a505521dbe877e20',t:'MTc5Mjk3NDI5NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

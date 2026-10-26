@@ -221,6 +221,223 @@
   table.sol-tbl tr.md-bal-row td{border-bottom:2px solid #94a3b8 !important}
   table.eq-mat-aug td.aug-sep{border-left:1.5px dashed #94a3b8;padding-left:10px}
 
+
+  /* ============ STARTUP DEVICE CHOOSER (CP vs LAPTOP) & ADAPTIVE LAYOUT ============ */
+  .dev-switch-wrap{
+    margin-left:auto; display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  .dev-switch-lbl{
+    font-size:11.5px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+  }
+  .dev-seg{
+    display:inline-flex; background:var(--surface); border:1px solid #3f386b;
+    border-radius:999px; padding:3px; gap:3px;
+  }
+  .dev-btn{
+    border:none; background:transparent; color:#cbd5e1; border-radius:999px;
+    padding:5px 12px; font:700 12px/1.2 inherit; cursor:pointer;
+    display:inline-flex; align-items:center; gap:5px; transition:all .16s ease;
+  }
+  .dev-btn:hover{ color:#fff; background:rgba(109,91,208,0.18); }
+  .dev-btn.active{
+    background:var(--violet); color:#fff; box-shadow:0 2px 8px rgba(109,91,208,0.45);
+  }
+
+  /* Startup Modal Overlay */
+  .dev-modal-overlay{
+    position:fixed; inset:0; z-index:2147483600;
+    background:rgba(9,9,15,0.86); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px);
+    display:flex; align-items:center; justify-content:center; padding:16px;
+    overflow-y:auto;
+  }
+  .dev-modal-overlay.hidden{ display:none !important; }
+  .dev-modal-card{
+    width:100%; max-width:680px; background:linear-gradient(155deg,#171528 0%,#111118 100%);
+    border:1.5px solid #4c3d8f; border-radius:16px; padding:24px 24px 20px;
+    box-shadow:0 22px 60px rgba(0,0,0,0.72); color:var(--text); margin:auto;
+  }
+  .dev-modal-kicker{
+    display:inline-block; font-size:11px; font-weight:800; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--deflec); background:rgba(251,204,21,0.12);
+    border:1px solid rgba(251,204,21,0.35); border-radius:999px; padding:3px 10px; margin-bottom:10px;
+  }
+  .dev-modal-title{
+    margin:0 0 6px; font-size:22px; font-weight:800; color:#fff; line-height:1.25;
+  }
+  .dev-modal-sub{
+    margin:0 0 18px; font-size:13.5px; color:#cbd5e1; line-height:1.5;
+  }
+  .dev-choice-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:14px;
+  }
+  @media (max-width:600px){
+    .dev-choice-grid{ grid-template-columns:1fr; }
+    .dev-modal-card{ padding:18px 16px 16px; }
+    .dev-modal-title{ font-size:19px; }
+  }
+  .dev-choice-btn{
+    position:relative; background:#161622; border:1.5px solid #32324a; border-radius:13px;
+    padding:18px 16px; text-align:left; color:var(--text); cursor:pointer; font:inherit;
+    display:flex; flex-direction:column; gap:8px; transition:transform .15s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .dev-choice-btn:hover, .dev-choice-btn:focus-visible{
+    border-color:var(--violet); background:#1d1933; transform:translateY(-2px);
+    box-shadow:0 10px 26px rgba(109,91,208,0.28); outline:none;
+  }
+  .dev-choice-btn.recommended{
+    border-color:#7c6ae6; box-shadow:0 0 0 1px rgba(124,106,230,0.35) inset;
+  }
+  .dev-rec-tag{
+    display:none; align-self:flex-start; font-size:10.5px; font-weight:800; letter-spacing:.04em;
+    text-transform:uppercase; padding:2px 8px; border-radius:999px;
+    background:rgba(34,197,94,0.16); border:1px solid rgba(34,197,94,0.45); color:#4ade80;
+  }
+  .dev-choice-btn.recommended .dev-rec-tag{ display:inline-block; }
+  .dev-choice-head{ display:flex; align-items:center; gap:11px; }
+  .dev-choice-ico{
+    width:42px; height:42px; border-radius:10px; background:rgba(109,91,208,0.2);
+    border:1px solid #534499; display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0;
+  }
+  .dev-choice-name{ font-size:16.5px; font-weight:800; color:#fff; }
+  .dev-choice-tag{ font-size:11.8px; color:#a5b4fc; font-weight:600; }
+  .dev-choice-list{
+    margin:2px 0 0; padding-left:17px; color:#cbd5e1; font-size:12.2px; line-height:1.52;
+  }
+  .dev-choice-cta{
+    margin-top:auto; padding-top:8px; font-size:12.5px; font-weight:800; color:var(--deflec);
+    display:flex; align-items:center; gap:5px;
+  }
+  .dev-modal-foot{
+    margin-top:14px; padding-top:11px; border-top:1px solid #28283c;
+    display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;
+    font-size:11.8px; color:var(--muted);
+  }
+
+  /* Propped Beam Detection Banner */
+  .propped-banner{
+    display:none; align-items:center; gap:8px; padding:8px 12px; margin-bottom:10px;
+    border-radius:8px; background:linear-gradient(90deg,rgba(251,204,21,0.14),rgba(109,91,208,0.16));
+    border:1px solid rgba(251,204,21,0.45); color:#fef08a; font-size:12.2px; font-weight:600; line-height:1.4;
+  }
+  .propped-banner.show{ display:flex; }
+  .propped-banner strong{ color:#fff; }
+
+  /* Table Scroll Wrappers & Mobile Quick Nav */
+  .tbl-scroll{ width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .cp-scroll-hint{
+    display:none; font-size:11px; color:#a5b4fc; margin:0 0 5px; font-weight:600;
+  }
+  .cp-quick-nav{
+    display:none; position:sticky; top:0; z-index:950;
+    background:rgba(18,18,26,0.96); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid #352f59; padding:7px 10px; gap:6px; overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .cp-qbtn{
+    flex:1 0 auto; border:1px solid #38335c; background:#1c1a2e; color:#e2e8f0;
+    border-radius:8px; padding:7px 11px; font:700 12px/1.2 inherit; cursor:pointer;
+    white-space:nowrap; text-align:center;
+  }
+  .cp-qbtn.calc-act{
+    background:var(--violet); border-color:var(--violet); color:#fff;
+  }
+  .cp-qbtn:active{ transform:scale(0.98); }
+
+  /* ---- CELLPHONE (CP) MODE OPTIMIZATIONS ---- */
+  body.device-cp{
+    font-size:14.5px; -webkit-text-size-adjust:100%;
+  }
+  body.device-cp header{
+    padding:12px 12px; gap:8px; align-items:center;
+  }
+  body.device-cp header h1{ font-size:17.5px; }
+  body.device-cp header .sub{ font-size:11.5px; width:100%; order:3; line-height:1.35; }
+  body.device-cp .dev-switch-wrap{ margin-left:auto; order:2; }
+  body.device-cp .dev-switch-lbl{ display:none; }
+  body.device-cp .cp-quick-nav{ display:flex; }
+  body.device-cp main{
+    grid-template-columns:1fr !important;
+    max-width:560px; margin:0 auto; padding:10px 10px 64px; gap:12px;
+  }
+  body.device-cp .card{ padding:12px 11px; margin-bottom:11px; border-radius:10px; }
+  body.device-cp .row.c4{ grid-template-columns:repeat(2,1fr); gap:9px; }
+  body.device-cp input, body.device-cp select{
+    font-size:16px; min-height:42px; padding:7px 9px; border-radius:7px;
+  }
+  body.device-cp td input, body.device-cp td select{
+    font-size:14.5px; min-height:36px; padding:4px 6px;
+  }
+  body.device-cp .cp-scroll-hint{ display:block; }
+  body.device-cp #supTable{ min-width:440px; }
+  body.device-cp #loadTable{ min-width:560px; }
+  body.device-cp #spanTable{ min-width:420px; }
+  body.device-cp .btn{
+    min-height:42px; padding:9px 14px; font-size:13.5px; border-radius:8px;
+  }
+  body.device-cp .btn.sm{
+    min-height:36px; padding:6px 11px; font-size:12.5px;
+  }
+  body.device-cp #mainActionRow{
+    display:grid; grid-template-columns:1fr 1fr; gap:8px;
+  }
+  body.device-cp #mainActionRow #solMethod{
+    grid-column:1 / -1; max-width:none !important; width:100%;
+  }
+  body.device-cp #mainActionRow #clear{
+    grid-column:1 / -1;
+  }
+  body.device-cp .fm-mgrid{ grid-template-columns:1fr !important; gap:7px; }
+  body.device-cp .fm-mbtn{ padding:10px 11px; }
+  body.device-cp .fm-optrow{ grid-template-columns:1fr !important; }
+  body.device-cp .kpis{ grid-template-columns:repeat(2,1fr); gap:8px; }
+  body.device-cp .kpi:nth-child(3){ grid-column:1 / -1; }
+  body.device-cp .kpi .v{ font-size:16px; }
+  body.device-cp .fm-sumgrid{ grid-template-columns:1fr 1fr; gap:7px; }
+  @media (max-width:390px){
+    body.device-cp .kpis, body.device-cp .fm-sumgrid{ grid-template-columns:1fr; }
+    body.device-cp .kpi:nth-child(3){ grid-column:auto; }
+  }
+  body.device-cp .fm-pills{
+    flex-wrap:nowrap; overflow-x:auto; max-width:100%; padding-bottom:3px;
+    -webkit-overflow-scrolling:touch;
+  }
+  body.device-cp .fm-pill{ flex-shrink:0; padding:6px 11px; font-size:12px; }
+  body.device-cp .sol-rich{
+    padding:10px 9px; font-size:13px;
+  }
+  body.device-cp .sol-step{ padding:10px 10px; margin-bottom:10px; }
+  body.device-cp .sol-sub{ padding:8px 9px; }
+  body.device-cp .eq-box{
+    padding:8px 10px; -webkit-overflow-scrolling:touch;
+  }
+  body.device-cp .math{ font-size:13.8px; line-height:1.62; }
+  body.device-cp .sol-fig-svg{
+    padding:6px 6px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
+  body.device-cp .sol-fig-svg svg{
+    min-width:540px;
+  }
+  body.device-cp #fmResultRich{ max-height:480px !important; }
+  body.device-cp footer{ max-width:560px; margin:0 auto; padding:12px 12px 64px; }
+  body.device-cp .profx-wm-float{
+    right:10px; bottom:10px; padding:4px 10px; font-size:10.5px; pointer-events:none;
+  }
+
+  /* ---- LAPTOP / DESKTOP MODE OPTIMIZATIONS ---- */
+  body.device-laptop main{
+    max-width:1720px; margin:0 auto;
+    grid-template-columns:minmax(375px, 445px) minmax(0, 1fr);
+    gap:20px; padding:18px 24px; align-items:start;
+  }
+  @media (max-width:860px){
+    body.device-laptop main{ grid-template-columns:1fr; padding:14px; }
+  }
+  body.device-laptop #fmMethodGrid .fm-mbtn[data-dm="cf"]{
+    grid-column:1 / -1;
+  }
+  body.device-laptop #fmResultRich{ max-height:640px !important; }
+
   @page{margin:12mm}
 
   /* ============ PROF X WATERMARK & ARENA BADGE OVERRIDE ============ */
@@ -313,7 +530,7 @@
     .profx-wm-float strong,.profx-wm-bar strong{color:#000 !important}
     .profx-wm-bar{color:#111 !important;border-top:1px solid #94a3b8 !important}
     body{background:#fff !important;color:#111 !important}
-    header,main > section:first-child,#status,#kpis,#reactCard,#plots,.sol-toolbar,.fm-pills,#fmOpenFull,#fmDlTxt,#solDl,#solPrint,#fmPrint,#solClose,footer{display:none !important}
+    header,.dev-modal-overlay,.cp-quick-nav,.cp-scroll-hint,main > section:first-child,#status,#kpis,#reactCard,#plots,.sol-toolbar,.fm-pills,#fmOpenFull,#fmDlTxt,#solDl,#solPrint,#fmPrint,#solClose,footer{display:none !important}
     main{display:block !important;padding:0 !important}
     .card,#solCard,#fmResultCard{border:none !important;background:#fff !important;padding:0 !important;margin:0 !important;display:block !important}
     .sol-rich{max-height:none !important;overflow:visible !important;background:#fff !important;color:#111 !important;border:none !important;padding:0 !important}
@@ -347,10 +564,23 @@
 <header>
   <h1>Prof.X Beam Analysis</h1>
   <span class="sub">Structural Theory &mdash; Beam Calculations &middot; CE, USM Main Campus &middot; units kN, m</span>
+  <div class="dev-switch-wrap" id="headerDeviceBar" title="Switch interface between Cellphone (CP) and Laptop mode">
+    <span class="dev-switch-lbl">Device Mode:</span>
+    <div class="dev-seg">
+      <button type="button" class="dev-btn" data-dev="cp">&#128241; CP</button>
+      <button type="button" class="dev-btn active" data-dev="laptop">&#128187; Laptop</button>
+    </div>
+  </div>
 </header>
+<nav class="cp-quick-nav" id="cpQuickNav" aria-label="Mobile quick navigation">
+  <button type="button" class="cp-qbtn" data-cpjump="inputsSection">&#9998; Inputs</button>
+  <button type="button" class="cp-qbtn calc-act" id="cpQuickCalc">&#9889; Calculate</button>
+  <button type="button" class="cp-qbtn" data-cpjump="resultsSection">&#128202; Diagrams</button>
+  <button type="button" class="cp-qbtn" id="cpQuickSol">&sum; Solution</button>
+</nav>
 <main>
   <!-- ============ INPUTS ============ -->
-  <section>
+  <section id="inputsSection">
     <div class="card">
       <h2>Beam</h2>
       <label>Title</label><input id="fTitle" value="Beam">
@@ -375,10 +605,11 @@
         <div style="font-size:11px;color:var(--muted);margin-bottom:6px;line-height:1.35">
           Enter relative multipliers (<code>I</code>, <code>2I</code>, <code>1.5I</code>, <code>I/2</code>, <code>E</code>, <code>2E</code>) or exact numerical values (<code>kN/m&sup2;</code>, <code>mm&#8308;</code>).
         </div>
-        <table id="spanTable">
+        <div class="cp-scroll-hint">&harr; Swipe table sideways to view all columns</div>
+        <div class="tbl-scroll"><table id="spanTable">
           <thead><tr><th>Span</th><th id="thSpanE">E (kN/m&sup2; or kE)</th><th id="thSpanI">I (mm&#8308; or kI)</th><th>Effective EI</th></tr></thead>
           <tbody></tbody>
-        </table>
+        </table></div>
         <div style="margin-top:7px">
           <label>Extra section-step x inside spans (m, optional list &mdash; e.g. stepped beam without support)</label>
           <input id="fStepX" type="text" placeholder="e.g. 3  (splits span at x = 3 m into separate EI segments)">
@@ -388,10 +619,11 @@
 
     <div class="card">
       <h2>Supports</h2>
-      <table id="supTable">
+      <div class="cp-scroll-hint">&harr; Swipe sideways to edit settlement / spring k</div>
+      <div class="tbl-scroll"><table id="supTable">
         <thead><tr><th></th><th>x (m)</th><th>Type</th><th>Settlement (m)</th><th>k (kN/m)</th></tr></thead>
         <tbody></tbody>
-      </table>
+      </table></div>
       <div class="btnrow">
         <button class="btn ghost sm" id="addSup">+ Add support</button>
         <button class="btn danger sm" id="delSup">- Delete selected</button>
@@ -400,29 +632,34 @@
 
     <div class="card">
       <h2>Loads</h2>
-      <table id="loadTable">
+      <div class="cp-scroll-hint">&harr; Swipe sideways to edit positions a, b, V1, V2 &amp; direction</div>
+      <div class="tbl-scroll"><table id="loadTable">
         <thead><tr><th></th><th>Type</th><th>a (m)</th><th>b (m)</th><th>V1</th><th>V2</th><th>Direction</th></tr></thead>
         <tbody></tbody>
-      </table>
+      </table></div>
       <div class="btnrow">
         <button class="btn ghost sm" id="addLoad">+ Add load</button>
         <button class="btn danger sm" id="delLoad">- Delete selected</button>
       </div>
     </div>
 
-    <div class="btnrow">
+    <div class="btnrow" id="mainActionRow">
       <button class="btn primary" id="calc">CALCULATE</button>
-      <select id="solMethod" style="max-width:230px" title="Step-by-step method">
+      <button class="btn primary" id="viewSol" style="background:var(--violet2)">VIEW SOLUTION</button>
+      <select id="solMethod" style="max-width:255px" title="Step-by-step method">
         <option value="tm">Three-Moment Equation</option>
         <option value="sd">Slope-Deflection Method</option>
         <option value="md">Moment Distribution Method</option>
         <option value="fm">Method of Consistent Deformations (Force Method)</option>
+        <option value="pb">Propped Beam &mdash; Deflection of Cantilever</option>
       </select>
-      <button class="btn primary" id="viewSol" style="background:var(--violet2)">VIEW SOLUTION</button>
       <button class="btn ghost" id="clear">CLEAR ALL</button>
     </div>
 
     <div class="fm-box" id="fmDeflBox" style="display:none">
+      <div class="propped-banner" id="proppedAutoBanner">
+        <span>&#9889; <strong>Propped Cantilever Detected:</strong> Using <strong>Deflection of Cantilever (Method of Superposition)</strong> for primary cantilever deflections (&Delta;<sub>iO</sub>) and flexibility coefficients (f<sub>ij</sub>).</span>
+      </div>
       <div class="fm-box-head">
         <span class="fm-box-title">Force Method &mdash; Deflection Method</span>
       </div>
@@ -430,6 +667,10 @@
         Choose which method will be used to compute the primary beam deformations (&Delta;<sub>iO</sub>, f<sub>ij</sub>) and beam deflections:
       </div>
       <div class="fm-mgrid" id="fmMethodGrid">
+        <button type="button" class="fm-mbtn" data-dm="cf">
+          <span class="mt"><span class="mdot"></span>Deflection of Cantilever (Propped Beam)</span>
+          <span class="ms">Cantilever superposition formulas: PL&sup3;/3EI, Pa&sup2;(3L&minus;a)/6EI, wL&#8308;/8EI, &hellip;</span>
+        </button>
         <button type="button" class="fm-mbtn active" data-dm="ma">
           <span class="mt"><span class="mdot"></span>Moment-Area</span>
           <span class="ms">Geometric areas (bh, &frac12;bh, &#8532;bh, &#8531;bh) &amp; centroids</span>
@@ -451,6 +692,7 @@
         <div>
           <label for="fmDeflSelect">Selected deflection method</label>
           <select id="fmDeflSelect">
+            <option value="cf">Deflection of Cantilever (Superposition &mdash; Propped Beam)</option>
             <option value="ma" selected>Moment-Area Method (Geometric Areas)</option>
             <option value="vw">Virtual Work Method (Geometric Area &times; Ordinate)</option>
             <option value="cb">Conjugate Beam Method (Geometric Elastic Areas)</option>
@@ -466,18 +708,19 @@
   </section>
 
   <!-- ============ RESULTS ============ -->
-  <section>
+  <section id="resultsSection">
     <div id="status">Ready. Enter the beam and press CALCULATE.</div>
     <div class="kpis" id="kpis"></div>
     <div class="card" id="reactCard" style="display:none">
       <h2>Reactions</h2>
-      <table id="reactTable"><thead><tr><th>Reaction</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table>
+      <div class="tbl-scroll"><table id="reactTable"><thead><tr><th>Reaction</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div>
     </div>
     <div class="card" id="fmResultCard" style="display:none;border-color:#483b8a">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
         <h2 style="margin:0;color:var(--deflec)" id="fmResultTitle">Force Method &mdash; Deflection Calculation</h2>
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
           <div class="fm-pills" id="fmResultPills">
+            <button type="button" class="fm-pill" data-dm="cf">Cantilever Deflection</button>
             <button type="button" class="fm-pill active" data-dm="ma">Moment-Area</button>
             <button type="button" class="fm-pill" data-dm="vw">Virtual Work</button>
             <button type="button" class="fm-pill" data-dm="cb">Conjugate Beam</button>
@@ -540,11 +783,14 @@
           pictures: the beam itself, the shear diagram, the bending moment diagram and the deflection curve,
           each with its maximum value marked.</li>
       <li><b style="color:var(--text)">Want the full working?</b> Choose a method &mdash; Three-Moment Equation,
-          Slope-Deflection, Moment Distribution or Force Method &mdash; and press <i>VIEW SOLUTION</i>. When
-          <b style="color:var(--text)">Force Method</b> is chosen, you can also pick how deflections are computed:
-          <i>Double Integration</i>, <i>Moment-Area</i>, <i>Virtual Work</i> or <i>Conjugate Beam</i>. That calculation
-          appears directly in the Results card and in the full step-by-step solution, and <i>Download .txt</i> saves it
-          for your notes or submission.</li>
+          Slope-Deflection, Moment Distribution, Force Method, or <b>Propped Beam &mdash; Deflection of Cantilever</b> &mdash;
+          and press <i>VIEW SOLUTION</i>. Whenever you analyze a <b>propped beam</b> (fixed at one end + prop support),
+          it automatically solves primary-beam deflections and flexibility coefficients using <i>Deflection of Cantilever
+          (Method of Superposition)</i>; you can also switch anytime among <i>Cantilever Deflection</i>, <i>Moment-Area</i>,
+          <i>Virtual Work</i>, <i>Conjugate Beam</i>, and <i>Direct Integration</i>.</li>
+      <li><b style="color:var(--text)">Cellphone (CP) or Laptop Mode:</b> Choose your device at startup &mdash; or tap
+          <b>&#128241; CP</b> / <b>&#128187; Laptop</b> in the top-right header anytime &mdash; to switch between the
+          touch-optimized mobile layout and the wide 2-column desktop workbench.</li>
       <li><b style="color:var(--text)">Start over</b> with <i>CLEAR ALL</i> whenever you like.</li>
     </ol>
   </div>
@@ -563,6 +809,55 @@
   <p style="margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);color:#fbcc15;font-weight:700;font-size:13px">Made and prepare by: Prof X</p>
 </footer>
 <div class="profx-wm-float">Made and prepare by: <strong>Prof X</strong></div>
+
+<div class="dev-modal-overlay" id="deviceModal" role="dialog" aria-modal="true" aria-labelledby="devModalTitle">
+  <div class="dev-modal-card">
+    <span class="dev-modal-kicker">Prof.X Beam Analysis &middot; Display Setup</span>
+    <h2 class="dev-modal-title" id="devModalTitle">What device are you using?</h2>
+    <p class="dev-modal-sub">
+      Select <strong>Cellphone (CP)</strong> or <strong>Laptop / Desktop</strong> so we can optimize the beam input tables, technical diagrams, and step-by-step mathematical equations for your screen.
+    </p>
+    <div class="dev-choice-grid">
+      <button type="button" class="dev-choice-btn" id="chooseDeviceCP" data-dev="cp">
+        <span class="dev-rec-tag">Recommended for your screen</span>
+        <div class="dev-choice-head">
+          <div class="dev-choice-ico">&#128241;</div>
+          <div>
+            <div class="dev-choice-name">Cellphone (CP)</div>
+            <div class="dev-choice-tag">Mobile &amp; Touch Screen Layout</div>
+          </div>
+        </div>
+        <ul class="dev-choice-list">
+          <li>Single-column touch layout with sticky quick-jump bar (<b>Inputs &middot; Calculate &middot; Diagrams &middot; Solution</b>)</li>
+          <li>Large touch fields, 2&times;2 beam inputs &amp; smooth-swipe support/load tables</li>
+          <li>Mobile-scaled diagrams &amp; pan-scrollable equations</li>
+        </ul>
+        <div class="dev-choice-cta">Use Cellphone (CP) Mode &rarr;</div>
+      </button>
+
+      <button type="button" class="dev-choice-btn" id="chooseDeviceLaptop" data-dev="laptop">
+        <span class="dev-rec-tag">Recommended for your screen</span>
+        <div class="dev-choice-head">
+          <div class="dev-choice-ico">&#128187;</div>
+          <div>
+            <div class="dev-choice-name">Laptop / Desktop</div>
+            <div class="dev-choice-tag">Wide Engineering Workbench</div>
+          </div>
+        </div>
+        <ul class="dev-choice-list">
+          <li>Side-by-side 2-column studio (<b>Beam Builder</b> on left &middot; <b>Live Diagrams &amp; Solutions</b> on right)</li>
+          <li>Full 4-column beam property bar &amp; expanded multi-column tables</li>
+          <li>Wide high-resolution SVG plots &amp; textbook-scale equations</li>
+        </ul>
+        <div class="dev-choice-cta">Use Laptop Mode &rarr;</div>
+      </button>
+    </div>
+    <div class="dev-modal-foot">
+      <span>Tip: You can switch between <b>&#128241; CP</b> and <b>&#128187; Laptop</b> anytime in the top-right header.</span>
+      <span style="color:#fbcc15;font-weight:700">Made and prepare by: Prof X</span>
+    </div>
+  </div>
+</div>
 
 <script>
 /*SOLVER-START*/
@@ -2433,11 +2728,202 @@ function fmAnalyze(B){
 
 /* ============ FORCE METHOD DEFLECTION SUB-METHODS ENGINE (DI, MA, VW, CB) ============ */
 var FM_DEFL_METHODS = {
-  di: { id:'di', slug:'direct-integration', short:'Direct Integration', name:'Direct Integration Method' },
-  ma: { id:'ma', slug:'moment-area',        short:'Moment-Area',        name:'Moment-Area Method' },
-  vw: { id:'vw', slug:'virtual-work',       short:'Virtual Work',       name:'Virtual Work Method' },
-  cb: { id:'cb', slug:'conjugate-beam',     short:'Conjugate Beam',     name:'Conjugate Beam Method' }
+  cf: { id:'cf', slug:'cantilever-deflection', short:'Cantilever Deflection', name:'Deflection of Cantilever (Method of Superposition)' },
+  di: { id:'di', slug:'direct-integration',    short:'Direct Integration',    name:'Direct Integration Method' },
+  ma: { id:'ma', slug:'moment-area',           short:'Moment-Area',           name:'Moment-Area Method' },
+  vw: { id:'vw', slug:'virtual-work',          short:'Virtual Work',          name:'Virtual Work Method' },
+  cb: { id:'cb', slug:'conjugate-beam',        short:'Conjugate Beam',        name:'Conjugate Beam Method' }
 };
+
+function isProppedCantileverBeam(B){
+  if(!B || !B.sup || B.sup.length < 2) return false;
+  if((B.hinge || []).length > 0) return false;
+  var nFix = 0, nProp = 0, xFix = null, tol = 1e-7 * Math.max(1, B.L || 1);
+  B.sup.forEach(function(sp){
+    if(sp[1] === 1){ nFix++; xFix = sp[0]; }
+    else if(sp[1] >= 2 && sp[1] <= 4){ nProp++; }
+  });
+  if(nFix !== 1 || nProp < 1) return false;
+  return B.sup.some(function(sp){
+    return sp[1] !== 1 && Math.abs(sp[0] - xFix) > tol;
+  });
+}
+
+/* Exact Standard Cantilever Beam Deflection & Slope Formulas (u >= 0 from fixed wall) */
+function cfEvalPoint(P, a, u){
+  if(a <= 1e-12 || u <= 1e-12 || Math.abs(P) < 1e-15) return { yEI:0, thuEI:0 };
+  if(u <= a){
+    return { yEI: -P * u * u * (3*a - u) / 6, thuEI: -P * u * (2*a - u) / 2 };
+  }
+  return { yEI: -P * a * a * (3*u - a) / 6, thuEI: -P * a * a / 2 };
+}
+function cfEvalCouple(Msag, a, u){
+  if(a <= 1e-12 || u <= 1e-12 || Math.abs(Msag) < 1e-15) return { yEI:0, thuEI:0 };
+  if(u <= a){
+    return { yEI: Msag * u * u / 2, thuEI: Msag * u };
+  }
+  return { yEI: Msag * a * (2*u - a) / 2, thuEI: Msag * a };
+}
+function cfEvalUDL0(w, a, u){
+  if(a <= 1e-12 || u <= 1e-12 || Math.abs(w) < 1e-15) return { yEI:0, thuEI:0 };
+  if(u <= a){
+    return {
+      yEI:   -w * u * u * (6*a*a - 4*a*u + u*u) / 24,
+      thuEI: -w * u * (3*a*a - 3*a*u + u*u) / 6
+    };
+  }
+  return {
+    yEI:   -w * a * a * a * (4*u - a) / 24,
+    thuEI: -w * a * a * a / 6
+  };
+}
+function cfEvalTriDec0(w0, a, u){
+  if(a <= 1e-12 || u <= 1e-12 || Math.abs(w0) < 1e-15) return { yEI:0, thuEI:0 };
+  if(u <= a){
+    return {
+      yEI:   -w0 * u * u * (10*a*a*a - 10*a*a*u + 5*a*u*u - u*u*u) / (120 * a),
+      thuEI: -w0 * u * (4*a*a*a - 6*a*a*u + 4*a*u*u - u*u*u) / (24 * a)
+    };
+  }
+  return {
+    yEI:   -w0 * a * a * a * (5*u - a) / 120,
+    thuEI: -w0 * a * a * a / 24
+  };
+}
+function cfEvalTriInc0(w0, a, u){
+  var rU = cfEvalUDL0(w0, a, u), rD = cfEvalTriDec0(w0, a, u);
+  return { yEI: rU.yEI - rD.yEI, thuEI: rU.thuEI - rD.thuEI };
+}
+
+function cfCollectSideComponents(B, xFix, sDir, ryArr, withLoads, kFix){
+  var comps = [], tol = 1e-9 * Math.max(1, B.L || 1);
+  if(withLoads){
+    (B.P || []).forEach(function(p){
+      var a = (p[0] - xFix) * sDir;
+      if(a > tol && Math.abs(p[1]) > 1e-14){
+        comps.push({
+          kind:'point', isRxn:false, P:p[1], a:a, xOrig:p[0],
+          desc:'Concentrated load P = ' + fmtN(Math.abs(p[1])) + ' kN (' + (p[1]>=0?'↓':'↑') + ') at a = ' + fmtX(a) + ' m from fixed end'
+        });
+      }
+    });
+    (B.M || []).forEach(function(m){
+      var a = (m[0] - xFix) * sDir;
+      if(a > tol && Math.abs(m[1]) > 1e-14){
+        comps.push({
+          kind:'couple', Msag: sDir * m[1], mOrig: m[1], a:a, xOrig:m[0],
+          desc:'Concentrated couple M₀ = ' + fmtN(Math.abs(m[1])) + ' kN·m (' + (m[1]>=0?'↺ CCW':'↻ CW') + ') at a = ' + fmtX(a) + ' m from fixed end'
+        });
+      }
+    });
+    (B.W || []).forEach(function(w){
+      var s1 = w[0], s2 = w[1], w1 = w[2], w2 = w[3];
+      var a1, a2, q1, q2;
+      if(sDir > 0){
+        if(s2 <= xFix + tol) return;
+        if(s1 < xFix){
+          var tL = (xFix - s1) / (s2 - s1);
+          w1 = w1 + tL * (w2 - w1);
+          s1 = xFix;
+        }
+        a1 = Math.max(0, s1 - xFix); a2 = s2 - xFix; q1 = w1; q2 = w2;
+      } else {
+        if(s1 >= xFix - tol) return;
+        if(s2 > xFix){
+          var tR = (xFix - s1) / (s2 - s1);
+          w2 = w1 + tR * (w2 - w1);
+          s2 = xFix;
+        }
+        a1 = Math.max(0, xFix - s2); a2 = xFix - s1; q1 = w2; q2 = w1;
+      }
+      if(a2 - a1 <= tol) return;
+      if(Math.abs(q1) < 1e-14 && Math.abs(q2) < 1e-14) return;
+
+      function pushLin0(qFix, qTip, aEnd, tagPrefix){
+        if(aEnd <= tol) return;
+        var pfx = tagPrefix ? (tagPrefix + ': ') : '';
+        if(Math.abs(qFix - qTip) <= 1e-9 * Math.max(1, Math.abs(qFix), Math.abs(qTip))){
+          if(Math.abs(qFix) > 1e-14){
+            comps.push({
+              kind:'udl0', w:qFix, a:aEnd,
+              desc: pfx + 'UDL w = ' + fmtN(Math.abs(qFix)) + ' kN/m (' + (qFix>=0?'↓':'↑') + ') on [0, ' + fmtX(aEnd) + ' m] from fixed end'
+            });
+          }
+        } else if(Math.abs(qTip) <= 1e-11){
+          comps.push({
+            kind:'tri_dec0', w0:qFix, a:aEnd,
+            desc: pfx + 'Triangular load w = ' + fmtN(Math.abs(qFix)) + ' → 0 kN/m (' + (qFix>=0?'↓':'↑') + ') on [0, ' + fmtX(aEnd) + ' m] from fixed end'
+          });
+        } else if(Math.abs(qFix) <= 1e-11){
+          comps.push({
+            kind:'tri_inc0', w0:qTip, a:aEnd,
+            desc: pfx + 'Triangular load w = 0 → ' + fmtN(Math.abs(qTip)) + ' kN/m (' + (qTip>=0?'↓':'↑') + ') on [0, ' + fmtX(aEnd) + ' m] from fixed end'
+          });
+        } else {
+          if(qFix * qTip > 0 && Math.abs(qFix) > Math.abs(qTip)){
+            comps.push({
+              kind:'udl0', w:qTip, a:aEnd,
+              desc: pfx + 'Trapezoid uniform base w = ' + fmtN(Math.abs(qTip)) + ' kN/m (' + (qTip>=0?'↓':'↑') + ') on [0, ' + fmtX(aEnd) + ' m]'
+            });
+            comps.push({
+              kind:'tri_dec0', w0:(qFix - qTip), a:aEnd,
+              desc: pfx + 'Trapezoid triangular delta Δw = ' + fmtN(Math.abs(qFix - qTip)) + ' → 0 kN/m (' + ((qFix-qTip)>=0?'↓':'↑') + ') on [0, ' + fmtX(aEnd) + ' m]'
+            });
+          } else {
+            comps.push({
+              kind:'udl0', w:qFix, a:aEnd,
+              desc: pfx + 'Trapezoid uniform base w = ' + fmtN(Math.abs(qFix)) + ' kN/m (' + (qFix>=0?'↓':'↑') + ') on [0, ' + fmtX(aEnd) + ' m]'
+            });
+            comps.push({
+              kind:'tri_inc0', w0:(qTip - qFix), a:aEnd,
+              desc: pfx + 'Trapezoid triangular delta Δw = 0 → ' + fmtN(Math.abs(qTip - qFix)) + ' kN/m (' + ((qTip-qFix)>=0?'↓':'↑') + ') on [0, ' + fmtX(aEnd) + ' m]'
+            });
+          }
+        }
+      }
+
+      if(a1 <= tol){
+        pushLin0(q1, q2, a2, '');
+      } else {
+        var slopeW = (q2 - q1) / (a2 - a1);
+        var q0 = q1 - slopeW * a1;
+        pushLin0(q0, q2, a2, 'Superposition +[0, ' + fmtX(a2) + ' m] (for load on [' + fmtX(a1) + ', ' + fmtX(a2) + ' m])');
+        pushLin0(-q0, -q1, a1, 'Superposition −[0, ' + fmtX(a1) + ' m] (subtract unloaded [0, ' + fmtX(a1) + ' m])');
+      }
+    });
+  }
+
+  if(ryArr && ryArr.length){
+    B.sup.forEach(function(sp, k){
+      if(k === kFix) return;
+      var rk = ryArr[k] || 0;
+      if(Math.abs(rk) <= 1e-13) return;
+      var a = (sp[0] - xFix) * sDir;
+      if(a > tol){
+        var jNm = ptJointName(B, sp[0]);
+        comps.push({
+          kind:'point', isRxn:true, rxnName: jNm + '_y', rxnJoint: jNm,
+          P: -rk, Rval: rk, a:a, xOrig:sp[0],
+          desc:'Prop / support reaction ' + jNm + '_y = ' + fmtN(Math.abs(rk)) + ' kN (' + (rk>=0?'↑':'↓') + ') at a = ' + fmtX(a) + ' m from fixed end'
+        });
+      }
+    });
+  }
+  return comps;
+}
+
+function cfEvalComponent(comp, u){
+  if(comp.kind === 'point') return cfEvalPoint(comp.P, comp.a, u);
+  if(comp.kind === 'couple') return cfEvalCouple(comp.Msag, comp.a, u);
+  if(comp.kind === 'udl0') return cfEvalUDL0(comp.w, comp.a, u);
+  if(comp.kind === 'udl_part'){
+    var r2 = cfEvalUDL0(comp.w, comp.a2, u), r1 = cfEvalUDL0(comp.w, comp.a1, u);
+    return { yEI: r2.yEI - r1.yEI, thuEI: r2.thuEI - r1.thuEI, sub2:r2, sub1:r1 };
+  }
+  if(comp.kind === 'tri_dec0') return cfEvalTriDec0(comp.w0, comp.a, u);
+  if(comp.kind === 'tri_inc0') return cfEvalTriInc0(comp.w0, comp.a, u);
+  return { yEI:0, thuEI:0 };
+}
 
 function fmtX(x){ return Math.abs(x - Math.round(x*100)/100) < 1e-4 ? x.toFixed(2) : x.toFixed(4); }
 function zrC(v){ return Math.abs(v) < 1e-8 ? 0 : v; }
@@ -6565,6 +7051,467 @@ function fmSolveCB(B, piecesObj, rest, cantOpts){
   };
 }
 
+
+/* 3-Panel Propped Cantilever Superposition Diagram (Kassimali 4th Ed. Fig. 13.2) */
+function buildProppedCantileverSuperpositionSVG(B, R, sc){
+  var S = R.sol, fixIdx = S.fixIdx[0];
+  var xFix = B.sup[fixIdx][0];
+  var W = 840, H = 356, padL = 72, padR = 56;
+  var L = Math.max(B.L || 1, 1e-6);
+  function X(x){ return padL + (x / L) * (W - padL - padR); }
+
+  var EIx0 = expandEI(B), ei0 = EIx0[0][0] * EIx0[1][0];
+  var nPts = 64, xs = [], y0Arr = [], yRArr = [];
+  var ryProps = R.Ry.map(function(v, k){ return k === fixIdx ? 0 : v; });
+  for(var q = 0; q <= nPts; q++){
+    var xq = L * q / nPts;
+    xs.push(xq);
+    var sDir = xq >= xFix ? 1 : -1;
+    var uq = Math.abs(xq - xFix);
+    var c0 = cfCollectSideComponents(B, xFix, sDir, null, true, fixIdx);
+    var cR = cfCollectSideComponents(B, xFix, sDir, ryProps, false, fixIdx);
+    var sum0 = 0, sumR = 0;
+    c0.forEach(function(c){ sum0 += cfEvalComponent(c, uq).yEI; });
+    cR.forEach(function(c){ sumR += cfEvalComponent(c, uq).yEI; });
+    y0Arr.push(sum0);
+    yRArr.push(sumR);
+  }
+  var maxAbs = 1e-9;
+  y0Arr.forEach(function(v){ maxAbs = Math.max(maxAbs, Math.abs(v)); });
+  yRArr.forEach(function(v){ maxAbs = Math.max(maxAbs, Math.abs(v)); });
+  var ampPx = 28;
+
+  function drawFixedWall(yBeam){
+    var px = X(xFix), isLeft = xFix <= L * 0.5;
+    var out = '<line x1="'+px.toFixed(1)+'" y1="'+(yBeam-20)+'" x2="'+px.toFixed(1)+'" y2="'+(yBeam+20)+'" class="sfg-fixwall"/>';
+    for(var hh = -18; hh <= 18; hh += 6){
+      var x2 = isLeft ? (px - 8) : (px + 8);
+      out += '<line x1="'+px.toFixed(1)+'" y1="'+(yBeam+hh)+'" x2="'+x2.toFixed(1)+'" y2="'+(yBeam+hh+5)+'" class="sfg-fixhatch"/>';
+    }
+    return out;
+  }
+
+  function drawExternalLoadsMini(yBeam){
+    var g = '';
+    (B.W || []).forEach(function(w){
+      var xa = X(w[0]), xb = X(w[1]), sg = (w[2]+w[3]) >= 0 ? 1 : -1;
+      var topY = sg > 0 ? (yBeam - 18) : (yBeam + 4);
+      g += '<rect x="'+Math.min(xa,xb).toFixed(1)+'" y="'+topY.toFixed(1)+'" width="'+Math.abs(xb-xa).toFixed(1)+'" height="14" class="sfg-load-area"/>';
+      var nA = Math.max(3, Math.min(9, Math.round(Math.abs(xb-xa)/42)));
+      for(var ia=0; ia<=nA; ia++){
+        var xx = xa + (xb - xa)*ia/nA;
+        var yTip = sg > 0 ? (yBeam - 4) : (yBeam + 4);
+        var yTail = sg > 0 ? (yBeam - 18) : (yBeam + 18);
+        g += '<line x1="'+xx.toFixed(1)+'" y1="'+yTail+'" x2="'+xx.toFixed(1)+'" y2="'+yTip+'" class="sfg-load" stroke-width="1.3"/>';
+      }
+      g += '<text x="'+((xa+xb)/2).toFixed(1)+'" y="'+(sg>0 ? yBeam-22 : yBeam+29)+'" text-anchor="middle" class="sfg-tag-load">'+
+           fmtN(w[2])+(Math.abs(w[2]-w[3])>1e-9 ? '→'+fmtN(w[3]) : '')+' kN/m</text>';
+    });
+    (B.P || []).forEach(function(p){
+      var px = X(p[0]), sg = p[1] >= 0 ? 1 : -1;
+      var yTip = sg > 0 ? (yBeam - 4) : (yBeam + 4), yTail = sg > 0 ? (yBeam - 24) : (yBeam + 24);
+      g += '<line x1="'+px.toFixed(1)+'" y1="'+yTail+'" x2="'+px.toFixed(1)+'" y2="'+yTip+'" class="sfg-load" stroke-width="2"/>';
+      g += '<polygon points="'+px.toFixed(1)+','+yTip+' '+(px-4).toFixed(1)+','+(yTip-(sg>0?6:-6))+' '+(px+4).toFixed(1)+','+(yTip-(sg>0?6:-6))+'" class="sfg-load"/>';
+      g += '<text x="'+(px+5).toFixed(1)+'" y="'+(sg>0 ? yTail+2 : yTail+8)+'" class="sfg-tag-load">'+fmtN(Math.abs(p[1]))+' kN</text>';
+    });
+    return g;
+  }
+
+  var svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Propped Cantilever Superposition Diagram">';
+  svg += '<rect x="0" y="0" width="'+W+'" height="'+H+'" class="sfg-bg"/>';
+
+  var y1 = 62;
+  svg += '<rect x="12" y="10" width="'+(W-24)+'" height="96" rx="7" class="sfg-panel"/>';
+  svg += '<text x="24" y="27" class="sfg-txt">(a) Indeterminate Propped Cantilever Beam  (Compatibility: Δ_prop = Δ_O + f · R_prop = s)</text>';
+  svg += '<line x1="'+X(0)+'" y1="'+y1+'" x2="'+X(L)+'" y2="'+y1+'" class="sfg-beam" stroke-width="4"/>';
+  svg += drawFixedWall(y1) + drawExternalLoadsMini(y1);
+  B.sup.forEach(function(sp, k){
+    var px = X(sp[0]), jNm = ptJointName(B, sp[0]);
+    if(k !== fixIdx){
+      svg += '<polygon points="'+px.toFixed(1)+','+(y1+4)+' '+(px-7).toFixed(1)+','+(y1+16)+' '+(px+7).toFixed(1)+','+(y1+16)+'" class="sfg-sup"/>';
+      svg += '<circle cx="'+(px-4).toFixed(1)+'" cy="'+(y1+19)+'" r="2.2" class="sfg-sup"/>';
+      svg += '<circle cx="'+(px+4).toFixed(1)+'" cy="'+(y1+19)+'" r="2.2" class="sfg-sup"/>';
+    }
+    svg += '<text x="'+px.toFixed(1)+'" y="'+(y1+33)+'" text-anchor="middle" class="sfg-sub">'+jNm+' ('+fmtX(sp[0])+' m)</text>';
+  });
+
+  var y2 = 172;
+  svg += '<rect x="12" y="116" width="'+(W-24)+'" height="108" rx="7" class="sfg-panel"/>';
+  svg += '<text x="24" y="133" class="sfg-txt">(b) Primary Cantilever Under External Loads (Prop Removed)  ⇒  Cantilever Deflection Δ_iO</text>';
+  svg += '<line x1="'+X(0)+'" y1="'+y2+'" x2="'+X(L)+'" y2="'+y2+'" class="sfg-grid"/>';
+  var pts0 = xs.map(function(xq, qi){
+    var py = y2 - (y0Arr[qi] / maxAbs) * ampPx;
+    return X(xq).toFixed(1) + ',' + py.toFixed(1);
+  }).join(' ');
+  svg += '<polyline points="'+pts0+'" class="sfg-curve"/>';
+  svg += drawFixedWall(y2) + drawExternalLoadsMini(y2);
+  S.red.forEach(function(rd, idx){
+    if(rd >= S.nS) return;
+    var xp = B.sup[rd][0], px = X(xp), jNm = ptJointName(B, xp);
+    var d0Sc = zr(S.D0[idx] * sc);
+    var pyDef = y2 - ((S.D0[idx] * ei0) / maxAbs) * ampPx;
+    svg += '<line x1="'+px.toFixed(1)+'" y1="'+y2+'" x2="'+px.toFixed(1)+'" y2="'+pyDef.toFixed(1)+'" class="sfg-load" stroke-width="1.8" stroke-dasharray="3 2"/>';
+    svg += '<circle cx="'+px.toFixed(1)+'" cy="'+pyDef.toFixed(1)+'" r="3.5" class="sfg-load"/>';
+    var anchorDir = xp >= L*0.5 ? 'end' : 'start', dxLbl = xp >= L*0.5 ? -8 : 8;
+    svg += '<text x="'+(px + dxLbl).toFixed(1)+'" y="'+(Math.max(y2+16, pyDef+13)).toFixed(1)+'" text-anchor="'+anchorDir+'" class="sfg-tag-neg">Δ_'+jNm+'O = '+fmtN(d0Sc)+'/EI</text>';
+  });
+
+  var y3 = 294;
+  svg += '<rect x="12" y="234" width="'+(W-24)+'" height="112" rx="7" class="sfg-panel"/>';
+  svg += '<text x="24" y="251" class="sfg-txt">(c) Primary Cantilever Under Redundant Prop Reaction(s)  ⇒  Upward Cantilever Deflection f_ij · R_prop</text>';
+  svg += '<line x1="'+X(0)+'" y1="'+y3+'" x2="'+X(L)+'" y2="'+y3+'" class="sfg-grid"/>';
+  var ptsR = xs.map(function(xq, qi){
+    var py = y3 - (yRArr[qi] / maxAbs) * ampPx;
+    return X(xq).toFixed(1) + ',' + py.toFixed(1);
+  }).join(' ');
+  svg += '<polyline points="'+ptsR+'" class="sfg-curve"/>';
+  svg += drawFixedWall(y3);
+  S.red.forEach(function(rd, idx){
+    if(rd >= S.nS) return;
+    var xp = B.sup[rd][0], px = X(xp), jNm = ptJointName(B, xp);
+    var rVal = zr(S.X[idx]);
+    var pyDef = y3 - (((-S.D0[idx]) * ei0) / maxAbs) * ampPx;
+    svg += '<line x1="'+px.toFixed(1)+'" y1="'+(y3+24)+'" x2="'+px.toFixed(1)+'" y2="'+(y3+4)+'" class="sfg-rxn" stroke-width="2.3"/>';
+    svg += '<polygon points="'+px.toFixed(1)+','+(y3+3)+' '+(px-4.5).toFixed(1)+','+(y3+10)+' '+(px+4.5).toFixed(1)+','+(y3+10)+'" class="sfg-rxn"/>';
+    svg += '<text x="'+px.toFixed(1)+'" y="'+(y3+38)+'" text-anchor="middle" class="sfg-tag-rxn">'+jNm+'_y = '+fmtN(Math.abs(rVal))+' kN '+(rVal>=0?'↑':'↓')+' (f_'+jNm+jNm+' = L³ / 3EI)</text>';
+    svg += '<circle cx="'+px.toFixed(1)+'" cy="'+pyDef.toFixed(1)+'" r="3.5" class="sfg-rxn"/>';
+  });
+
+  svg += '</svg>';
+  return svg;
+}
+
+/* Complete Step-by-Step Renderer for Deflection of Cantilever (Method of Superposition) */
+function fmRenderCantileverFormulaMethod(doc, B, piecesObj, rest, sc, unTok, targets, tag, cantOpts, fmtThAns, fmtVAns){
+  cantOpts = cantOpts || {};
+  var tol = 1e-7 * Math.max(1, B.L || 1);
+
+  if(!rest || !rest.thR || rest.thR.length !== 1 || (B.hinge && B.hinge.length > 0)){
+    doc.note('<b>Note on Primary Structure:</b> Because this beam does not reduce to a single fixed-end cantilever without hinges, deformations are evaluated using the <b>Cantilever Moment-Diagram-by-Parts (Moment-Area) Method</b>:',
+             'Note: Primary structure has no single fixed cantilever support; evaluating via Cantilever Moment-Diagram-by-Parts (Moment-Area):');
+    fmRenderMethodWorkingDoc(doc, 'ma', B, piecesObj, rest, sc, unTok, targets, tag, cantOpts);
+    return;
+  }
+
+  var xFix = rest.thR[0].x, kFix = rest.thR[0].supIdx;
+  var jFix = ptJointName(B, xFix);
+  var vFix = 0;
+  (rest.vR || []).forEach(function(vr){ if(Math.abs(vr.x - xFix) < tol) vFix = vr.v; });
+
+  var allUniformSide = true;
+  (targets || []).forEach(function(tg){
+    if(Math.abs(tg.x - xFix) <= tol) return;
+    var sideLo = tg.x >= xFix ? xFix : 0, sideHi = tg.x >= xFix ? B.L : xFix;
+    var eiSide = null;
+    piecesObj.pieces.forEach(function(pc){
+      if(pc.b <= sideLo + tol || pc.a >= sideHi - tol) return;
+      if(eiSide === null) eiSide = pc.EI;
+      else if(Math.abs(pc.EI - eiSide) > 1e-7 * Math.max(1, eiSide)) allUniformSide = false;
+    });
+  });
+
+  if(!allUniformSide){
+    doc.note('<b>Non-Prismatic Cantilever (Varying <i>EI</i>):</b> Standard single-span handbook cantilever formulas assume constant <i class="mv">EI</i> (Kassimali Sec. 13.1, p. 517). Since <i class="mv">EI</i> steps along this cantilever, we evaluate the exact cantilever deflection directly from the fixed wall <i class="mv">' + jFix + '</i> (&theta;<sub>' + jFix + '</sub> = 0, <i class="mv">y</i><sub>' + jFix + '</sub> = ' + fmtN(zrC(vFix*sc)) + ') using the stepped-(<i class="mv">M</i> / <i class="mv">EI</i>) Cantilever Spandrel Method (<i class="mv">y</i> = &Sigma; <i class="mv">A<sub>k</sub></i>(<i class="mv">x</i> &minus; <span class="mbar"><i class="mv">x</i></span><sub><i>k</i></sub>)):',
+             'Non-Prismatic Cantilever (Varying EI): Evaluating exact cantilever deflection from fixed support ' + jFix + ' via stepped-(M/EI) cantilever spandrels:');
+    fmRenderMethodWorkingDoc(doc, 'ma', B, piecesObj, rest, sc, unTok, targets, tag, cantOpts);
+    return;
+  }
+
+  doc.note('<b>Deflection of Cantilever — Method of Superposition (Kassimali Sec. 13.1, Example 13.1 &amp; Back-Cover Cantilever Deflection Table):</b><br>' +
+           'Measure distances <i class="mv">a</i> (load position) and <i class="mv">L</i><sub>p</sub> = |<i class="mv">x</i> &minus; <i class="mv">x</i><sub>' + jFix + '</sub>| (evaluation point) from the <b>Fixed Support ' + jFix + '</b> at <i class="mv">x</i><sub>' + jFix + '</sub> = ' + fmtX(xFix) + ' m (where &theta;<sub>' + jFix + '</sub> = 0' + (Math.abs(vFix) < 1e-12 ? ' and <i class="mv">y</i><sub>' + jFix + '</sub> = 0' : ', <i class="mv">y</i><sub>' + jFix + '</sub> = ' + fmtN(zrC(vFix*sc)) + '/EI') + '). Superpose standard cantilever beam deflection formulas (+<i class="mv">y</i> upward, +&theta; CCW):',
+           'Deflection of Cantilever — Method of Superposition (Kassimali Sec. 13.1 & Cantilever Deflection Table): Measure distances from Fixed Support ' + jFix + ' at x = ' + fmtX(xFix) + ' m.');
+
+  (targets || []).forEach(function(tg){
+    var jTg = ptJointName(B, tg.x);
+    var sDir = tg.x >= xFix ? 1 : -1;
+    var u = Math.abs(tg.x - xFix);
+
+    var eiSide = sc;
+    piecesObj.pieces.forEach(function(pc){
+      var xm = 0.5*(pc.a + pc.b);
+      if((sDir > 0 && xm >= xFix) || (sDir < 0 && xm <= xFix)) eiSide = pc.EI;
+    });
+    var rEI = eiSide / sc;
+    var eiDenH = Math.abs(rEI - 1) < 1e-7 ? '<i class="mv">EI</i>' : (fmtFactorNum(rEI) + '<i class="mv">EI</i>');
+    var eiDenT = Math.abs(rEI - 1) < 1e-7 ? 'EI' : (fmtFactorNum(rEI) + '·EI');
+
+    doc.sub('Cantilever Superposition at Point ' + jTg + '  (<i>x</i> = ' + fmtX(tg.x) + ' m, distance <i>L</i><sub>p</sub> = |' + fmtX(tg.x) + ' &minus; ' + fmtX(xFix) + '| = ' + fmtX(u) + ' m from Fixed Support ' + jFix + ')',
+            'Cantilever Superposition at Point ' + jTg + ' (x = ' + fmtX(tg.x) + ' m, distance L_p = ' + fmtX(u) + ' m from Fixed Support ' + jFix + ')');
+
+    if(u <= tol){
+      var zRows = [];
+      if(tg.kind === 'th' || tg.kind === 'both'){
+        zRows.push([tg.thTok || M.grk('theta', jTg), '=', fmtThAns(0, tg.showPhys), 'Zero slope at fixed support ' + jFix]);
+      }
+      if(tg.kind === 'v' || tg.kind === 'both'){
+        zRows.push([tg.vTok || M.v('y', jTg), '=', fmtVAns(vFix, tg.showPhys), 'Boundary condition at fixed support ' + jFix]);
+      }
+      doc.eqChain(zRows);
+      doc.endSub();
+      return;
+    }
+
+    var comps = cfCollectSideComponents(B, xFix, sDir, piecesObj.ry, piecesObj.withLoads, kFix);
+    if(!comps.length){
+      var emptyRows = [];
+      if(tg.kind === 'th' || tg.kind === 'both'){
+        emptyRows.push([tg.thTok || M.grk('theta', jTg), '=', fmtThAns(0, tg.showPhys), 'No active cantilever loads on this side']);
+      }
+      if(tg.kind === 'v' || tg.kind === 'both'){
+        emptyRows.push([tg.vTok || M.v('y', jTg), '=', fmtVAns(vFix, tg.showPhys), 'No active cantilever loads on this side']);
+      }
+      doc.eqChain(emptyRows);
+      doc.endSub();
+      return;
+    }
+
+    if(tg.kind === 'v' || tg.kind === 'both'){
+      var defRows = [], tblRows = [], yContribsSc = [];
+      if(Math.abs(vFix * sc) > 1e-12){
+        yContribsSc.push(vFix * sc);
+        defRows.push([M.v('y', jFix), '=', M.cat(M.num(zrC(vFix*sc), 4), unTok), 'Fixed-support vertical displacement']);
+      }
+
+      comps.forEach(function(c, idx){
+        var evC = cfEvalComponent(c, u);
+        var valSc = evC.yEI / rEI;
+        yContribsSc.push(valSc);
+        var dSym = M.grk('delta', ''+(idx+1));
+        var a = c.a, fmlH = '', fmlT = '', subH = '', subT = '';
+
+        if(c.kind === 'point'){
+          var Pm = Math.abs(c.P), sgnH = c.P >= 0 ? '&minus;' : '+', sgnT = c.P >= 0 ? '-' : '+';
+          var pLblH = c.isRxn ? M.rxSym(c.rxnJoint, 'Fy').h : '<i class="mv">P</i>';
+          var pLblT = c.isRxn ? (c.rxnJoint + '_y') : 'P';
+          if(Math.abs(u - a) <= tol){
+            fmlH = sgnH + '<span class="eq-frac"><span class="eq-num">' + pLblH + '<i class="mv">L</i><sup>3</sup></span><span class="eq-den">3' + eiDenH + '</span></span>';
+            fmlT = sgnT + '(' + pLblT + '·L³) / (3·' + eiDenT + ')';
+            subH = sgnH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(Pm) + ')(' + fmtX(u) + ')<sup>3</sup></span><span class="eq-den">3' + eiDenH + '</span></span>';
+            subT = sgnT + '(' + fmtN(Pm) + ')(' + fmtX(u) + ')³ / (3·' + eiDenT + ')';
+          } else if(u > a){
+            fmlH = sgnH + '<span class="eq-frac"><span class="eq-num">' + pLblH + '<i class="mv">a</i><sup>2</sup>(3<i class="mv">L</i> &minus; <i class="mv">a</i>)</span><span class="eq-den">6' + eiDenH + '</span></span>';
+            fmlT = sgnT + pLblT + '·a²(3L - a) / (6·' + eiDenT + ')';
+            subH = sgnH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(Pm) + ')(' + fmtX(a) + ')<sup>2</sup>[3(' + fmtX(u) + ') &minus; ' + fmtX(a) + ']</span><span class="eq-den">6' + eiDenH + '</span></span>';
+            subT = sgnT + '(' + fmtN(Pm) + ')(' + fmtX(a) + ')²[3(' + fmtX(u) + ') - ' + fmtX(a) + '] / (6·' + eiDenT + ')';
+          } else {
+            fmlH = sgnH + '<span class="eq-frac"><span class="eq-num">' + pLblH + '<i class="mv">x</i><sup>2</sup>(3<i class="mv">a</i> &minus; <i class="mv">x</i>)</span><span class="eq-den">6' + eiDenH + '</span></span>';
+            fmlT = sgnT + pLblT + '·x²(3a - x) / (6·' + eiDenT + ')';
+            subH = sgnH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(Pm) + ')(' + fmtX(u) + ')<sup>2</sup>[3(' + fmtX(a) + ') &minus; ' + fmtX(u) + ']</span><span class="eq-den">6' + eiDenH + '</span></span>';
+            subT = sgnT + '(' + fmtN(Pm) + ')(' + fmtX(u) + ')²[3(' + fmtX(a) + ') - ' + fmtX(u) + '] / (6·' + eiDenT + ')';
+          }
+        } else if(c.kind === 'couple'){
+          var Mm = Math.abs(c.Msag), sgMH = c.Msag >= 0 ? '+' : '&minus;', sgMT = c.Msag >= 0 ? '+' : '-';
+          if(Math.abs(u - a) <= tol){
+            fmlH = sgMH + '<span class="eq-frac"><span class="eq-num"><i class="mv">M</i><sub>0</sub><i class="mv">L</i><sup>2</sup></span><span class="eq-den">2' + eiDenH + '</span></span>';
+            fmlT = sgMT + 'M₀·L² / (2·' + eiDenT + ')';
+            subH = sgMH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(Mm) + ')(' + fmtX(u) + ')<sup>2</sup></span><span class="eq-den">2' + eiDenH + '</span></span>';
+            subT = sgMT + '(' + fmtN(Mm) + ')(' + fmtX(u) + ')² / (2·' + eiDenT + ')';
+          } else if(u > a){
+            fmlH = sgMH + '<span class="eq-frac"><span class="eq-num"><i class="mv">M</i><sub>0</sub><i class="mv">a</i>(2<i class="mv">L</i> &minus; <i class="mv">a</i>)</span><span class="eq-den">2' + eiDenH + '</span></span>';
+            fmlT = sgMT + 'M₀·a(2L - a) / (2·' + eiDenT + ')';
+            subH = sgMH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(Mm) + ')(' + fmtX(a) + ')[2(' + fmtX(u) + ') &minus; ' + fmtX(a) + ']</span><span class="eq-den">2' + eiDenH + '</span></span>';
+            subT = sgMT + '(' + fmtN(Mm) + ')(' + fmtX(a) + ')[2(' + fmtX(u) + ') - ' + fmtX(a) + '] / (2·' + eiDenT + ')';
+          } else {
+            fmlH = sgMH + '<span class="eq-frac"><span class="eq-num"><i class="mv">M</i><sub>0</sub><i class="mv">x</i><sup>2</sup></span><span class="eq-den">2' + eiDenH + '</span></span>';
+            fmlT = sgMT + 'M₀·x² / (2·' + eiDenT + ')';
+            subH = sgMH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(Mm) + ')(' + fmtX(u) + ')<sup>2</sup></span><span class="eq-den">2' + eiDenH + '</span></span>';
+            subT = sgMT + '(' + fmtN(Mm) + ')(' + fmtX(u) + ')² / (2·' + eiDenT + ')';
+          }
+        } else if(c.kind === 'udl0'){
+          var wm = Math.abs(c.w), sgWH = c.w >= 0 ? '&minus;' : '+', sgWT = c.w >= 0 ? '-' : '+';
+          if(Math.abs(u - a) <= tol){
+            fmlH = sgWH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wL</i><sup>4</sup></span><span class="eq-den">8' + eiDenH + '</span></span>';
+            fmlT = sgWT + 'w·L⁴ / (8·' + eiDenT + ')';
+            subH = sgWH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wm) + ')(' + fmtX(u) + ')<sup>4</sup></span><span class="eq-den">8' + eiDenH + '</span></span>';
+            subT = sgWT + '(' + fmtN(wm) + ')(' + fmtX(u) + ')⁴ / (8·' + eiDenT + ')';
+          } else if(u > a){
+            fmlH = sgWH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wa</i><sup>3</sup>(4<i class="mv">L</i> &minus; <i class="mv">a</i>)</span><span class="eq-den">24' + eiDenH + '</span></span>';
+            fmlT = sgWT + 'w·a³(4L - a) / (24·' + eiDenT + ')';
+            subH = sgWH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wm) + ')(' + fmtX(a) + ')<sup>3</sup>[4(' + fmtX(u) + ') &minus; ' + fmtX(a) + ']</span><span class="eq-den">24' + eiDenH + '</span></span>';
+            subT = sgWT + '(' + fmtN(wm) + ')(' + fmtX(a) + ')³[4(' + fmtX(u) + ') - ' + fmtX(a) + '] / (24·' + eiDenT + ')';
+          } else {
+            fmlH = sgWH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wx</i><sup>2</sup>(6<i class="mv">a</i><sup>2</sup> &minus; 4<i class="mv">ax</i> + <i class="mv">x</i><sup>2</sup>)</span><span class="eq-den">24' + eiDenH + '</span></span>';
+            fmlT = sgWT + 'w·x²(6a² - 4ax + x²) / (24·' + eiDenT + ')';
+            subH = sgWH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wm) + ')(' + fmtX(u) + ')<sup>2</sup>[6(' + fmtX(a) + ')<sup>2</sup> &minus; 4(' + fmtX(a) + ')(' + fmtX(u) + ') + (' + fmtX(u) + ')<sup>2</sup>]</span><span class="eq-den">24' + eiDenH + '</span></span>';
+            subT = sgWT + '(' + fmtN(wm) + ')(' + fmtX(u) + ')²[6(' + fmtX(a) + ')² - 4(' + fmtX(a) + ')(' + fmtX(u) + ') + (' + fmtX(u) + ')²] / (24·' + eiDenT + ')';
+          }
+        } else if(c.kind === 'udl_part'){
+          var v2Sc = evC.sub2.yEI / rEI, v1Sc = evC.sub1.yEI / rEI;
+          fmlH = '&delta;<sub>UDL[0,' + fmtX(c.a2) + ']</sub> &minus; &delta;<sub>UDL[0,' + fmtX(c.a1) + ']</sub>';
+          fmlT = 'δ_UDL[0,' + fmtX(c.a2) + '] - δ_UDL[0,' + fmtX(c.a1) + ']';
+          subH = '(' + M.num(zrC(v2Sc), 4).h + ' &minus; (' + M.num(zrC(v1Sc), 4).h + '))' + unTok.h;
+          subT = '(' + M.num(zrC(v2Sc), 4).t + ' - (' + M.num(zrC(v1Sc), 4).t + '))' + unTok.t;
+        } else if(c.kind === 'tri_dec0'){
+          var wd = Math.abs(c.w0), sgDH = c.w0 >= 0 ? '&minus;' : '+', sgDT = c.w0 >= 0 ? '-' : '+';
+          if(Math.abs(u - a) <= tol){
+            fmlH = sgDH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wL</i><sup>4</sup></span><span class="eq-den">30' + eiDenH + '</span></span>';
+            fmlT = sgDT + 'w·L⁴ / (30·' + eiDenT + ')';
+            subH = sgDH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wd) + ')(' + fmtX(u) + ')<sup>4</sup></span><span class="eq-den">30' + eiDenH + '</span></span>';
+            subT = sgDT + '(' + fmtN(wd) + ')(' + fmtX(u) + ')⁴ / (30·' + eiDenT + ')';
+          } else if(u > a){
+            fmlH = sgDH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wa</i><sup>3</sup>(5<i class="mv">L</i> &minus; <i class="mv">a</i>)</span><span class="eq-den">120' + eiDenH + '</span></span>';
+            fmlT = sgDT + 'w·a³(5L - a) / (120·' + eiDenT + ')';
+            subH = sgDH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wd) + ')(' + fmtX(a) + ')<sup>3</sup>[5(' + fmtX(u) + ') &minus; ' + fmtX(a) + ']</span><span class="eq-den">120' + eiDenH + '</span></span>';
+            subT = sgDT + '(' + fmtN(wd) + ')(' + fmtX(a) + ')³[5(' + fmtX(u) + ') - ' + fmtX(a) + '] / (120·' + eiDenT + ')';
+          } else {
+            fmlH = sgDH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wx</i><sup>2</sup>(10<i class="mv">a</i><sup>3</sup> &minus; 10<i class="mv">a</i><sup>2</sup><i class="mv">x</i> + 5<i class="mv">ax</i><sup>2</sup> &minus; <i class="mv">x</i><sup>3</sup>)</span><span class="eq-den">120<i class="mv">a</i>&thinsp;' + eiDenH + '</span></span>';
+            fmlT = sgDT + 'w·x²(10a³ - 10a²x + 5ax² - x³) / (120·a·' + eiDenT + ')';
+            subH = sgDH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wd) + ')(' + fmtX(u) + ')<sup>2</sup>[10(' + fmtX(a) + ')<sup>3</sup> &minus; 10(' + fmtX(a) + ')<sup>2</sup>(' + fmtX(u) + ') + 5(' + fmtX(a) + ')(' + fmtX(u) + ')<sup>2</sup> &minus; (' + fmtX(u) + ')<sup>3</sup>]</span><span class="eq-den">120(' + fmtX(a) + ')' + eiDenH + '</span></span>';
+            subT = sgDT + '(' + fmtN(wd) + ')(' + fmtX(u) + ')²[...] / (120·' + fmtX(a) + '·' + eiDenT + ')';
+          }
+        } else if(c.kind === 'tri_inc0'){
+          var wi = Math.abs(c.w0), sgIH = c.w0 >= 0 ? '&minus;' : '+', sgIT = c.w0 >= 0 ? '-' : '+';
+          if(Math.abs(u - a) <= tol){
+            fmlH = sgIH + '<span class="eq-frac"><span class="eq-num">11<i class="mv">wL</i><sup>4</sup></span><span class="eq-den">120' + eiDenH + '</span></span>';
+            fmlT = sgIT + '11·w·L⁴ / (120·' + eiDenT + ')';
+            subH = sgIH + '<span class="eq-frac"><span class="eq-num">11(' + fmtN(wi) + ')(' + fmtX(u) + ')<sup>4</sup></span><span class="eq-den">120' + eiDenH + '</span></span>';
+            subT = sgIT + '11(' + fmtN(wi) + ')(' + fmtX(u) + ')⁴ / (120·' + eiDenT + ')';
+          } else if(u > a){
+            fmlH = sgIH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wa</i><sup>3</sup>(15<i class="mv">L</i> &minus; 4<i class="mv">a</i>)</span><span class="eq-den">120' + eiDenH + '</span></span>';
+            fmlT = sgIT + 'w·a³(15L - 4a) / (120·' + eiDenT + ')';
+            subH = sgIH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wi) + ')(' + fmtX(a) + ')<sup>3</sup>[15(' + fmtX(u) + ') &minus; 4(' + fmtX(a) + ')]</span><span class="eq-den">120' + eiDenH + '</span></span>';
+            subT = sgIT + '(' + fmtN(wi) + ')(' + fmtX(a) + ')³[15(' + fmtX(u) + ') - 4(' + fmtX(a) + ')] / (120·' + eiDenT + ')';
+          } else {
+            fmlH = sgIH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wx</i><sup>2</sup>(20<i class="mv">a</i><sup>3</sup> &minus; 10<i class="mv">a</i><sup>2</sup><i class="mv">x</i> + <i class="mv">x</i><sup>3</sup>)</span><span class="eq-den">120<i class="mv">a</i>&thinsp;' + eiDenH + '</span></span>';
+            fmlT = sgIT + 'w·x²(20a³ - 10a²x + x³) / (120·a·' + eiDenT + ')';
+            subH = sgIH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wi) + ')(' + fmtX(u) + ')<sup>2</sup>[20(' + fmtX(a) + ')<sup>3</sup> &minus; 10(' + fmtX(a) + ')<sup>2</sup>(' + fmtX(u) + ') + (' + fmtX(u) + ')<sup>3</sup>]</span><span class="eq-den">120(' + fmtX(a) + ')' + eiDenH + '</span></span>';
+            subT = sgIT + '(' + fmtN(wi) + ')(' + fmtX(u) + ')²[...] / (120·' + fmtX(a) + '·' + eiDenT + ')';
+          }
+        }
+
+        var resTok = M.cat(M.num(zrC(valSc), 4), unTok);
+        defRows.push([
+          dSym,
+          '=',
+          { h: fmlH + ' = ' + subH + ' = ' + resTok.h, t: fmlT + ' = ' + subT + ' = ' + resTok.t },
+          c.desc
+        ]);
+        tblRows.push([dSym, c.desc, { h: fmlH, t: fmlT }, resTok]);
+      });
+
+      var totVSc = yContribsSc.reduce(function(acc, v){ return acc + v; }, 0);
+      var totVPhys = totVSc / sc;
+      if(comps.length > 1 || Math.abs(vFix*sc) > 1e-12){
+        defRows.push([
+          tg.vTok || M.v('y', jTg),
+          '=',
+          M.cat(M.p(M.signedSum(yContribsSc, 4)), unTok, M.op('='), fmtVAns(totVPhys, tg.showPhys)),
+          'Superpose cantilever deflection components'
+        ]);
+      } else {
+        defRows.push([
+          tg.vTok || M.v('y', jTg),
+          '=',
+          fmtVAns(totVPhys, tg.showPhys),
+          'Cantilever deflection at x = ' + fmtX(tg.x) + ' m'
+        ]);
+      }
+      doc.eqChain(defRows);
+      if(tblRows.length > 1){
+        doc.table(['Term', 'Cantilever Load Component (from Fixed Support ' + jFix + ')', 'Cantilever Formula', 'Deflection δ_m'],
+                  tblRows, {align:['c','l','c','r']});
+      }
+    }
+
+    if(tg.kind === 'th' || tg.kind === 'both'){
+      var thContribsSc = [], thRows = [];
+      comps.forEach(function(c, idx){
+        var evC = cfEvalComponent(c, u);
+        var thSc = (sDir * evC.thuEI) / rEI;
+        thContribsSc.push(thSc);
+        var tSym = M.grk('theta', ''+(idx+1));
+        var a = c.a, tfH = '', tfT = '', tsH = '', tsT = '';
+        if(c.kind === 'point'){
+          var Pm = Math.abs(c.P), effP = sDir * c.P;
+          var sgH = effP >= 0 ? '&minus;' : '+', sgT = effP >= 0 ? '-' : '+';
+          var pLH = c.isRxn ? M.rxSym(c.rxnJoint, 'Fy').h : '<i class="mv">P</i>';
+          var pLT = c.isRxn ? (c.rxnJoint + '_y') : 'P';
+          if(u >= a - tol){
+            tfH = sgH + '<span class="eq-frac"><span class="eq-num">' + pLH + '<i class="mv">a</i><sup>2</sup></span><span class="eq-den">2' + eiDenH + '</span></span>';
+            tfT = sgT + pLT + '·a² / (2·' + eiDenT + ')';
+            tsH = sgH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(Pm) + ')(' + fmtX(a) + ')<sup>2</sup></span><span class="eq-den">2' + eiDenH + '</span></span>';
+            tsT = sgT + '(' + fmtN(Pm) + ')(' + fmtX(a) + ')² / (2·' + eiDenT + ')';
+          } else {
+            tfH = sgH + '<span class="eq-frac"><span class="eq-num">' + pLH + '<i class="mv">x</i>(2<i class="mv">a</i> &minus; <i class="mv">x</i>)</span><span class="eq-den">2' + eiDenH + '</span></span>';
+            tfT = sgT + pLT + '·x(2a - x) / (2·' + eiDenT + ')';
+            tsH = sgH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(Pm) + ')(' + fmtX(u) + ')[2(' + fmtX(a) + ') &minus; ' + fmtX(u) + ']</span><span class="eq-den">2' + eiDenH + '</span></span>';
+            tsT = sgT + '(' + fmtN(Pm) + ')(' + fmtX(u) + ')[2(' + fmtX(a) + ') - ' + fmtX(u) + '] / (2·' + eiDenT + ')';
+          }
+        } else if(c.kind === 'couple'){
+          var Mm = Math.abs(c.mOrig), sgMH = c.mOrig >= 0 ? '+' : '&minus;', sgMT = c.mOrig >= 0 ? '+' : '-';
+          var lenM = Math.min(u, a);
+          var symLenH = u >= a - tol ? '<i class="mv">a</i>' : '<i class="mv">x</i>';
+          var symLenT = u >= a - tol ? 'a' : 'x';
+          tfH = sgMH + '<span class="eq-frac"><span class="eq-num"><i class="mv">M</i><sub>0</sub>' + symLenH + '</span><span class="eq-den">' + eiDenH + '</span></span>';
+          tfT = sgMT + 'M₀·' + symLenT + ' / ' + eiDenT;
+          tsH = sgMH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(Mm) + ')(' + fmtX(lenM) + ')</span><span class="eq-den">' + eiDenH + '</span></span>';
+          tsT = sgMT + '(' + fmtN(Mm) + ')(' + fmtX(lenM) + ') / ' + eiDenT;
+        } else if(c.kind === 'udl0'){
+          var wm = Math.abs(c.w), effW = sDir * c.w;
+          var sgWH = effW >= 0 ? '&minus;' : '+', sgWT = effW >= 0 ? '-' : '+';
+          if(u >= a - tol){
+            tfH = sgWH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wa</i><sup>3</sup></span><span class="eq-den">6' + eiDenH + '</span></span>';
+            tfT = sgWT + 'w·a³ / (6·' + eiDenT + ')';
+            tsH = sgWH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wm) + ')(' + fmtX(a) + ')<sup>3</sup></span><span class="eq-den">6' + eiDenH + '</span></span>';
+            tsT = sgWT + '(' + fmtN(wm) + ')(' + fmtX(a) + ')³ / (6·' + eiDenT + ')';
+          } else {
+            tfH = sgWH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wx</i>(3<i class="mv">a</i><sup>2</sup> &minus; 3<i class="mv">ax</i> + <i class="mv">x</i><sup>2</sup>)</span><span class="eq-den">6' + eiDenH + '</span></span>';
+            tfT = sgWT + 'w·x(3a² - 3ax + x²) / (6·' + eiDenT + ')';
+            tsH = sgWH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wm) + ')(' + fmtX(u) + ')[3(' + fmtX(a) + ')<sup>2</sup> &minus; 3(' + fmtX(a) + ')(' + fmtX(u) + ') + (' + fmtX(u) + ')<sup>2</sup>]</span><span class="eq-den">6' + eiDenH + '</span></span>';
+            tsT = sgWT + '(' + fmtN(wm) + ')(' + fmtX(u) + ')[3(' + fmtX(a) + ')² - 3(' + fmtX(a) + ')(' + fmtX(u) + ') + (' + fmtX(u) + ')²] / (6·' + eiDenT + ')';
+          }
+        } else if(c.kind === 'tri_dec0'){
+          var wd = Math.abs(c.w0), effD = sDir * c.w0;
+          var sgDH = effD >= 0 ? '&minus;' : '+', sgDT = effD >= 0 ? '-' : '+';
+          if(u >= a - tol){
+            tfH = sgDH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wa</i><sup>3</sup></span><span class="eq-den">24' + eiDenH + '</span></span>';
+            tfT = sgDT + 'w·a³ / (24·' + eiDenT + ')';
+            tsH = sgDH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wd) + ')(' + fmtX(a) + ')<sup>3</sup></span><span class="eq-den">24' + eiDenH + '</span></span>';
+            tsT = sgDT + '(' + fmtN(wd) + ')(' + fmtX(a) + ')³ / (24·' + eiDenT + ')';
+          } else {
+            tfH = sgDH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wx</i>(4<i class="mv">a</i><sup>3</sup> &minus; 6<i class="mv">a</i><sup>2</sup><i class="mv">x</i> + 4<i class="mv">ax</i><sup>2</sup> &minus; <i class="mv">x</i><sup>3</sup>)</span><span class="eq-den">24<i class="mv">a</i>&thinsp;' + eiDenH + '</span></span>';
+            tfT = sgDT + 'w·x(4a³ - 6a²x + 4ax² - x³) / (24·a·' + eiDenT + ')';
+            tsH = sgDH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wd) + ')(' + fmtX(u) + ')[...]</span><span class="eq-den">24(' + fmtX(a) + ')' + eiDenH + '</span></span>';
+            tsT = sgDT + '(' + fmtN(wd) + ')(' + fmtX(u) + ')[...] / (24·' + fmtX(a) + '·' + eiDenT + ')';
+          }
+        } else if(c.kind === 'tri_inc0'){
+          var wi = Math.abs(c.w0), effI = sDir * c.w0;
+          var sgIH = effI >= 0 ? '&minus;' : '+', sgIT = effI >= 0 ? '-' : '+';
+          if(u >= a - tol){
+            tfH = sgIH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wa</i><sup>3</sup></span><span class="eq-den">8' + eiDenH + '</span></span>';
+            tfT = sgIT + 'w·a³ / (8·' + eiDenT + ')';
+            tsH = sgIH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wi) + ')(' + fmtX(a) + ')<sup>3</sup></span><span class="eq-den">8' + eiDenH + '</span></span>';
+            tsT = sgIT + '(' + fmtN(wi) + ')(' + fmtX(a) + ')³ / (8·' + eiDenT + ')';
+          } else {
+            tfH = sgIH + '<span class="eq-frac"><span class="eq-num"><i class="mv">wx</i>(8<i class="mv">a</i><sup>3</sup> &minus; 6<i class="mv">a</i><sup>2</sup><i class="mv">x</i> + <i class="mv">x</i><sup>3</sup>)</span><span class="eq-den">24<i class="mv">a</i>&thinsp;' + eiDenH + '</span></span>';
+            tfT = sgIT + 'w·x(8a³ - 6a²x + x³) / (24·a·' + eiDenT + ')';
+            tsH = sgIH + '<span class="eq-frac"><span class="eq-num">(' + fmtN(wi) + ')(' + fmtX(u) + ')[...]</span><span class="eq-den">24(' + fmtX(a) + ')' + eiDenH + '</span></span>';
+            tsT = sgIT + '(' + fmtN(wi) + ')(' + fmtX(u) + ')[...] / (24·' + fmtX(a) + '·' + eiDenT + ')';
+          }
+        }
+        var thRes = M.cat(M.num(zrC(thSc), 4), unTok);
+        thRows.push([
+          tSym,
+          '=',
+          tfH ? { h: tfH + ' = ' + tsH + ' = ' + thRes.h, t: tfT + ' = ' + tsT + ' = ' + thRes.t } : thRes,
+          'Cantilever slope: ' + c.desc
+        ]);
+      });
+      var totThSc = thContribsSc.reduce(function(acc, v){ return acc + v; }, 0);
+      var totThPhys = totThSc / sc;
+      thRows.push([
+        tg.thTok || M.grk('theta', jTg),
+        '=',
+        M.cat(thContribsSc.length > 1 ? M.cat(M.p(M.signedSum(thContribsSc, 4)), unTok, M.op('=')) : '', fmtThAns(totThPhys, tg.showPhys)),
+        'Superpose cantilever slope contributions at x = ' + fmtX(tg.x) + ' m'
+      ]);
+      doc.eqChain(thRows);
+    }
+
+    doc.endSub();
+  });
+}
+
 function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, targets, tag, cantOpts){
   cantOpts = cantOpts || {};
   var lhsTh = M.cat(M.v('EI'), M.sp(), M.grk('theta', tag || null));
@@ -6587,6 +7534,11 @@ function fmRenderMethodWorkingDoc(doc, methodId, B, piecesObj, rest, sc, unTok, 
     }
     return M.ans(M.cat(M.num(vS, 4), unTok), dir);
   };
+
+  if(methodId === 'cf'){
+    fmRenderCantileverFormulaMethod(doc, B, piecesObj, rest, sc, unTok, targets, tag, cantOpts, fmtThAns, fmtVAns);
+    return;
+  }
 
   if(methodId === 'di'){
     var di = fmSolveDI(B, piecesObj, rest);
@@ -7256,6 +8208,7 @@ function fmBuildDoc(B, R, fmOpts){
   var sR  = S.dS.map(function(v, i){ return (v + S.dP[i]) * sc; });
 
   var dmSecMap = {
+    cf: 'Ch. 13 (Sec. 13.1 Propped Cantilever — Deflection of Cantilever by Superposition & Back-Cover Beam Table)',
     di: 'Ch. 6 (Sec. 6.2 Direct Integration)',
     ma: 'Ch. 6 (Sec. 6.4 Moment-Area Method)',
     vw: 'Ch. 7 (Sec. 7.4 Virtual Work Method)',
@@ -7403,6 +8356,13 @@ function fmBuildDoc(B, R, fmOpts){
     /* STEP 6: DEFLECTIONS OF THE PRIMARY BEAM (Δ_iO) BY SELECTED KASSIMALI METHOD */
     st++;
     doc.startStep(st, 'Deflections of the Primary Beam (Δ_iO) [' + dmInfo.name + ']', 'fm-defl');
+    if(dm === 'cf' && isProppedCantileverBeam(B)){
+      doc.diagram(
+        'Propped Cantilever Superposition Diagram — Released Cantilever Primary Beam Under External Loads (Δ_iO) &amp; Prop Reaction(s) (Kassimali Fig. 13.2)',
+        buildProppedCantileverSuperpositionSVG(B, R, sc),
+        'Propped Cantilever Superposition Diagram (Primary Cantilever Deflections Δ_iO and f_ij · R_prop)'
+      );
+    }
     if(dm === 'vw'){
       doc.note('<b>Virtual Work by Geometric Area &times; Ordinate Method:</b> Break the primary (<i class="mv">M</i><sub>O</sub> / <i class="mv">EI</i>) diagram into simple geometric shapes (rectangles <i class="mv">b</i>&middot;<i class="mv">h</i>, triangles &frac12;<i class="mv">b</i>&middot;<i class="mv">h</i>, parabolas &#8532;<i class="mv">b</i>&middot;<i class="mv">h</i>, parabolic spandrels &#8531;<i class="mv">b</i>&middot;<i class="mv">h</i>) and multiply each area <i class="mv">A<sub>k</sub></i> by the linear virtual-moment ordinate <i class="mv">M</i><sub>v,<i>i</i></sub>(<span class="mbar"><i class="mv">x</i></span><sub><i>k</i></sub>) at its centroid: 1(&Delta;<sub><i>i</i>O</sub>) = &Sigma; <i class="mv">A<sub>k</sub></i>&thinsp;<i class="mv">M</i><sub>v,<i>i</i></sub>(<span class="mbar"><i class="mv">x</i></span><sub><i>k</i></sub>):',
                'Virtual Work by Geometric Area × Ordinate Method: Break M_O/EI into geometric shapes (bh, 1/2 bh, 2/3 bh, 1/3 bh) and evaluate 1(Δ_iO) = ∑ A_k · M_v,i(x̄_k):');
@@ -7747,7 +8707,7 @@ function buildFullReportDoc(B, loads, methodCode, methodTitle, R, fmOpts){
   var methodDoc;
   if(methodCode === 'sd') methodDoc = sdBuildDoc(B, R);
   else if(methodCode === 'md') methodDoc = mdBuildDoc(B, R);
-  else if(methodCode === 'fm') methodDoc = fmBuildDoc(B, R, fmOpts || {});
+  else if(methodCode === 'fm' || methodCode === 'pb') methodDoc = fmBuildDoc(B, R, fmOpts || {});
   else methodDoc = tmBuildDoc(B, R);
 
   var fullDoc = new SolDoc({ method: methodTitle });
@@ -8112,33 +9072,38 @@ function readModel(){
 
 /* ---------- plots (pure inline SVG, no libraries) ---------- */
 function svgFrame(w,h){ return '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg">'; }
+var deviceMode = 'laptop'; /* 'cp' or 'laptop' */
+
 function linePlot(title, xs, ys, color, unit, scale){
-  var W=720,H=190,pad=46,top=26,bot=34;
+  var isCP = (deviceMode === 'cp');
+  var W = isCP ? 500 : 740, H = isCP ? 196 : 192, pad = isCP ? 50 : 48, top = isCP ? 29 : 26, bot = isCP ? 36 : 34;
+  var fTitleSz = isCP ? 12.8 : 12, fSubSz = isCP ? 11.2 : 10, fValSz = isCP ? 11.8 : 11;
   var mn=Math.min.apply(null,ys), mx=Math.max.apply(null,ys);
   if(mx-mn<1e-12){ mx+=1; mn-=1; }
   var x0=Math.min.apply(null,xs), x1=Math.max.apply(null,xs);
   function X(v){return pad+(v-x0)/(x1-x0||1)*(W-pad-14);}
   function Y(v){return top+(mx-v)/(mx-mn)*(H-top-bot);}
   var s = svgFrame(W,H);
-  s += '<text x="12" y="16" fill="#9a9aa4" font-size="12" font-weight="600">'+title+'</text>';
+  s += '<text x="12" y="17" fill="#9a9aa4" font-size="'+fTitleSz+'" font-weight="600">'+title+'</text>';
   s += '<line x1="'+pad+'" y1="'+Y(0)+'" x2="'+(W-14)+'" y2="'+Y(0)+'" stroke="#3a3a42" stroke-width="1"/>';
   var pts = xs.map(function(v,i){return X(v).toFixed(1)+','+Y(ys[i]).toFixed(1);}).join(' ');
-  s += '<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2"/>';
-  // zero crossings ticks
-  s += '<text x="'+pad+'" y="'+(H-10)+'" fill="#9a9aa4" font-size="10">'+fmt(x0)+' m</text>';
-  s += '<text x="'+(W-60)+'" y="'+(H-10)+'" fill="#9a9aa4" font-size="10">'+fmt(x1)+' m</text>';
-  // max marker
+  s += '<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="'+(isCP?2.5:2)+'"/>';
+  s += '<text x="'+pad+'" y="'+(H-10)+'" fill="#9a9aa4" font-size="'+fSubSz+'">'+fmt(x0)+' m</text>';
+  s += '<text x="'+(W-64)+'" y="'+(H-10)+'" fill="#9a9aa4" font-size="'+fSubSz+'">'+fmt(x1)+' m</text>';
   var imx=0; for(var i=0;i<ys.length;i++) if(Math.abs(ys[i])>Math.abs(ys[imx])) imx=i;
-  s += '<circle cx="'+X(xs[imx])+'" cy="'+Y(ys[imx])+'" r="3.5" fill="#fff"/>';
-  s += '<text x="'+Math.min(W-120,X(xs[imx])+6)+'" y="'+Math.max(14,Y(ys[imx])-6)+'" fill="#e8e8ec" font-size="11">'+
+  s += '<circle cx="'+X(xs[imx])+'" cy="'+Y(ys[imx])+'" r="'+(isCP?4.2:3.5)+'" fill="#fff"/>';
+  var lblMaxX = Math.max(pad+4, Math.min(W-(isCP?165:140), X(xs[imx])+6));
+  var lblMaxY = Math.max(top+8, Math.min(H-bot-4, Y(ys[imx])-7));
+  s += '<text x="'+lblMaxX+'" y="'+lblMaxY+'" fill="#e8e8ec" font-size="'+fValSz+'" font-weight="600">'+
        fmt(ys[imx])+' '+unit+' @ x='+fmt(xs[imx])+' m</text>';
-  s += '<text x="6" y="'+(top+4)+'" fill="#9a9aa4" font-size="10">'+fmt(mx)+'</text>';
-  s += '<text x="6" y="'+(H-bot+4)+'" fill="#9a9aa4" font-size="10">'+fmt(mn)+'</text>';
+  s += '<text x="6" y="'+(top+4)+'" fill="#9a9aa4" font-size="'+fSubSz+'">'+fmt(mx)+'</text>';
+  s += '<text x="6" y="'+(H-bot+4)+'" fill="#9a9aa4" font-size="'+fSubSz+'">'+fmt(mn)+'</text>';
   s += '</svg>';
   return s;
 }
 function beamSketch(B){
-  var W=720,H=170,pad=46,yb=96;
+  var isCP = (deviceMode === 'cp');
+  var W = isCP ? 500 : 740, H = isCP ? 184 : 172, pad = isCP ? 48 : 46, yb = isCP ? 102 : 96;
   var x0=0,x1=B.L;
   function X(v){return pad+(v-x0)/(x1-x0||1)*(W-pad-14);}
   var s = svgFrame(W,H);
@@ -8317,6 +9282,7 @@ el('fI').addEventListener('input', updateSpanPreviews);
 el('spanTable').addEventListener('input', updateSpanPreviews);
 refreshSpanTable();
 
+var _lastAutoProppedSig = "";
 function calculate(){
   var st = el('status');
   try{
@@ -8363,10 +9329,29 @@ function calculate(){
       (Mcalc.sym
         ? linePlot('Relative Deflection Curve (EI·y) — kN·m³ / EI', R.xp, R.vp, '#fbcc15','/ EI')
         : linePlot('Beam Deflection Curve — mm', R.xp, R.vp.map(function(v){return v*1000;}), '#fbcc15','mm'));
-    if(el('solMethod').value === 'fm'){
+    var isPropBeam = isProppedCantileverBeam(B);
+    var propSig = JSON.stringify([B.sup.map(function(s){return [s[0],s[1]];}), B.hinge||[]]);
+    if(el('proppedAutoBanner')) el('proppedAutoBanner').classList.toggle('show', isPropBeam);
+    if(isPropBeam && propSig !== _lastAutoProppedSig){
+      _lastAutoProppedSig = propSig;
+      el('solMethod').value = 'pb';
+      el('fmDeflBox').style.display = '';
+      setFmDeflMethod('cf', false);
+    } else if(!isPropBeam && _lastAutoProppedSig){
+      _lastAutoProppedSig = '';
+      if(el('solMethod').value === 'pb'){
+        el('solMethod').value = 'fm';
+        setFmDeflMethod('ma', false);
+      }
+    }
+    var curM = el('solMethod').value;
+    if(curM === 'fm' || curM === 'pb'){
+      if(curM === 'pb' && el('fmDeflSelect').value !== 'cf') setFmDeflMethod('cf', false);
+      el('fmDeflBox').style.display = '';
       refreshForceMethodViews(false);
       var dmName = FM_DEFL_METHODS[getFmOptions().deflMethod].name;
-      st.textContent = 'Done — Force Method (' + dmName + ') & direct stiffness solution. Degree of indeterminacy: ' + R.DI +
+      st.textContent = 'Done — ' + (isPropBeam && getFmOptions().deflMethod === 'cf' ? 'Propped Beam (' + dmName + ')' : 'Force Method (' + dmName + ')') +
+                       ' & direct stiffness solution. Degree of indeterminacy: ' + R.DI +
                        (R.DI===0?' (statically determinate)':' (indeterminate, degree '+R.DI+')') + '.';
     } else if(el('solCard').style.display !== 'none'){
       generateFullSolution(false);
@@ -8380,8 +9365,8 @@ el('calc').onclick = calculate;
 var lastReport = '';
 var lastReportSlug = 'three-moment';
 var solViewMode = 'rich'; /* 'rich' = Equation Form, 'text' = Plain Text */
-var METHOD_NAMES = {tm:'Three-Moment Equation', sd:'Slope-Deflection Method', md:'Moment Distribution Method', fm:'Method of Consistent Deformations'};
-var METHOD_SLUGS = {tm:'three-moment', sd:'slope-deflection', md:'moment-distribution', fm:'force-method'};
+var METHOD_NAMES = {tm:'Three-Moment Equation', sd:'Slope-Deflection Method', md:'Moment Distribution Method', fm:'Method of Consistent Deformations', pb:'Propped Beam — Deflection of Cantilever'};
+var METHOD_SLUGS = {tm:'three-moment', sd:'slope-deflection', md:'moment-distribution', fm:'force-method', pb:'propped-beam-cantilever'};
 
 function setSolViewMode(mode){
   solViewMode = (mode === 'text') ? 'text' : 'rich';
@@ -8408,6 +9393,7 @@ function getFmOptions(){
 
 function setFmDeflMethod(dm, shouldRefresh){
   if(!FM_DEFL_METHODS[dm]) dm = 'ma';
+  if(dm !== 'cf' && el('solMethod') && el('solMethod').value === 'pb') el('solMethod').value = 'fm';
   el('fmDeflSelect').value = dm;
   document.querySelectorAll('#fmMethodGrid .fm-mbtn').forEach(function(btn){
     btn.classList.toggle('active', btn.getAttribute('data-dm') === dm);
@@ -8426,11 +9412,14 @@ document.querySelectorAll('#fmResultPills .fm-pill').forEach(function(btn){
 });
 el('fmDeflSelect').onchange = function(){ setFmDeflMethod(el('fmDeflSelect').value, true); };
 el('fmTargetX').addEventListener('input', function(){
-  if(el('solMethod').value === 'fm') refreshForceMethodViews(false);
+  var _sm = el('solMethod').value;
+  if(_sm === 'fm' || _sm === 'pb') refreshForceMethodViews(false);
 });
 
 function syncMethodVisibility(){
-  var isFm = el('solMethod').value === 'fm';
+  var mVal = el('solMethod').value;
+  var isFm = (mVal === 'fm' || mVal === 'pb');
+  if(mVal === 'pb') setFmDeflMethod('cf', false);
   el('fmDeflBox').style.display = isFm ? '' : 'none';
   if(isFm){
     refreshForceMethodViews(false);
@@ -8443,7 +9432,8 @@ function syncMethodVisibility(){
 el('solMethod').addEventListener('change', syncMethodVisibility);
 
 function refreshForceMethodViews(showErrors){
-  if(el('solMethod').value !== 'fm'){
+  var _sm = el('solMethod').value;
+  if(_sm !== 'fm' && _sm !== 'pb'){
     el('fmResultCard').style.display = 'none';
     return;
   }
@@ -8522,11 +9512,14 @@ function generateFullSolution(scrollToCard){
     var R, mTitle = METHOD_NAMES[m], opts = null;
     if(m === 'sd'){ R = sdAnalyze(B); lastReportSlug = METHOD_SLUGS[m]; }
     else if(m === 'md'){ R = mdAnalyze(B); lastReportSlug = METHOD_SLUGS[m]; }
-    else if(m === 'fm'){
+    else if(m === 'fm' || m === 'pb'){
+      if(m === 'pb') setFmDeflMethod('cf', false);
       opts = getFmOptions();
       var dmInfo = FM_DEFL_METHODS[opts.deflMethod];
       R = fmAnalyze(B);
-      mTitle = 'Method of Consistent Deformations (' + dmInfo.name + ')';
+      mTitle = (isProppedCantileverBeam(B) && opts.deflMethod === 'cf')
+        ? 'Propped Beam — ' + dmInfo.name
+        : 'Method of Consistent Deformations (' + dmInfo.name + ')';
       lastReportSlug = 'force-method-' + dmInfo.slug;
       refreshForceMethodViews(false);
     }
@@ -8560,7 +9553,7 @@ function printCurrentSolution(){
 }
 
 function downloadCurrentSolution(){
-  if(!lastReport || el('solMethod').value === 'fm'){
+  if(!lastReport || el('solMethod').value === 'fm' || el('solMethod').value === 'pb'){
     try{
       generateFullSolution(false);
     }catch(e){}
@@ -8616,6 +9609,77 @@ el('clear').onclick = function(){
   }
 })();
 
+
+/* ============ STARTUP DEVICE MODE CONTROLLER (CELLPHONE CP vs LAPTOP) ============ */
+function setDeviceMode(mode, closeStartupModal){
+  deviceMode = (mode === 'cp') ? 'cp' : 'laptop';
+  if(document.body && document.body.classList){
+    document.body.classList.toggle('device-cp', deviceMode === 'cp');
+    document.body.classList.toggle('device-laptop', deviceMode === 'laptop');
+  }
+  document.querySelectorAll('#headerDeviceBar .dev-btn').forEach(function(btn){
+    btn.classList.toggle('active', btn.getAttribute('data-dev') === deviceMode);
+  });
+  try{
+    if(typeof localStorage !== 'undefined') localStorage.setItem('profx_device_mode', deviceMode);
+  }catch(e){}
+  if(closeStartupModal && el('deviceModal')){
+    el('deviceModal').classList.add('hidden');
+  }
+  try{
+    if(el('supTable') && el('supTable').querySelectorAll('tbody tr').length > 0){
+      calculate();
+    }
+  }catch(e){}
+}
+
+(function initDeviceChooser(){
+  var savedMode = null;
+  try{
+    if(typeof localStorage !== 'undefined') savedMode = localStorage.getItem('profx_device_mode');
+  }catch(e){}
+  var isNarrowScreen = (typeof window !== 'undefined' && window.innerWidth && window.innerWidth <= 820);
+  var initialMode = (savedMode === 'cp' || savedMode === 'laptop') ? savedMode : (isNarrowScreen ? 'cp' : 'laptop');
+
+  var btnCP = el('chooseDeviceCP'), btnLap = el('chooseDeviceLaptop');
+  if(btnCP) btnCP.classList.toggle('recommended', isNarrowScreen);
+  if(btnLap) btnLap.classList.toggle('recommended', !isNarrowScreen);
+
+  if(document.body && document.body.classList){
+    deviceMode = initialMode;
+    document.body.classList.toggle('device-cp', deviceMode === 'cp');
+    document.body.classList.toggle('device-laptop', deviceMode === 'laptop');
+    document.querySelectorAll('#headerDeviceBar .dev-btn').forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-dev') === deviceMode);
+    });
+  }
+
+  if(btnCP) btnCP.onclick = function(){ setDeviceMode('cp', true); };
+  if(btnLap) btnLap.onclick = function(){ setDeviceMode('laptop', true); };
+
+  document.querySelectorAll('#headerDeviceBar .dev-btn').forEach(function(btn){
+    btn.onclick = function(){ setDeviceMode(btn.getAttribute('data-dev'), true); };
+  });
+
+  document.querySelectorAll('#cpQuickNav [data-cpjump]').forEach(function(btn){
+    btn.onclick = function(){
+      var tid = btn.getAttribute('data-cpjump');
+      var target = el(tid);
+      if(target && target.scrollIntoView) target.scrollIntoView({behavior:'smooth', block:'start'});
+    };
+  });
+  if(el('cpQuickCalc')){
+    el('cpQuickCalc').onclick = function(){
+      calculate();
+      var rs = el('resultsSection');
+      if(rs && rs.scrollIntoView) rs.scrollIntoView({behavior:'smooth', block:'start'});
+    };
+  }
+  if(el('cpQuickSol')){
+    el('cpQuickSol').onclick = function(){ generateFullSolution(true); };
+  }
+})();
+
 /* demo model = the example from the desktop app screenshot */
 supRow({x:0,  type:'2', set:0});
 supRow({x:5,  type:'3', set:0});
@@ -8624,5 +9688,5 @@ loadRow({type:'UDL', a:0, b:10, v1:10, v2:10, dir:'Downward'});
 refreshSpanTable();
 calculate();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a505521dbe877e20',t:'MTc5Mjk3NDI5NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a505c12a1d94aeb9',t:'MTc5Mjk3ODg0Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
